@@ -29,7 +29,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
-	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.7.0'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 }
 
 tasks.named('bootBuildImage') {
