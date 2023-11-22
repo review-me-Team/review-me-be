@@ -1,6 +1,8 @@
 package reviewme.be.resume.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +22,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeController {
 
-    @Operation(summary = "main", description = "전체 공개 이력서 목록을 조회합니다.")
+    @Operation(summary = "resume", description = "이력서 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<CustomResponse<ResumePageResponse>> showAllResumes() {
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이력서 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "이력서 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes() {
 
         List<ResumeResponse> sampleResponse = List.of(
                 ResumeResponse.builder()
                         .id(1L)
-                        .title("이력서 제목")
-                        .writer("이름")
+                        .title("네이버 신입 대비")
+                        .writer("aken-you")
                         .createdAt(LocalDateTime.now())
-                        .scope("전체 공개")
+                        .scope("public")
                         .build());
 
         return ResponseEntity
