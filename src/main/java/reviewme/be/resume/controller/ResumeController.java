@@ -106,4 +106,21 @@ public class ResumeController {
                         sampleResponse
                 ));
     }
+
+    @Operation(summary = "resume", description = "이력서를 삭제합니다.")
+    @DeleteMapping("/{resumeId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이력서 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "이력서 삭제 실패")
+    })
+    public ResponseEntity<CustomResponse> deleteResume(@PathVariable Long resumeId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "이력서 삭제에 성공했습니다."
+                ));
+    }
 }
