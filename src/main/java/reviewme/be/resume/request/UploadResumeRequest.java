@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Schema(description = "이력서 업로드 메타 데이터 요청")
+@Schema(description = "이력서 업로드 요청")
 public class UploadResumeRequest {
 
     @Schema(description = "이력서 제목", example = "네이버 신입 개발자 준비")
