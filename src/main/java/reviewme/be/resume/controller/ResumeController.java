@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.request.UploadResumeRequest;
+import reviewme.be.resume.response.ResumeDetailResponse;
 import reviewme.be.resume.response.ResumePageResponse;
 import reviewme.be.resume.response.ResumeResponse;
 import reviewme.be.resume.response.UploadResumeResponse;
@@ -78,6 +79,31 @@ public class ResumeController {
                         200,
                         "이력서 업로드에 성공했습니다.",
                         createdResumeId
+                ));
+    }
+
+    @Operation(summary = "resume", description = "이력서 상세 내용을 조회합니다.")
+    @GetMapping("/{resumeId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이력서 상세 내용 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "이력서 상세 내용 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(@PathVariable Long resumeId) {
+
+        // TODO: S3 연결 후, sample resume 세팅
+        // TODO: findByResumeId -> get resumeUrl
+
+        ResumeDetailResponse sampleResponse = ResumeDetailResponse.builder()
+                .resumeUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .build();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "이력서 상세 내용 조회에 성공했습니다.",
+                        sampleResponse
                 ));
     }
 }
