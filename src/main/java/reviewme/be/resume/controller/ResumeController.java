@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reviewme.be.resume.request.UpdateResumeRequest;
 import reviewme.be.resume.request.UploadResumeRequest;
 import reviewme.be.resume.response.ResumeDetailResponse;
 import reviewme.be.resume.response.ResumePageResponse;
@@ -41,7 +42,7 @@ public class ResumeController {
                         .title("네이버 신입 대비")
                         .writer("aken-you")
                         .createdAt(LocalDateTime.now())
-                        .scope("public")
+                        .scopeId(1L)
                         .build());
 
         return ResponseEntity
@@ -121,6 +122,32 @@ public class ResumeController {
                         "success",
                         200,
                         "이력서 삭제에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "resume", description = "이력서를 수정합니다.")
+    @PatchMapping("/{resumeId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "이력서 수정 실패")
+    })
+    public ResponseEntity<CustomResponse<ResumeResponse>> updateResume(@PathVariable Long resumeId, @RequestBody UpdateResumeRequest updateResumeRequest) {
+
+        ResumeResponse sampleUpdatedResumeResponse = ResumeResponse.builder()
+                .id(1L)
+                .title("네이버 신입 대비") // TODO: updateResumeRequest Title()
+                .writer("aken-you")
+                .createdAt(LocalDateTime.now())
+                .scopeId(1L)    // TODO: updateResumeRequest ScopeId()
+                .build();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "이력서 수정에 성공했습니다.",
+                        sampleUpdatedResumeResponse
                 ));
     }
 }
