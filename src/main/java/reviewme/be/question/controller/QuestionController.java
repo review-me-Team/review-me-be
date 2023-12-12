@@ -9,12 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.request.PostQuestionRequest;
 import reviewme.be.question.response.PostQuestionResponse;
-import reviewme.be.resume.response.ResumePageResponse;
-import reviewme.be.resume.response.ResumeResponse;
 import reviewme.be.util.CustomResponse;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Tag(name = "question", description = "예상 질문(question) API")
 @RequestMapping("/resume/{resumeId}/question")
