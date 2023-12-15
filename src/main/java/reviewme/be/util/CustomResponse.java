@@ -14,7 +14,7 @@ public class CustomResponse<T> {
     @Schema(description = "응답 코드", example = "200")
     private int code;
 
-    @Schema(description = "응답 메시지", example = "이력서 목록 조회 성공")
+    @Schema(description = "응답 메시지", example = "요청 성공 여부 등")
     private String message;
 
     @Schema(description = "응답 데이터")

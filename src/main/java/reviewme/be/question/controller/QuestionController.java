@@ -13,7 +13,6 @@ import reviewme.be.question.request.PostQuestionRequest;
 import reviewme.be.question.response.PostQuestionResponse;
 import reviewme.be.question.response.QuestionPageResponse;
 import reviewme.be.question.response.QuestionResponse;
-import reviewme.be.resume.response.ResumeResponse;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
 
