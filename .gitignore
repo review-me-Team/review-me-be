@@ -270,3 +270,4 @@ gradle-app.setting
 
 .idea
 ./main/resources/application.properties
+./main/resources/application-dev.properties
