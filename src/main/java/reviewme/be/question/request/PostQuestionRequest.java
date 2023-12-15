@@ -18,4 +18,8 @@ public class PostQuestionRequest {
 
     @Schema(description = "라벨 내용", example = "react-query")
     private String labelContent;
+
+    @Schema(description = "이력서 페이지", example = "1")
+    @NotBlank(message = "이력서의 몇 페이지에 질문을 하는 지는 필수 입력 값입니다.")
+    private long resumePage;
 }

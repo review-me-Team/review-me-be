@@ -32,6 +32,7 @@ public class QuestionController {
                 .writerId(1L)
                 .writerName("aken-you")
                 .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .resumePage(1L)
                 .questionId(1L)
                 .createdAt(LocalDateTime.now())
                 .build();

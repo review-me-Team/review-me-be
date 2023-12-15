@@ -23,6 +23,9 @@ public class PostQuestionResponse {
     @Schema(description = "예상 질문 작성자 프로필 url", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
     private String writerProfileUrl;
 
+    @Schema(description = "질문한 이력서의 페이지", example = "1")
+    private long resumePage;
+
     @Schema(description = "예상 질문 ID", example = "1")
     private long questionId;
 
