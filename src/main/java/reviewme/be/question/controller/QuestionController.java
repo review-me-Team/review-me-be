@@ -139,4 +139,23 @@ public class QuestionController {
                                 .build()
                 ));
     }
+
+    @Operation(summary = "question", description = "예상 질문을 삭제합니다.")
+    @DeleteMapping("/{questionId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문 삭제 실패")
+    })
+    public ResponseEntity<CustomResponse> deleteQuestions(@PathVariable long resumeId, @PathVariable long questionId) {
+
+        // TODO: 본인이 작성한 question만 삭제 가능
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 삭제에 성공했습니다."
+                ));
+    }
 }
