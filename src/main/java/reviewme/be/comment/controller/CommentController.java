@@ -101,4 +101,24 @@ public class CommentController {
                                 .build()
                 ));
     }
+
+    @Operation(summary = "DELETE comment of resume", description = "이력서에 단 댓글을 삭제합니다.")
+    @DeleteMapping("/{commentId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "댓글 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "댓글 삭제 실패")
+    })
+    public ResponseEntity<CustomResponse> deleteCommentOfResume(@PathVariable long resumeId, @PathVariable long commentId) {
+
+        // TODO: 본인이 작성한 댓글만 삭제 가능
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "댓글 삭제에 성공했습니다."
+                ));
+    }
+
 }
