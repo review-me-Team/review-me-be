@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.util.CustomResponse;
+import reviewme.be.util.dto.UserInfo;
 import reviewme.be.util.response.*;
 
 import java.util.List;
@@ -17,6 +18,30 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class UtilController {
+
+    @Operation(summary = "개인 정보 조회", description = "자신의 정보를 조회합니다.")
+    @GetMapping("/info")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "개인 정보 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "개인 정보 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<UserInfo>> showUserInfo() {
+
+        UserInfo sampleResponse = UserInfo.builder()
+                .id(1L)
+                .name("aken-you")
+                .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .build();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "개인 정보 조회에 성공했습니다.",
+                        sampleResponse
+                ));
+    }
 
     @Operation(summary = "공개 범위 목록 조회", description = "공개 범위 목록을 조회합니다.")
     @GetMapping("/scope")
