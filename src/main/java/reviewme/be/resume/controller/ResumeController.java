@@ -28,6 +28,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeController {
 
+    @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
+    @PostMapping
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이력서 업로드 성공"),
+            @ApiResponse(responseCode = "400", description = "이력서 업로드 실패")
+    })
+    public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
+            @Parameter(description = "PDF 파일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
+            @RequestPart MultipartFile pdf,
+            @RequestPart UploadResumeRequest uploadResumeRequest
+    ) {
+
+        UploadResumeResponse createdResumeId = UploadResumeResponse.builder()
+                .id(1L)
+                .build();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "이력서 업로드에 성공했습니다.",
+                        createdResumeId
+                ));
+    }
+
     @Operation(summary = "이력서 목록 조회", description = "이력서 목록을 조회합니다.")
     @GetMapping
     @ApiResponses({
@@ -56,32 +82,6 @@ public class ResumeController {
                         ResumePageResponse.builder()
                                 .resumePage(sampleResponse)
                                 .build()
-                ));
-    }
-
-    @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
-    @PostMapping
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "이력서 업로드 성공"),
-            @ApiResponse(responseCode = "400", description = "이력서 업로드 실패")
-    })
-    public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
-            @Parameter(description = "PDF 파일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
-            @RequestPart MultipartFile pdf,
-            @RequestPart UploadResumeRequest uploadResumeRequest
-    ) {
-
-        UploadResumeResponse createdResumeId = UploadResumeResponse.builder()
-                .id(1L)
-                .build();
-
-        return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "이력서 업로드에 성공했습니다.",
-                        createdResumeId
                 ));
     }
 
