@@ -32,10 +32,10 @@ public class QuestionResponse {
     private long countOfReplies;
 
     @Schema(description = "북마크 여부", example = "true")
-    private boolean isBookmarked;
+    private boolean bookmarked;
 
     @Schema(description = "체크 여부", example = "true")
-    private boolean isChecked;
+    private boolean checked;
 
     @Schema(description = "이모지 정보")
     private List<EmojiInfo> emojiInfos;

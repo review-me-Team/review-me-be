@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.request.PostQuestionRequest;
+import reviewme.be.question.request.UpdateQuestionCheckRequest;
 import reviewme.be.question.request.UpdateQuestionContentRequest;
 import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
@@ -80,8 +81,8 @@ public class QuestionController {
                         .labelId(1L)
                         .createdAt(LocalDateTime.now())
                         .countOfReplies(10L)
-                        .isBookmarked(true)
-                        .isChecked(true)
+                        .bookmarked(true)
+                        .checked(true)
                         .emojiInfos(sampleEmojis)
                         .myEmojiId(1L)
                         .build());
@@ -174,6 +175,27 @@ public class QuestionController {
                         "success",
                         200,
                         "예상 질문 수정에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "question", description = "본인의 이력서에 대한 예상 질문 내용에 체크 상태를 수정합니다.")
+    @PatchMapping("/{questionId}/check")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문 체크 상태 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문 체크 상태 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateQuestionCheck(@RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+
+        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
+
+        System.out.println(updateQuestionCheckRequest.isChecked());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 체크 상태 수정에 성공했습니다."
                 ));
     }
 }
