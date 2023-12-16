@@ -9,10 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reviewme.be.question.request.PostQuestionRequest;
-import reviewme.be.question.request.UpdateQuestionBookmarkRequest;
-import reviewme.be.question.request.UpdateQuestionCheckRequest;
-import reviewme.be.question.request.UpdateQuestionContentRequest;
+import reviewme.be.question.request.*;
 import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
@@ -210,7 +207,6 @@ public class QuestionController {
     public ResponseEntity<CustomResponse> updateQuestionBookmark(@Valid @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
-        System.out.println(updateQuestionBookmarkRequest.getBookmarked());
 
         return ResponseEntity
                 .ok()
@@ -248,6 +244,23 @@ public class QuestionController {
                         LabelPageResponse.builder()
                                 .labels(sampleLabels)
                                 .build()
+                ));
+    }
+
+    @Operation(summary = "question", description = "예상 질문에 표시할 이모지를 수정합니다.")
+    @PatchMapping("/{questionId}/emoji")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문 이모지 상태 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문 이모지 상태 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateQuestionEmoji(@RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 이모지 수정에 성공했습니다."
                 ));
     }
 }
