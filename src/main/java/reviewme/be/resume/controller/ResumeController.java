@@ -43,6 +43,8 @@ public class ResumeController {
                         .writer("aken-you")
                         .createdAt(LocalDateTime.now())
                         .scopeId(1L)
+                        .occupation("frontend")
+                        .year(0L)
                         .build());
 
         return ResponseEntity
@@ -139,6 +141,8 @@ public class ResumeController {
                 .writer("aken-you")
                 .createdAt(LocalDateTime.now())
                 .scopeId(1L)    // TODO: updateResumeRequest ScopeId()
+                .occupation("frontend")
+                .year(0L)
                 .build();
 
         return ResponseEntity

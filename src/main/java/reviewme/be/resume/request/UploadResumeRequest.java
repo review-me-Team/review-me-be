@@ -20,4 +20,10 @@ public class UploadResumeRequest {
     @Schema(description = "이력서 공개 범위 ID", example = "1")
     @NotBlank(message = "공개 범위 선택은 필수입니다.")
     private long scopeId;
+
+    @Schema(description = "직군 ID", example = "1")
+    private long occupationId;
+
+    @Schema(description = "년차", example = "0")
+    private long year;
 }

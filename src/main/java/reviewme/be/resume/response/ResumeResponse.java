@@ -24,5 +24,11 @@ public class ResumeResponse {
     private LocalDateTime createdAt;
 
     @Schema(description = "공개 범위", example = "1")
-    private Long scopeId;
+    private long scopeId;
+
+    @Schema(description = "직군", example = "frontend")
+    private String occupation;
+
+    @Schema(description = "년차", example = "0")
+    private long year;
 }

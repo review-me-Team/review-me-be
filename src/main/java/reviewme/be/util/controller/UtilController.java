@@ -9,10 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.util.CustomResponse;
-import reviewme.be.util.response.EmojiPageResponse;
-import reviewme.be.util.response.EmojiResponse;
-import reviewme.be.util.response.ScopePageResponse;
-import reviewme.be.util.response.ScopeResponse;
+import reviewme.be.util.response.*;
 
 import java.util.List;
 
@@ -93,6 +90,53 @@ public class UtilController {
                         "이모지 목록 조회에 성공했습니다.",
                         EmojiPageResponse.builder()
                                 .emojis(sampleResponse)
+                                .build()
+                ));
+    }
+
+    @Operation(summary = "occupation", description = "직군 목록을 조회합니다.")
+    @GetMapping("/occupation")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "직군 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "직군 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<OccupationPageResponse>> showOccupations() {
+
+        List<OccupationResponse> sampleResponse = List.of(
+                OccupationResponse.builder()
+                        .id(1L)
+                        .occupation("Frontend")
+                        .build(),
+                OccupationResponse.builder()
+                        .id(2L)
+                        .occupation("Backend")
+                        .build(),
+                OccupationResponse.builder()
+                        .id(3L)
+                        .occupation("Android")
+                        .build(),
+                OccupationResponse.builder()
+                        .id(4L)
+                        .occupation("iOS")
+                        .build(),
+                OccupationResponse.builder()
+                        .id(5L)
+                        .occupation("AI/ML")
+                        .build(),
+                OccupationResponse.builder()
+                        .id(6L)
+                        .occupation("Data Engineering")
+                        .build()
+                );
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "직군 목록 조회에 성공했습니다.",
+                        OccupationPageResponse.builder()
+                                .occupations(sampleResponse)
                                 .build()
                 ));
     }
