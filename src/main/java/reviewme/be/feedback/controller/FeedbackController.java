@@ -10,11 +10,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.request.PostFeedbackRequest;
+import reviewme.be.feedback.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -173,6 +175,26 @@ public class FeedbackController {
                         "success",
                         200,
                         "피드백 수정에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "UPDATE feedback check state", description = "본인의 이력서에 대한 피드백의 체크 상태를 수정합니다.")
+    @PatchMapping("/{feedbackId}/check")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백 체크 상태 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백 체크 상태 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateFeedbackCheck(@Valid @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+
+        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
+        // TODO: feedback이 댓글이 아닌 feedback인 경우에만 체크 상태 수정 가능
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "피드백 체크 상태 수정에 성공했습니다."
                 ));
     }
 }

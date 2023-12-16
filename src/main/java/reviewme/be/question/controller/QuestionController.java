@@ -188,6 +188,7 @@ public class QuestionController {
     public ResponseEntity<CustomResponse> updateQuestionCheck(@Valid @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
+        // TODO: question이 댓글이 아닌 question인 경우에만 체크 상태 수정 가능
 
         return ResponseEntity
                 .ok()
