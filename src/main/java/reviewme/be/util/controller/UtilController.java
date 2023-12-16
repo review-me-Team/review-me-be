@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UtilController {
 
-    @Operation(summary = "scope", description = "공개 범위 목록을 조회합니다.")
+    @Operation(summary = "GET scopes", description = "공개 범위 목록을 조회합니다.")
     @GetMapping("/scope")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "공개 범위 목록 조회 성공"),
@@ -52,7 +52,7 @@ public class UtilController {
                 ));
     }
 
-    @Operation(summary = "emoji", description = "선택할 수 있는 이모지 목록을 조회합니다.")
+    @Operation(summary = "GET emojis", description = "선택할 수 있는 이모지 목록을 조회합니다.")
     @GetMapping("/emoji")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이모지 목록 조회 성공"),
@@ -94,7 +94,7 @@ public class UtilController {
                 ));
     }
 
-    @Operation(summary = "occupation", description = "직군 목록을 조회합니다.")
+    @Operation(summary = "GET occupations", description = "직군 목록을 조회합니다.")
     @GetMapping("/occupation")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "직군 목록 조회 성공"),
@@ -137,6 +137,44 @@ public class UtilController {
                         "직군 목록 조회에 성공했습니다.",
                         OccupationPageResponse.builder()
                                 .occupations(sampleResponse)
+                                .build()
+                ));
+    }
+
+    @Operation(summary = "GET feedback labels", description = "피드백 라벨 목록을 조회합니다.")
+    @GetMapping("/labels")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백 라벨 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백 라벨 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<LabelPageResponse>> showFeedbackLabels() {
+
+        List<LabelResponse> sampleResponse = List.of(
+                LabelResponse.builder()
+                        .id(1L)
+                        .label("프로젝트")
+                        .build(),
+                LabelResponse.builder()
+                        .id(2L)
+                        .label("자기소개")
+                        .build(),
+                LabelResponse.builder()
+                        .id(3L)
+                        .label("협업")
+                        .build(),
+                LabelResponse.builder()
+                        .id(4L)
+                        .label("기타")
+                        .build());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "피드백 라벨 목록 조회에 성공했습니다.",
+                        LabelPageResponse.builder()
+                                .labels(sampleResponse)
                                 .build()
                 ));
     }
