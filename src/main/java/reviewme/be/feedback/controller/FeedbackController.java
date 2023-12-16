@@ -10,9 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.request.PostFeedbackRequest;
-import reviewme.be.feedback.response.FeedbackPageResponse;
-import reviewme.be.feedback.response.FeedbackResponse;
-import reviewme.be.feedback.response.PostFeedbackResponse;
+import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
 
@@ -97,4 +95,48 @@ public class FeedbackController {
                                 .build()
                 ));
     }
+
+    @Operation(summary = "GET comments of feedback", description = "피드백에 달린 댓글 목록을 조회합니다.")
+    @GetMapping("/{feedbackId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백 댓글 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백 댓글 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<CommentOfFeedbackPageResponse>> showCommentsOfFeedback(@PathVariable long resumeId, @PathVariable long feedbackId, @PageableDefault(size=20) Pageable pageable) {
+
+        // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
+
+        List<EmojiInfo> sampleEmojis = List.of(
+                EmojiInfo.builder()
+                        .id(1L)
+                        .count(10L)
+                        .build(),
+                EmojiInfo.builder()
+                        .id(2L)
+                        .count(3L)
+                        .build());
+
+        List<CommentOfFeedbackResponse> sampleResponse = List.of(
+                CommentOfFeedbackResponse.builder()
+                        .id(1L)
+                        .feedbackId(1L)
+                        .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
+                        .writerId(1L)
+                        .createdAt(LocalDateTime.now())
+                        .emojiInfos(sampleEmojis)
+                        .myEmojiId(1L)
+                        .build());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 댓글 조회에 성공했습니다.",
+                        CommentOfFeedbackPageResponse.builder()
+                                .comments(sampleResponse)
+                                .build()
+                ));
+    }
+
 }
