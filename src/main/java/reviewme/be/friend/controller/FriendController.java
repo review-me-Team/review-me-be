@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.friend.request.AcceptFriendRequest;
 import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.util.CustomResponse;
 
@@ -30,6 +31,25 @@ public class FriendController {
                         "success",
                         200,
                         "친구 요청에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "친구 요청 수락", description = "친구 요청을 수락합니다.")
+    @PatchMapping
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "친구 요청 수락 성공"),
+            @ApiResponse(responseCode = "400", description = "친구 요청 수락 실패")
+    })
+    public ResponseEntity<CustomResponse> acceptFriend(@RequestBody AcceptFriendRequest acceptFriendRequest) {
+
+        // TODO: 친구 요청 목록에 있는지 검증
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "친구 요청 수락에 성공했습니다."
                 ));
     }
 }
