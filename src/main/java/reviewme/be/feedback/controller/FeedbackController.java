@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.request.PostFeedbackRequest;
 import reviewme.be.feedback.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
+import reviewme.be.feedback.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
@@ -195,6 +196,23 @@ public class FeedbackController {
                         "success",
                         200,
                         "피드백 체크 상태 수정에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "UPDATE feedback emoji", description = "피드백에 표시할 이모지를 수정합니다.")
+    @PatchMapping("/{feedbackId}/emoji")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백 이모지 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateQuestionEmoji(@RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "피드백 이모지 수정에 성공했습니다."
                 ));
     }
 }
