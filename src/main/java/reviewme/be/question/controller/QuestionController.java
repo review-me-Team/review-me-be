@@ -10,9 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.request.PostQuestionRequest;
-import reviewme.be.question.response.PostQuestionResponse;
-import reviewme.be.question.response.QuestionPageResponse;
-import reviewme.be.question.response.QuestionResponse;
+import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
 
@@ -59,18 +57,18 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<QuestionPageResponse>> postQuestions(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable, @RequestParam long resumePage) {
+    public ResponseEntity<CustomResponse<QuestionPageResponse>> showQuestions(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable, @RequestParam long resumePage) {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
         List<EmojiInfo> sampleEmojis = List.of(
                 EmojiInfo.builder()
                         .id(1L)
-                        .countOfEmoji(10L)
+                        .count(10L)
                         .build(),
                 EmojiInfo.builder()
                         .id(2L)
-                        .countOfEmoji(3L)
+                        .count(3L)
                         .build());
 
         List<QuestionResponse> sampleResponse = List.of(
@@ -95,6 +93,49 @@ public class QuestionController {
                         "예상 질문 목록 조회에 성공했습니다.",
                         QuestionPageResponse.builder()
                                 .questionPage(sampleResponse)
+                                .build()
+                ));
+    }
+
+    @Operation(summary = "question", description = "예상 질문에 달린 댓글 목록을 조회합니다.")
+    @GetMapping("/{questionId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문 댓글 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문 댓글 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<CommentOfQuestionPageResponse>> showCommentsOfQuestions(@PathVariable long resumeId, @PathVariable long questionId, @PageableDefault(size=20) Pageable pageable) {
+
+        // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
+
+        List<EmojiInfo> sampleEmojis = List.of(
+                EmojiInfo.builder()
+                        .id(1L)
+                        .count(10L)
+                        .build(),
+                EmojiInfo.builder()
+                        .id(2L)
+                        .count(3L)
+                        .build());
+
+        List<CommentOfQuestionResponse> sampleResponse = List.of(
+                CommentOfQuestionResponse.builder()
+                        .id(1L)
+                        .questionId(1L)
+                        .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
+                        .writerId(1L)
+                        .createdAt(LocalDateTime.now())
+                        .emojiInfos(sampleEmojis)
+                        .myEmojiId(1L)
+                        .build());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 댓글 조회에 성공했습니다.",
+                        CommentOfQuestionPageResponse.builder()
+                                .commentPage(sampleResponse)
                                 .build()
                 ));
     }

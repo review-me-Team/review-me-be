@@ -13,5 +13,5 @@ public class EmojiInfo {
     private long id;
 
     @Schema(description = "이모지 개수", example = "10")
-    private long countOfEmoji;
+    private long count;
 }
