@@ -139,4 +139,22 @@ public class FeedbackController {
                 ));
     }
 
+    @Operation(summary = "DELETE feedback", description = "예상 질문을 삭제합니다.")
+    @DeleteMapping("/{feedbackId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백 삭제 실패")
+    })
+    public ResponseEntity<CustomResponse> deleteFeedback(@PathVariable long resumeId, @PathVariable long feedbackId) {
+
+        // TODO: 본인이 작성한 feedback만 삭제 가능
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "피드백 삭제에 성공했습니다."
+                ));
+    }
 }
