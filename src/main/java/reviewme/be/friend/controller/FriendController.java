@@ -127,4 +127,38 @@ public class FriendController {
                                 .build()
                 ));
     }
+
+    @Operation(summary = "사용자 검색 목록 조회", description = "검색한 이름으로 시작하는 사용자 목록을 조회합니다.")
+    @GetMapping("/user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용자 검색 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "사용자 검색 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<FriendsResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
+
+        List<UserInfo> sampleResponse = List.of(
+                UserInfo.builder()
+                        .id(1L)
+                        .name("aken-you")
+                        .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                        .build(),
+                UserInfo.builder()
+                        .id(2L)
+                        .name("acceptor-gyu")
+                        .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")
+                        .build()
+        );
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다.",
+                        FriendsResponse.builder()
+                                .userInfos(sampleResponse)
+                                .count(2)
+                                .build()
+                ));
+    }
 }
