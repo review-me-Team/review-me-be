@@ -205,7 +205,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionEmoji(@RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackEmoji(@RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
 
         return ResponseEntity
                 .ok()
