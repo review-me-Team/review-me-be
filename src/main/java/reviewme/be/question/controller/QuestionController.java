@@ -10,12 +10,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.request.PostQuestionRequest;
+import reviewme.be.question.request.UpdateQuestionBookmarkRequest;
 import reviewme.be.question.request.UpdateQuestionCheckRequest;
 import reviewme.be.question.request.UpdateQuestionContentRequest;
 import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -184,11 +186,9 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 체크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionCheck(@RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse> updateQuestionCheck(@Valid @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
-
-        System.out.println(updateQuestionCheckRequest.isChecked());
 
         return ResponseEntity
                 .ok()
@@ -196,6 +196,26 @@ public class QuestionController {
                         "success",
                         200,
                         "예상 질문 체크 상태 수정에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "question", description = "본인의 이력서에 대한 예상 질문 내용에 북마크 상태를 수정합니다.")
+    @PatchMapping("/{questionId}/bookmark")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문 북마크 상태 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문 북마크 상태 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateQuestionBookmark(@Valid @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+
+        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
+        System.out.println(updateQuestionBookmarkRequest.getBookmarked());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 북마크 상태 수정에 성공했습니다."
                 ));
     }
 }
