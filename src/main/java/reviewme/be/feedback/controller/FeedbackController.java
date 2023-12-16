@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedbackController {
 
-    @Operation(summary = "POST feedback", description = "피드백을 추가합니다.")
+    @Operation(summary = "피드백 추가", description = "피드백을 추가합니다.")
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 추가 성공"),
@@ -55,7 +55,7 @@ public class FeedbackController {
                 ));
     }
 
-    @Operation(summary = "GET feedbacks", description = "피드백 목록을 조회합니다.")
+    @Operation(summary = "피드백 목록 조회", description = "피드백 목록을 조회합니다.")
     @GetMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 목록 조회 성공"),
@@ -100,7 +100,7 @@ public class FeedbackController {
                 ));
     }
 
-    @Operation(summary = "GET comments of feedback", description = "피드백에 달린 댓글 목록을 조회합니다.")
+    @Operation(summary = "피드백에 달린 피드백(댓글) 목록 조회", description = "피드백에 달린 댓글 목록을 조회합니다.")
     @GetMapping("/{feedbackId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 댓글 목록 조회 성공"),
@@ -143,7 +143,7 @@ public class FeedbackController {
                 ));
     }
 
-    @Operation(summary = "DELETE feedback", description = "피드백을 삭제합니다.")
+    @Operation(summary = "피드백 삭제", description = "피드백을 삭제합니다.")
     @DeleteMapping("/{feedbackId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 삭제 성공"),
@@ -162,7 +162,7 @@ public class FeedbackController {
                 ));
     }
 
-    @Operation(summary = "UPDATE feedback content", description = "피드백 내용을 수정합니다.")
+    @Operation(summary = "피드백 내용 수정", description = "피드백 내용을 수정합니다.")
     @PatchMapping("/{feedbackId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),
@@ -179,7 +179,7 @@ public class FeedbackController {
                 ));
     }
 
-    @Operation(summary = "UPDATE feedback check state", description = "본인의 이력서에 대한 피드백의 체크 상태를 수정합니다.")
+    @Operation(summary = "피드백 체크 상태 수정", description = "본인의 이력서에 대한 피드백의 체크 상태를 수정합니다.")
     @PatchMapping("/{feedbackId}/check")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 체크 상태 수정 성공"),
@@ -199,7 +199,7 @@ public class FeedbackController {
                 ));
     }
 
-    @Operation(summary = "UPDATE feedback emoji", description = "피드백에 표시할 이모지를 수정합니다.")
+    @Operation(summary = "피드백 이모지 수정", description = "피드백에 표시할 이모지를 수정합니다.")
     @PatchMapping("/{feedbackId}/emoji")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),

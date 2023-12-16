@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UtilController {
 
-    @Operation(summary = "GET scopes", description = "공개 범위 목록을 조회합니다.")
+    @Operation(summary = "공개 범위 목록 조회", description = "공개 범위 목록을 조회합니다.")
     @GetMapping("/scope")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "공개 범위 목록 조회 성공"),
@@ -52,7 +52,7 @@ public class UtilController {
                 ));
     }
 
-    @Operation(summary = "GET emojis", description = "선택할 수 있는 이모지 목록을 조회합니다.")
+    @Operation(summary = "이모지 목록 조회", description = "선택할 수 있는 이모지 목록을 조회합니다.")
     @GetMapping("/emoji")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이모지 목록 조회 성공"),
@@ -94,7 +94,7 @@ public class UtilController {
                 ));
     }
 
-    @Operation(summary = "GET occupations", description = "직군 목록을 조회합니다.")
+    @Operation(summary = "직군 목록 조회", description = "직군 목록을 조회합니다.")
     @GetMapping("/occupation")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "직군 목록 조회 성공"),
@@ -141,7 +141,7 @@ public class UtilController {
                 ));
     }
 
-    @Operation(summary = "GET feedback labels", description = "피드백 라벨 목록을 조회합니다.")
+    @Operation(summary = "피드백 라벨 목록 조회", description = "피드백 라벨 목록을 조회합니다.")
     @GetMapping("/labels")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 라벨 목록 조회 성공"),

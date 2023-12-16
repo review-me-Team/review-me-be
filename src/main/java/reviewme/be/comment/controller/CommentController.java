@@ -15,20 +15,19 @@ import reviewme.be.comment.request.UpdateCommentEmojiRequest;
 import reviewme.be.comment.response.CommentPageResponse;
 import reviewme.be.comment.response.CommentResponse;
 import reviewme.be.comment.response.PostCommentResponse;
-import reviewme.be.feedback.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Tag(name = "commend", description = "댓글(comment) API")
+@Tag(name = "comment", description = "댓글(comment) API")
 @RequestMapping("/resume/{resumeId}/comment")
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
 
-    @Operation(summary = "POST comment of resume", description = "이력서에 대한 댓글을 추가합니다.")
+    @Operation(summary = "댓글 추가", description = "이력서에 대한 댓글을 추가합니다.")
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
@@ -56,7 +55,7 @@ public class CommentController {
     }
 
 
-    @Operation(summary = "GET comments of resume", description = "이력서에 달린 댓글 목록을 조회합니다.")
+    @Operation(summary = "댓글 목록 조회", description = "이력서에 달린 댓글 목록을 조회합니다.")
     @GetMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 목록 조회 성공"),
@@ -105,7 +104,7 @@ public class CommentController {
                 ));
     }
 
-    @Operation(summary = "DELETE comment of resume", description = "이력서에 단 댓글을 삭제합니다.")
+    @Operation(summary = "댓글 삭제", description = "이력서에 단 댓글을 삭제합니다.")
     @DeleteMapping("/{commentId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 삭제 성공"),
@@ -124,7 +123,7 @@ public class CommentController {
                 ));
     }
 
-    @Operation(summary = "UPDATE comment content", description = "이력서에 단 댓글 내용을 수정합니다.")
+    @Operation(summary = "댓글 수정", description = "이력서에 단 댓글 내용을 수정합니다.")
     @PatchMapping("/{commentId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
@@ -141,7 +140,7 @@ public class CommentController {
                 ));
     }
 
-    @Operation(summary = "UPDATE comment emoji", description = "댓글에 표시할 이모지를 수정합니다.")
+    @Operation(summary = "댓글 이모지 수정", description = "댓글에 표시할 이모지를 수정합니다.")
     @PatchMapping("/{commentId}/emoji")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),

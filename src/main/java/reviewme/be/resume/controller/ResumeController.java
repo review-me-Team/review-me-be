@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeController {
 
-    @Operation(summary = "resume", description = "이력서 목록을 조회합니다.")
+    @Operation(summary = "이력서 목록 조회", description = "이력서 목록을 조회합니다.")
     @GetMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이력서 목록 조회 성공"),
@@ -59,7 +59,7 @@ public class ResumeController {
                 ));
     }
 
-    @Operation(summary = "resume", description = "이력서를 업로드합니다.")
+    @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이력서 업로드 성공"),
@@ -85,7 +85,7 @@ public class ResumeController {
                 ));
     }
 
-    @Operation(summary = "resume", description = "이력서 상세 내용을 조회합니다.")
+    @Operation(summary = "이력서 상세 조회", description = "이력서 상세 내용을 조회합니다.")
     @GetMapping("/{resumeId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이력서 상세 내용 조회 성공"),
@@ -110,7 +110,7 @@ public class ResumeController {
                 ));
     }
 
-    @Operation(summary = "resume", description = "이력서를 삭제합니다.")
+    @Operation(summary = "이력서 삭제", description = "이력서를 삭제합니다.")
     @DeleteMapping("/{resumeId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이력서 삭제 성공"),
@@ -127,7 +127,7 @@ public class ResumeController {
                 ));
     }
 
-    @Operation(summary = "resume", description = "이력서를 수정합니다.")
+    @Operation(summary = "이력서 수정", description = "이력서를 수정합니다.")
     @PatchMapping("/{resumeId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
