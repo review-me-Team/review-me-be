@@ -16,6 +16,9 @@ public class PostQuestionRequest {
     @NotBlank(message = "예상 질문 내용은 필수 입력 값입니다.")
     private String content;
 
+    @Schema(description = "댓글을 추가할 예상 질문 ID", example = "1", required = false)
+    private Long questionId;
+
     @Schema(description = "라벨 내용", example = "react-query", required = false)
     private String labelContent;
 
