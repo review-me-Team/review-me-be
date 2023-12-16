@@ -100,6 +100,8 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<FriendsResponse>> showFollowFriends(@PageableDefault(size=20) Pageable pageable) {
 
+        // TODO: accepted: false인 친구 요청 목록 조회
+
         List<UserInfo> sampleResponse = List.of(
                 UserInfo.builder()
                         .id(1L)
