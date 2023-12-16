@@ -33,6 +33,14 @@ public class UtilController {
                 ScopeResponse.builder()
                         .id(1L)
                         .scope("public")
+                        .build(),
+                ScopeResponse.builder()
+                        .id(2L)
+                        .scope("private")
+                        .build(),
+                ScopeResponse.builder()
+                        .id(3L)
+                        .scope("friend")
                         .build());
 
         return ResponseEntity
