@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.request.PostFeedbackRequest;
+import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
@@ -155,6 +156,23 @@ public class FeedbackController {
                         "success",
                         200,
                         "피드백 삭제에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "UPDATE feedback content", description = "피드백 내용을 수정합니다.")
+    @PatchMapping("/{feedbackId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateFeedbackContent(@RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "피드백 수정에 성공했습니다."
                 ));
     }
 }
