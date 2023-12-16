@@ -167,7 +167,7 @@ public class UtilController {
     }
 
     @Operation(summary = "피드백 라벨 목록 조회", description = "피드백 라벨 목록을 조회합니다.")
-    @GetMapping("/labels")
+    @GetMapping("/label")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 라벨 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 라벨 목록 조회 실패")
