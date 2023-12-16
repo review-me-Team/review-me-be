@@ -27,7 +27,7 @@ public class PostFeedbackResponse {
     private long resumePage;
 
     @Schema(description = "피드백 ID", example = "1")
-    private long questionId;
+    private long feedbackId;
 
     @Schema(description = "피드백 작성 시간", example = "2023-11-23 09:27")
     private LocalDateTime createdAt;
