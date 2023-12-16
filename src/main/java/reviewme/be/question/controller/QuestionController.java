@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.request.PostQuestionRequest;
+import reviewme.be.question.request.UpdateQuestionContentRequest;
 import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
@@ -156,6 +157,23 @@ public class QuestionController {
                         "success",
                         200,
                         "예상 질문 삭제에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "question", description = "예상 질문 내용을 수정합니다.")
+    @PatchMapping("/{questionId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateQuestionContent(@RequestBody UpdateQuestionContentRequest updateQuestionContentRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 수정에 성공했습니다."
                 ));
     }
 }
