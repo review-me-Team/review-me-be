@@ -136,14 +136,14 @@ public class FeedbackController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "예상 질문 댓글 조회에 성공했습니다.",
+                        "피드백에 달린 댓글 조회에 성공했습니다.",
                         CommentOfFeedbackPageResponse.builder()
                                 .comments(sampleResponse)
                                 .build()
                 ));
     }
 
-    @Operation(summary = "DELETE feedback", description = "예상 질문을 삭제합니다.")
+    @Operation(summary = "DELETE feedback", description = "피드백을 삭제합니다.")
     @DeleteMapping("/{feedbackId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "피드백 삭제 성공"),
