@@ -16,6 +16,8 @@ import reviewme.be.question.request.UpdateQuestionContentRequest;
 import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.EmojiInfo;
+import reviewme.be.util.response.LabelPageResponse;
+import reviewme.be.util.response.LabelResponse;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -216,6 +218,36 @@ public class QuestionController {
                         "success",
                         200,
                         "예상 질문 북마크 상태 수정에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "question", description = "예상 질문 라벨 목록을 조회합니다.")
+    @GetMapping("/label")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문 라벨 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문 라벨 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<LabelPageResponse>> showLabelsOfQuestions(@PathVariable long resumeId) {
+
+        List<LabelResponse> sampleLabels = List.of(
+                LabelResponse.builder()
+                        .id(1L)
+                        .label("react-query")
+                        .build(),
+                LabelResponse.builder()
+                        .id(2L)
+                        .label("typescript")
+                        .build());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 라벨 목록 조회에 성공했습니다.",
+                        LabelPageResponse.builder()
+                                .labels(sampleLabels)
+                                .build()
                 ));
     }
 }
