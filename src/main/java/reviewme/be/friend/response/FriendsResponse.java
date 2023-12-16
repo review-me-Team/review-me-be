@@ -14,4 +14,7 @@ public class FriendsResponse {
 
     @Schema(description = "친구 정보 목록")
     private List<UserInfo> userInfos;
+
+    @Schema(description = "친구 수", example = "1")
+    private Integer count;
 }
