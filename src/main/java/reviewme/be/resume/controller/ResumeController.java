@@ -82,7 +82,7 @@ public class ResumeController {
                         200,
                         "전체 공개 이력서 목록 조회에 성공했습니다.",
                         ResumePageResponse.builder()
-                                .resumePage(sampleResponse)
+                                .resumes(sampleResponse)
                                 .build()
                 ));
     }

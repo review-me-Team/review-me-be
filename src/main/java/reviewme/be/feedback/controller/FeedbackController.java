@@ -95,7 +95,7 @@ public class FeedbackController {
                         200,
                         "피드백 목록 조회에 성공했습니다.",
                         FeedbackPageResponse.builder()
-                                .feedbackPage(sampleResponse)
+                                .feedbacks(sampleResponse)
                                 .build()
                 ));
     }

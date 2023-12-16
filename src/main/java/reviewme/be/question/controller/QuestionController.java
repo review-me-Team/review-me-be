@@ -95,7 +95,7 @@ public class QuestionController {
                         200,
                         "예상 질문 목록 조회에 성공했습니다.",
                         QuestionPageResponse.builder()
-                                .questionPage(sampleResponse)
+                                .questions(sampleResponse)
                                 .build()
                 ));
     }
@@ -138,7 +138,7 @@ public class QuestionController {
                         200,
                         "예상 질문 댓글 조회에 성공했습니다.",
                         CommentOfQuestionPageResponse.builder()
-                                .commentPage(sampleResponse)
+                                .comments(sampleResponse)
                                 .build()
                 ));
     }

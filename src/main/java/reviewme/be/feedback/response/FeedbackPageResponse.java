@@ -12,5 +12,5 @@ import java.util.List;
 public class FeedbackPageResponse {
 
     @Schema(description = "피드백 목록")
-    private List<FeedbackResponse> feedbackPage;
+    private List<FeedbackResponse> feedbacks;
 }

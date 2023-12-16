@@ -12,5 +12,5 @@ import java.util.List;
 public class ResumePageResponse {
 
     @Schema(description = "이력서 목록")
-    private List<ResumeResponse> resumePage;
+    private List<ResumeResponse> resumes;
 }

@@ -12,5 +12,5 @@ import java.util.List;
 public class CommentOfQuestionPageResponse {
 
     @Schema(description = "예상 질문 댓글 목록")
-    private List<CommentOfQuestionResponse> commentPage;
+    private List<CommentOfQuestionResponse> comments;
 }

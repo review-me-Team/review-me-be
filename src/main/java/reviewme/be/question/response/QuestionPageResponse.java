@@ -13,5 +13,5 @@ public class QuestionPageResponse {
 
 
     @Schema(description = "예상 질문 목록")
-    private List<QuestionResponse> questionPage;
+    private List<QuestionResponse> questions;
 }
