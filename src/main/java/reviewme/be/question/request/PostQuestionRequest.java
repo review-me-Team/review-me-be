@@ -16,10 +16,10 @@ public class PostQuestionRequest {
     @NotBlank(message = "예상 질문 내용은 필수 입력 값입니다.")
     private String content;
 
-    @Schema(description = "라벨 내용", example = "react-query")
+    @Schema(description = "라벨 내용", example = "react-query", required = false)
     private String labelContent;
 
     @Schema(description = "이력서 페이지", example = "1")
     @NotBlank(message = "이력서의 몇 페이지에 질문을 하는 지는 필수 입력 값입니다.")
-    private long resumePage;
+    private Long resumePage;
 }
