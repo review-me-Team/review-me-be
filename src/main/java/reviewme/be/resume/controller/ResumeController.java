@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,7 +62,7 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes() {
+    public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes(@PageableDefault(size=20) Pageable pageable) {
 
         List<ResumeResponse> sampleResponse = List.of(
                 ResumeResponse.builder()
@@ -69,7 +71,7 @@ public class ResumeController {
                         .writer("aken-you")
                         .createdAt(LocalDateTime.now())
                         .scopeId(1L)
-                        .occupation("frontend")
+                        .occupationId(1)
                         .year(0L)
                         .build());
 
@@ -95,9 +97,10 @@ public class ResumeController {
 
         // TODO: S3 연결 후, sample resume 세팅
         // TODO: findByResumeId -> get resumeUrl
+        // TODO: pdf url 암호화 필요할 수 있음 (회의 후 결정)
 
         ResumeDetailResponse sampleResponse = ResumeDetailResponse.builder()
-                .resumeUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .resumeUrl("https://review-me-resume.s3.ap-northeast-2.amazonaws.com/resume/7562857e-130f-4f9a-9ca1-441908180b31_%E1%84%8B%E1%85%B5%E1%84%85%E1%85%A7%E1%86%A8%E1%84%89%E1%85%A5_%E1%84%89%E1%85%A2%E1%86%B7%E1%84%91%E1%85%B3%E1%86%AF.pdf")
                 .build();
 
         return ResponseEntity
@@ -141,7 +144,7 @@ public class ResumeController {
                 .writer("aken-you")
                 .createdAt(LocalDateTime.now())
                 .scopeId(1L)    // TODO: updateResumeRequest ScopeId()
-                .occupation("frontend")
+                .occupationId(1)
                 .year(0L)
                 .build();
 

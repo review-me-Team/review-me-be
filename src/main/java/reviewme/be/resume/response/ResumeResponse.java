@@ -26,8 +26,8 @@ public class ResumeResponse {
     @Schema(description = "공개 범위", example = "1")
     private long scopeId;
 
-    @Schema(description = "직군", example = "frontend")
-    private String occupation;
+    @Schema(description = "직군 ID", example = "1")
+    private Integer occupationId;
 
     @Schema(description = "년차", example = "0")
     private long year;
