@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.comment.request.PostCommentRequest;
+import reviewme.be.comment.request.UpdateCommentContentRequest;
 import reviewme.be.comment.response.CommentPageResponse;
 import reviewme.be.comment.response.CommentResponse;
 import reviewme.be.comment.response.PostCommentResponse;
@@ -121,4 +122,20 @@ public class CommentController {
                 ));
     }
 
+    @Operation(summary = "UPDATE comment content", description = "이력서에 단 댓글 내용을 수정합니다.")
+    @PatchMapping("/{commentId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "댓글 수정 실패")
+    })
+    public ResponseEntity<CustomResponse> updateCommentContent(@RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "댓글 수정에 성공했습니다."
+                ));
+    }
 }
