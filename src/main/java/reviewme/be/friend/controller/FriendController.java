@@ -13,7 +13,7 @@ import reviewme.be.friend.request.AcceptFriendRequest;
 import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.friend.response.FriendsResponse;
 import reviewme.be.util.CustomResponse;
-import reviewme.be.util.dto.UserInfo;
+import reviewme.be.util.dto.User;
 
 import java.util.List;
 
@@ -67,13 +67,13 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<FriendsResponse>> showFriends(@PageableDefault(size=20) Pageable pageable) {
 
-        List<UserInfo> sampleResponse = List.of(
-                UserInfo.builder()
+        List<User> sampleResponse = List.of(
+                User.builder()
                         .id(1L)
                         .name("aken-you")
                         .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .build(),
-                UserInfo.builder()
+                User.builder()
                         .id(2L)
                         .name("acceptor-gyu")
                         .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")
@@ -102,13 +102,13 @@ public class FriendController {
 
         // TODO: accepted: false인 친구 요청 목록 조회
 
-        List<UserInfo> sampleResponse = List.of(
-                UserInfo.builder()
+        List<User> sampleResponse = List.of(
+                User.builder()
                         .id(1L)
                         .name("aken-you")
                         .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .build(),
-                UserInfo.builder()
+                User.builder()
                         .id(2L)
                         .name("acceptor-gyu")
                         .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")
@@ -136,13 +136,13 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<FriendsResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
 
-        List<UserInfo> sampleResponse = List.of(
-                UserInfo.builder()
+        List<User> sampleResponse = List.of(
+                User.builder()
                         .id(1L)
                         .name("aken-you")
                         .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .build(),
-                UserInfo.builder()
+                User.builder()
                         .id(2L)
                         .name("acceptor-gyu")
                         .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")

@@ -16,7 +16,7 @@ import reviewme.be.comment.response.CommentPageResponse;
 import reviewme.be.comment.response.CommentResponse;
 import reviewme.be.comment.response.PostCommentResponse;
 import reviewme.be.util.CustomResponse;
-import reviewme.be.util.dto.EmojiInfo;
+import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,12 +63,12 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable) {
 
-        List<EmojiInfo> sampleEmojis = List.of(
-                EmojiInfo.builder()
+        List<Emoji> sampleEmojis = List.of(
+                Emoji.builder()
                         .id(1L)
                         .count(10L)
                         .build(),
-                EmojiInfo.builder()
+                Emoji.builder()
                         .id(2L)
                         .count(3L)
                         .build());

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @Schema(description = "사용자 정보")
-public class UserInfo {
+public class User {
 
     @Schema(description = "사용자 ID", example = "2")
     private long id;

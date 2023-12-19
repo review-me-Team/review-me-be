@@ -3,7 +3,7 @@ package reviewme.be.friend.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import reviewme.be.util.dto.UserInfo;
+import reviewme.be.util.dto.User;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
 public class FriendsResponse {
 
     @Schema(description = "친구 정보 목록")
-    private List<UserInfo> userInfos;
+    private List<User> userInfos;
 
     @Schema(description = "친구 수", example = "1")
     private Integer count;

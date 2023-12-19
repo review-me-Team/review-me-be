@@ -15,7 +15,7 @@ import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
-import reviewme.be.util.dto.EmojiInfo;
+import reviewme.be.util.dto.Emoji;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -65,12 +65,12 @@ public class FeedbackController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<EmojiInfo> sampleEmojis = List.of(
-                EmojiInfo.builder()
+        List<Emoji> sampleEmojis = List.of(
+                Emoji.builder()
                         .id(1L)
                         .count(10L)
                         .build(),
-                EmojiInfo.builder()
+                Emoji.builder()
                         .id(2L)
                         .count(3L)
                         .build());
@@ -110,12 +110,12 @@ public class FeedbackController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<EmojiInfo> sampleEmojis = List.of(
-                EmojiInfo.builder()
+        List<Emoji> sampleEmojis = List.of(
+                Emoji.builder()
                         .id(1L)
                         .count(10L)
                         .build(),
-                EmojiInfo.builder()
+                Emoji.builder()
                         .id(2L)
                         .count(3L)
                         .build());

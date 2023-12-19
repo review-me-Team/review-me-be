@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.util.CustomResponse;
-import reviewme.be.util.dto.UserInfo;
+import reviewme.be.util.dto.User;
 import reviewme.be.util.response.*;
 
 import java.util.List;
@@ -25,9 +25,9 @@ public class UtilController {
             @ApiResponse(responseCode = "200", description = "개인 정보 조회 성공"),
             @ApiResponse(responseCode = "400", description = "개인 정보 조회 실패")
     })
-    public ResponseEntity<CustomResponse<UserInfo>> showUserInfo() {
+    public ResponseEntity<CustomResponse<User>> showUserInfo() {
 
-        UserInfo sampleResponse = UserInfo.builder()
+        User sampleResponse = User.builder()
                 .id(1L)
                 .name("aken-you")
                 .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")

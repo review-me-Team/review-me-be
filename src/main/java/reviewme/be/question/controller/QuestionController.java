@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.request.*;
 import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
-import reviewme.be.util.dto.EmojiInfo;
+import reviewme.be.util.dto.Emoji;
 import reviewme.be.util.response.LabelPageResponse;
 import reviewme.be.util.response.LabelResponse;
 
@@ -64,12 +64,12 @@ public class QuestionController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<EmojiInfo> sampleEmojis = List.of(
-                EmojiInfo.builder()
+        List<Emoji> sampleEmojis = List.of(
+                Emoji.builder()
                         .id(1L)
                         .count(10L)
                         .build(),
-                EmojiInfo.builder()
+                Emoji.builder()
                         .id(2L)
                         .count(3L)
                         .build());
@@ -110,12 +110,12 @@ public class QuestionController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<EmojiInfo> sampleEmojis = List.of(
-                EmojiInfo.builder()
+        List<Emoji> sampleEmojis = List.of(
+                Emoji.builder()
                         .id(1L)
                         .count(10L)
                         .build(),
-                EmojiInfo.builder()
+                Emoji.builder()
                         .id(2L)
                         .count(3L)
                         .build());

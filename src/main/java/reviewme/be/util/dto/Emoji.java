@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @Schema(description = "이모지 정보 응답")
-public class EmojiInfo {
+public class Emoji {
 
     @Schema(description = "이모지 ID", example = "1")
     private long id;
