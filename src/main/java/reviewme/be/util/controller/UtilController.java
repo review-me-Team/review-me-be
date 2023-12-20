@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.User;
+import reviewme.be.util.entity.Emoji;
+import reviewme.be.util.repository.EmojiRepository;
 import reviewme.be.util.response.*;
 
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class UtilController {
+
+    private final EmojiRepository emojiRepository;
 
     @Operation(summary = "개인 정보 조회", description = "자신의 정보를 조회합니다.")
     @GetMapping("/info")
@@ -84,6 +88,12 @@ public class UtilController {
             @ApiResponse(responseCode = "400", description = "이모지 목록 조회 실패")
     })
     public ResponseEntity<CustomResponse<EmojiPageResponse>> showEmojis() {
+
+        List<Emoji> emojis = emojiRepository.findAll();
+
+        for (Emoji emoji : emojis) {
+            System.out.println(emoji.getEmoji());
+        }
 
         List<EmojiResponse> sampleResponse = List.of(
                 EmojiResponse.builder()
