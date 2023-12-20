@@ -15,6 +15,7 @@ import reviewme.be.util.repository.EmojiRepository;
 import reviewme.be.util.response.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "util", description = "공통 API")
 @RestController
@@ -89,33 +90,9 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<EmojiPageResponse>> showEmojis() {
 
-        List<Emoji> emojis = emojiRepository.findAll();
-
-        for (Emoji emoji : emojis) {
-            System.out.println(emoji.getEmoji());
-        }
-
-        List<EmojiResponse> sampleResponse = List.of(
-                EmojiResponse.builder()
-                        .id(1L)
-                        .emoji("🤔")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(2L)
-                        .emoji("👍")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(3L)
-                        .emoji("👀")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(4L)
-                        .emoji("😎")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(5L)
-                        .emoji("🙏")
-                        .build());
+        List<EmojiResponse> emojiResponses = emojiRepository.findAll()
+                .stream().map(EmojiResponse::fromEmoji)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -124,7 +101,7 @@ public class UtilController {
                         200,
                         "이모지 목록 조회에 성공했습니다.",
                         EmojiPageResponse.builder()
-                                .emojis(sampleResponse)
+                                .emojis(emojiResponses)
                                 .build()
                 ));
     }
