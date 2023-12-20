@@ -12,6 +12,7 @@ import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.User;
 import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.repository.EmojiRepository;
+import reviewme.be.util.repository.ScopeRepository;
 import reviewme.be.util.response.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UtilController {
 
+    private final ScopeRepository scopeRepository;
     private final EmojiRepository emojiRepository;
 
     @Operation(summary = "개인 정보 조회", description = "자신의 정보를 조회합니다.")
@@ -56,19 +58,9 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<ScopePageResponse>> showScopes() {
 
-        List<ScopeResponse> sampleResponse = List.of(
-                ScopeResponse.builder()
-                        .id(1L)
-                        .scope("public")
-                        .build(),
-                ScopeResponse.builder()
-                        .id(2L)
-                        .scope("private")
-                        .build(),
-                ScopeResponse.builder()
-                        .id(3L)
-                        .scope("friend")
-                        .build());
+        List<ScopeResponse> scopeResponses = scopeRepository.findAll()
+                .stream().map(ScopeResponse::fromScope)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -77,7 +69,7 @@ public class UtilController {
                         200,
                         "공개 범위 목록 조회에 성공했습니다.",
                         ScopePageResponse.builder()
-                                .scopes(sampleResponse)
+                                .scopes(scopeResponses)
                                 .build()
                 ));
     }
