@@ -3,6 +3,7 @@ package reviewme.be.util.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.util.entity.Occupation;
 
 @Getter
 @Builder
@@ -14,4 +15,12 @@ public class OccupationResponse {
 
     @Schema(description = "직군", example = "frontend")
     private String occupation;
+
+    public static OccupationResponse fromOccupation(Occupation occupation) {
+
+        return OccupationResponse.builder()
+                .id(occupation.getId())
+                .occupation(occupation.getOccupation())
+                .build();
+    }
 }

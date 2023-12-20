@@ -12,6 +12,7 @@ import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.User;
 import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.repository.EmojiRepository;
+import reviewme.be.util.repository.OccupationRepository;
 import reviewme.be.util.repository.ScopeRepository;
 import reviewme.be.util.response.*;
 
@@ -25,6 +26,7 @@ public class UtilController {
 
     private final ScopeRepository scopeRepository;
     private final EmojiRepository emojiRepository;
+    private final OccupationRepository occupationRepository;
 
     @Operation(summary = "개인 정보 조회", description = "자신의 정보를 조회합니다.")
     @GetMapping("/info")
@@ -106,32 +108,9 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<OccupationPageResponse>> showOccupations() {
 
-        List<OccupationResponse> sampleResponse = List.of(
-                OccupationResponse.builder()
-                        .id(1L)
-                        .occupation("Frontend")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(2L)
-                        .occupation("Backend")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(3L)
-                        .occupation("Android")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(4L)
-                        .occupation("iOS")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(5L)
-                        .occupation("AI/ML")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(6L)
-                        .occupation("Data Engineering")
-                        .build()
-                );
+        List<OccupationResponse> occupationResponses = occupationRepository.findAll()
+                .stream().map(OccupationResponse::fromOccupation)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -140,7 +119,7 @@ public class UtilController {
                         200,
                         "직군 목록 조회에 성공했습니다.",
                         OccupationPageResponse.builder()
-                                .occupations(sampleResponse)
+                                .occupations(occupationResponses)
                                 .build()
                 ));
     }

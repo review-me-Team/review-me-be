@@ -1,7 +1,6 @@
 package reviewme.be.util.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.entity.Scope;
 
 import java.util.List;
