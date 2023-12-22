@@ -18,7 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private long gitHubId;
+    private long githubId;
     private String name;
     private String profileUrl;
 }

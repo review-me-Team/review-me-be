@@ -38,11 +38,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<User>> showUserInfo() {
 
-        User userResponse = userRepository.findById(1L)
-                .map(User::fromUser)
-                .orElseThrow(()
-                        -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
-                );
+        User userResponse = User.fromUser(userRepository.findById(1L).get());
 
         return ResponseEntity
                 .ok()
