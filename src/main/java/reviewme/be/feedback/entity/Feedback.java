@@ -35,6 +35,7 @@ public class Feedback {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
+    private String content;
     private int resumePage;
     private Boolean checked;
     private int childCnt;
