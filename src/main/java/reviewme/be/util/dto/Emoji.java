@@ -10,8 +10,15 @@ import lombok.Getter;
 public class Emoji {
 
     @Schema(description = "이모지 ID", example = "1")
-    private long id;
+    private Integer id;
 
     @Schema(description = "이모지 개수", example = "10")
-    private long count;
+    private Long count;
+
+    public static Emoji fromCountEmojiTuple(int id, long count) {
+        return Emoji.builder()
+                .id(id)
+                .count(count)
+                .build();
+    }
 }

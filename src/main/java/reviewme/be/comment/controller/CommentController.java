@@ -65,11 +65,11 @@ public class CommentController {
 
         List<Emoji> sampleEmojis = List.of(
                 Emoji.builder()
-                        .id(1L)
+                        .id(1)
                         .count(10L)
                         .build(),
                 Emoji.builder()
-                        .id(2L)
+                        .id(2)
                         .count(3L)
                         .build());
 
