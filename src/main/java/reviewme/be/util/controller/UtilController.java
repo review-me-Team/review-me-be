@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.User;
 import reviewme.be.util.entity.Emoji;
-import reviewme.be.util.repository.EmojiRepository;
-import reviewme.be.util.repository.OccupationRepository;
-import reviewme.be.util.repository.ScopeRepository;
-import reviewme.be.util.repository.UserRepository;
+import reviewme.be.util.repository.*;
 import reviewme.be.util.response.*;
 
 import java.util.List;
@@ -29,6 +26,7 @@ public class UtilController {
     private final ScopeRepository scopeRepository;
     private final EmojiRepository emojiRepository;
     private final OccupationRepository occupationRepository;
+    private final LabelRepository labelRepository;
 
     @Operation(summary = "개인 정보 조회", description = "자신의 정보를 조회합니다.")
     @GetMapping("/info")
@@ -130,23 +128,10 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<LabelPageResponse>> showFeedbackLabels() {
 
-        List<LabelResponse> sampleResponse = List.of(
-                LabelResponse.builder()
-                        .id(1L)
-                        .label("프로젝트")
-                        .build(),
-                LabelResponse.builder()
-                        .id(2L)
-                        .label("자기소개")
-                        .build(),
-                LabelResponse.builder()
-                        .id(3L)
-                        .label("협업")
-                        .build(),
-                LabelResponse.builder()
-                        .id(4L)
-                        .label("기타")
-                        .build());
+        List<LabelResponse> labelsResponse = labelRepository.findByResumeIsNull()
+                .stream()
+                .map(LabelResponse::fromLabel)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -155,7 +140,7 @@ public class UtilController {
                         200,
                         "피드백 라벨 목록 조회에 성공했습니다.",
                         LabelPageResponse.builder()
-                                .labels(sampleResponse)
+                                .labels(labelsResponse)
                                 .build()
                 ));
     }
