@@ -77,6 +77,8 @@ public class FriendController {
                         -> User.fromUser(friend.getFollowerUser())
                 ).collect(Collectors.toList());
 
+        long count = friendRepository.countByFollowingUserIdAndAcceptedIsTrue(1L);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -85,7 +87,7 @@ public class FriendController {
                         "친구 목록 조회에 성공했습니다.",
                         FriendsResponse.builder()
                                 .users(friendsResponse)
-                                .count(friendsResponse.size())
+                                .count(count)
                                 .build()
                 ));
     }
