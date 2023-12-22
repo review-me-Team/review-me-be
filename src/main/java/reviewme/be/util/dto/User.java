@@ -17,4 +17,13 @@ public class User {
 
     @Schema(description = "사용자 프로필 url", example = "https://avatars.githubusercontent.com/u/71162390?v=4")
     private String profileUrl;
+
+    public static User fromUser(reviewme.be.util.entity.User user) {
+
+        return User.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .profileUrl(user.getProfileUrl())
+                .build();
+    }
 }

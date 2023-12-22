@@ -14,6 +14,7 @@ import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.repository.EmojiRepository;
 import reviewme.be.util.repository.OccupationRepository;
 import reviewme.be.util.repository.ScopeRepository;
+import reviewme.be.util.repository.UserRepository;
 import reviewme.be.util.response.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UtilController {
 
+    private final UserRepository userRepository;
     private final ScopeRepository scopeRepository;
     private final EmojiRepository emojiRepository;
     private final OccupationRepository occupationRepository;
@@ -36,11 +38,11 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<User>> showUserInfo() {
 
-        User sampleResponse = User.builder()
-                .id(1L)
-                .name("aken-you")
-                .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .build();
+        User userResponse = userRepository.findById(1L)
+                .map(User::fromUser)
+                .orElseThrow(()
+                        -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
+                );
 
         return ResponseEntity
                 .ok()
@@ -48,7 +50,7 @@ public class UtilController {
                         "success",
                         200,
                         "개인 정보 조회에 성공했습니다.",
-                        sampleResponse
+                        userResponse
                 ));
     }
 
