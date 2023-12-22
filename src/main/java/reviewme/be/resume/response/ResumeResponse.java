@@ -3,6 +3,7 @@ package reviewme.be.resume.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.resume.entity.Resume;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +28,20 @@ public class ResumeResponse {
     private long scopeId;
 
     @Schema(description = "직군 ID", example = "1")
-    private Integer occupationId;
+    private int occupationId;
 
     @Schema(description = "년차", example = "0")
     private long year;
+
+    public static ResumeResponse fromResume(Resume resume) {
+        return ResumeResponse.builder()
+                .id(resume.getId())
+                .title(resume.getTitle())
+                .writer(resume.getUser().getName())
+                .createdAt(resume.getCreatedAt())
+                .scopeId(resume.getScope().getId())
+                .occupationId(resume.getOccupation().getId())
+                .year(resume.getYear())
+                .build();
+    }
 }

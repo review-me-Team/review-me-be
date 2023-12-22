@@ -24,6 +24,7 @@ import reviewme.be.util.CustomResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "resume", description = "이력서(resume) API")
 @RequestMapping("/resume")
@@ -71,18 +72,10 @@ public class ResumeController {
         // 내 이력서 목록 조회
         // TODO: pageable 적용
 
-
-
-        List<ResumeResponse> sampleResponse = List.of(
-                ResumeResponse.builder()
-                        .id(1L)
-                        .title("네이버 신입 대비")
-                        .writer("aken-you")
-                        .createdAt(LocalDateTime.now())
-                        .scopeId(1L)
-                        .occupationId(1)
-                        .year(0L)
-                        .build());
+        List<ResumeResponse> resumeResponse = resumeRepository.findByUserId(1L)
+                .stream()
+                .map(ResumeResponse::fromResume)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -91,7 +84,7 @@ public class ResumeController {
                         200,
                         "전체 공개 이력서 목록 조회에 성공했습니다.",
                         ResumePageResponse.builder()
-                                .resumes(sampleResponse)
+                                .resumes(resumeResponse)
                                 .build()
                 ));
     }

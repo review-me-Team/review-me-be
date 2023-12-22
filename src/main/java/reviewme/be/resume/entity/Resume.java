@@ -34,7 +34,7 @@ public class Resume {
     private String title;
     private String url;
     private int year;
-    private int commentCount;
+    private int commentCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 }
