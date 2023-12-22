@@ -23,15 +23,15 @@ public class Feedback {
     @JoinColumn(name = "user_id")
     private User writer;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Feedback parentFeedback;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "label_id")
     private Label label;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
