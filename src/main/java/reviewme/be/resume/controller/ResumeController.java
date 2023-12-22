@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.request.UpdateResumeRequest;
 import reviewme.be.resume.request.UploadResumeRequest;
 import reviewme.be.resume.response.ResumeDetailResponse;
@@ -29,6 +30,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class ResumeController {
+
+    private final ResumeRepository resumeRepository;
 
     @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
     @PostMapping
@@ -63,6 +66,12 @@ public class ResumeController {
             @ApiResponse(responseCode = "400", description = "이력서 목록 조회 실패")
     })
     public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes(@PageableDefault(size=20) Pageable pageable) {
+
+
+        // 내 이력서 목록 조회
+        // TODO: pageable 적용
+
+
 
         List<ResumeResponse> sampleResponse = List.of(
                 ResumeResponse.builder()
