@@ -10,4 +10,8 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findByFollowingUserIdAndAcceptedIsTrue(long followingUserId);
 
     long countByFollowingUserIdAndAcceptedIsTrue(long followingUserId);
+
+    List<Friend> findByFollowingUserIdAndAcceptedIsFalse(long followingUserId);
+
+    long countByFollowingUserIdAndAcceptedIsFalse(long followingUserId);
 }

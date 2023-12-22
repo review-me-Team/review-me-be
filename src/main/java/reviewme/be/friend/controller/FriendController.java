@@ -100,20 +100,13 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<FriendsResponse>> showFollowFriends(@PageableDefault(size=20) Pageable pageable) {
 
-        // TODO: accepted: false인 친구 요청 목록 조회
+        List<User> followersResponse = friendRepository.findByFollowingUserIdAndAcceptedIsFalse(1L)
+                .stream()
+                .map(friend
+                        -> User.fromUser(friend.getFollowerUser())
+                ).collect(Collectors.toList());
 
-        List<User> sampleResponse = List.of(
-                User.builder()
-                        .id(1L)
-                        .name("aken-you")
-                        .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                        .build(),
-                User.builder()
-                        .id(2L)
-                        .name("acceptor-gyu")
-                        .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")
-                        .build()
-        );
+        long count = friendRepository.countByFollowingUserIdAndAcceptedIsFalse(1L);
 
         return ResponseEntity
                 .ok()
@@ -122,8 +115,8 @@ public class FriendController {
                         200,
                         "친구 요청 온 목록 조회에 성공했습니다.",
                         FriendsResponse.builder()
-                                .users(sampleResponse)
-                                .count(2)
+                                .users(followersResponse)
+                                .count(count)
                                 .build()
                 ));
     }
