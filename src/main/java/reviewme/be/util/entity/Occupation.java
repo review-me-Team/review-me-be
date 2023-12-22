@@ -17,5 +17,6 @@ public class Occupation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private String occupation;
 }

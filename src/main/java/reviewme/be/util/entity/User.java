@@ -12,11 +12,13 @@ import javax.persistence.Id;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Scope {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
-    private String scope;
+    private long gitHubId;
+    private String name;
+    private String profileUrl;
 }
