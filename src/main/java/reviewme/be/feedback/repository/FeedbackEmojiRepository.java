@@ -18,4 +18,6 @@ public interface FeedbackEmojiRepository extends JpaRepository<FeedbackEmoji, Lo
             "WHERE feedbackEmoji.feedback.id = :feedbackId " +
             "GROUP BY emoji.id")
     List<Tuple> countByFeedbackIdGroupByEmojiId(long feedbackId);
+
+    FeedbackEmoji findByFeedbackIdAndUserId(long feedbackId, long userId);
 }

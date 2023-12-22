@@ -79,9 +79,12 @@ public class FeedbackController {
                         tuple.get("count", Long.class))
                 ).collect(Collectors.toList());
 
+        int myEmojiId = feedbackEmojiRepository.findByFeedbackIdAndUserId(1L, 1L)
+                .getEmoji().getId();
+
         List<FeedbackResponse> feedbacksResponse = feedbackRepository.findByResumeIdAndResumePage(1, 1)
                 .stream()
-                .map(feedback -> FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis))
+                .map(feedback -> FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId))
                 .collect(Collectors.toList());
 
         return ResponseEntity

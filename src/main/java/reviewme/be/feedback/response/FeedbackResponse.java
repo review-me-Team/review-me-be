@@ -41,7 +41,7 @@ public class FeedbackResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback, List<Emoji> emojis) {
+    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback, List<Emoji> emojis, Integer myEmojiId) {
 
         return FeedbackResponse.builder()
                 .id(feedback.getId())
@@ -52,7 +52,7 @@ public class FeedbackResponse {
                 .countOfReplies(feedback.getChildCnt())
                 .checked(feedback.getChecked())
                 .emojis(emojis)
-                .myEmojiId(1)
+                .myEmojiId(myEmojiId)
                 .build();
     }
 }
