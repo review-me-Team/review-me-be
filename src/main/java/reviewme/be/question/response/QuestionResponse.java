@@ -23,6 +23,12 @@ public class QuestionResponse {
     @Schema(description = "질문자 ID", example = "1")
     private long writerId;
 
+    @Schema(description = "질문자 이름", example = "aken-you")
+    private String writerName;
+
+    @Schema(description = "질문자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
+    private String writerProfileUrl;
+
     @Schema(description = "예상 질문 라벨 ID", example = "1")
     private long labelId;
 
@@ -50,6 +56,8 @@ public class QuestionResponse {
                 .id(question.getId())
                 .content(question.getContent())
                 .writerId(question.getWriter().getId())
+                .writerName(question.getWriter().getName())
+                .writerProfileUrl(question.getWriter().getProfileUrl())
                 .labelId(question.getLabel().getId())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())
@@ -66,6 +74,8 @@ public class QuestionResponse {
                 .id(question.getId())
                 .content(question.getContent())
                 .writerId(question.getWriter().getId())
+                .writerName(question.getWriter().getName())
+                .writerProfileUrl(question.getWriter().getProfileUrl())
                 .labelId(question.getLabel().getId())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())

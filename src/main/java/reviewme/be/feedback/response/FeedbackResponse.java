@@ -23,6 +23,12 @@ public class FeedbackResponse {
     @Schema(description = "피드백을 남긴 사용자 ID", example = "1")
     private long writerId;
 
+    @Schema(description = "피드백을 남긴 사용자 이름", example = "aken-you")
+    private String writerName;
+
+    @Schema(description = "피드백을 남긴 사용자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
+    private String writerProfileUrl;
+
     @Schema(description = "피드백 라벨 ID", example = "1")
     private long labelId;
 
@@ -47,6 +53,8 @@ public class FeedbackResponse {
                 .id(feedback.getId())
                 .content(feedback.getContent())
                 .writerId(feedback.getWriter().getId())
+                .writerName(feedback.getWriter().getName())
+                .writerProfileUrl(feedback.getWriter().getProfileUrl())
                 .labelId(feedback.getLabel().getId())
                 .createdAt(feedback.getCreatedAt())
                 .countOfReplies(feedback.getChildCnt())
