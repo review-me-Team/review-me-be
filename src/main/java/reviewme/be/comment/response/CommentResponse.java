@@ -23,6 +23,12 @@ public class CommentResponse {
     @Schema(description = "댓글 단 사용자 ID", example = "1")
     private long commenterId;
 
+    @Schema(description = "댓글 단 사용자 이름", example = "aken-you")
+    private String commenterName;
+
+    @Schema(description = "댓글 단 사용자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
+    private String commenterProfileUrl;
+
     @Schema(description = "댓글 작성 시간", example = "2023-12-15")
     private LocalDateTime createdAt;;
 
@@ -38,6 +44,8 @@ public class CommentResponse {
                 .id(comment.getId())
                 .content(comment.getContent())
                 .commenterId(comment.getWriter().getId())
+                .commenterName(comment.getWriter().getName())
+                .commenterProfileUrl(comment.getWriter().getProfileUrl())
                 .createdAt(comment.getCreatedAt())
                 .emojiInfos(emojiInfos)
                 .myEmojiId(myEmojiId)
