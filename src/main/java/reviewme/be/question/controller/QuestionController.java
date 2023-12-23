@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.question.repository.QuestionEmojiRepository;
 import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.question.request.*;
 import reviewme.be.question.response.*;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class QuestionController {
 
     private final QuestionRepository questionRepository;
+    private final QuestionEmojiRepository questionEmojiRepository;
 
     @Operation(summary = "예상 질문 추가", description = "예상 질문을 추가합니다.")
     @PostMapping
@@ -68,7 +70,7 @@ public class QuestionController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<Emoji> sampleEmojis = List.of(
+        List<Emoji> emojis = List.of(
                 Emoji.builder()
                         .id(1)
                         .count(10L)
@@ -78,9 +80,12 @@ public class QuestionController {
                         .count(3L)
                         .build());
 
+        int myEmojiId = questionEmojiRepository.findByQuestionIdAndUserId(1L, 1L)
+                .getEmoji().getId();
+
         List<QuestionResponse> questionsResponse = questionRepository.findByResumeIdAndResumePage(1L, 1)
                 .stream()
-                .map(question -> QuestionResponse.fromQuestionOfOwnResume(question, sampleEmojis, 1L))
+                .map(question -> QuestionResponse.fromQuestionOfOwnResume(question, emojis, myEmojiId))
                 .collect(Collectors.toList());
 
         return ResponseEntity

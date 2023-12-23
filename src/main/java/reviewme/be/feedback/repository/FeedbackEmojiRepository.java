@@ -3,7 +3,6 @@ package reviewme.be.feedback.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import reviewme.be.feedback.entity.FeedbackEmoji;
-import reviewme.be.util.dto.Emoji;
 
 import javax.persistence.Tuple;
 import java.util.List;

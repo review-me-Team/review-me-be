@@ -39,7 +39,7 @@ public class QuestionResponse {
     private boolean checked;
 
     @Schema(description = "이모지 정보")
-    private List<Emoji> emojiInfos;
+    private List<Emoji> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private long myEmojiId;
@@ -55,7 +55,7 @@ public class QuestionResponse {
                 .countOfReplies(question.getChildCnt())
                 .bookmarked(question.getBookmarked())
                 .checked(question.getChecked())
-                .emojiInfos(emojiInfos)
+                .emojis(emojiInfos)
                 .myEmojiId(myEmojiId)
                 .build();
     }
