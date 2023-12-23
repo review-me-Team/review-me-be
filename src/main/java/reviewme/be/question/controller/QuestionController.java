@@ -70,15 +70,10 @@ public class QuestionController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<Emoji> emojis = List.of(
-                Emoji.builder()
-                        .id(1)
-                        .count(10L)
-                        .build(),
-                Emoji.builder()
-                        .id(2)
-                        .count(3L)
-                        .build());
+        List<Emoji> emojis = questionEmojiRepository.countByQuestionIdGroupByEmojiId(1L)
+                .stream()
+                .map(tuple -> Emoji.fromCountEmojiTuple(tuple.get("id", Integer.class), tuple.get("count", Long.class)))
+                .collect(Collectors.toList());
 
         int myEmojiId = questionEmojiRepository.findByQuestionIdAndUserId(1L, 1L)
                 .getEmoji().getId();

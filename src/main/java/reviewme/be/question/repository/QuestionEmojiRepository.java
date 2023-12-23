@@ -11,5 +11,12 @@ public interface QuestionEmojiRepository extends JpaRepository<QuestionEmoji, Lo
 
     List<QuestionEmoji> findByQuestionId(long questionId);
 
+    @Query(value = "SELECT emoji.id AS id, COUNT(emoji.id) AS count " +
+            "FROM QuestionEmoji questionEmoji " +
+            "JOIN questionEmoji.emoji emoji " +
+            "WHERE questionEmoji.question.id = :questionId " +
+            "GROUP BY emoji.id")
+    List<Tuple> countByQuestionIdGroupByEmojiId(long questionId);
+
     QuestionEmoji findByQuestionIdAndUserId(long questionId, long userId);
 }
