@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.comment.entity.CommentEmoji;
+import reviewme.be.comment.repository.CommentEmojiRepository;
 import reviewme.be.comment.repository.CommentRepository;
 import reviewme.be.comment.request.PostCommentRequest;
 import reviewme.be.comment.request.UpdateCommentContentRequest;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public class CommentController {
 
     private final CommentRepository commentRepository;
+    private final CommentEmojiRepository commentEmojiRepository;
 
     @Operation(summary = "댓글 추가", description = "이력서에 대한 댓글을 추가합니다.")
     @PostMapping
@@ -67,21 +70,19 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable) {
 
-        List<Emoji> sampleEmojis = List.of(
-                Emoji.builder()
-                        .id(1)
-                        .count(10L)
-                        .build(),
-                Emoji.builder()
-                        .id(2)
-                        .count(3L)
-                        .build());
+        List<Emoji> emojis = commentEmojiRepository.countByCommentIdGroupByEmojiId(2L)
+                .stream()
+                .map(tuple -> Emoji.fromCountEmojiTuple(
+                        tuple.get("id", Integer.class),
+                        tuple.get("count", Long.class))
+                ).collect(Collectors.toList());
 
-        int myEmojiId = 1;
+        CommentEmoji myCommentEmoji = commentEmojiRepository.findByCommentIdAndUserId(2L, 1L);
+        int myEmojiId = myCommentEmoji == null ? 0 : myCommentEmoji.getEmoji().getId();
 
         List<CommentResponse> commentsResponse = commentRepository.findByResumeIdOrderByCreatedAtDesc(resumeId)
                 .stream()
-                .map(comment -> CommentResponse.fromComment(comment, sampleEmojis, myEmojiId))
+                .map(comment -> CommentResponse.fromComment(comment, emojis, myEmojiId))
                 .collect(Collectors.toList());
 
         return ResponseEntity
