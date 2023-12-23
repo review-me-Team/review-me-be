@@ -3,6 +3,7 @@ package reviewme.be.comment.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.comment.entity.Comment;
 import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class CommentResponse {
     @Schema(description = "댓글 ID", example = "1")
     private long id;
 
-    @Schema(description = "댓글 내용", example = "전반적으로 이력서를 읽기가 편한 것같아요")
+    @Schema(description = "댓글 내용", example = "전반적으로 이력서를 읽기가 편한 것같아요!")
     private String content;
 
     @Schema(description = "댓글 단 사용자 ID", example = "1")
@@ -30,4 +31,16 @@ public class CommentResponse {
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private long myEmojiId;
+
+    public static CommentResponse fromComment(Comment comment, List<Emoji> emojiInfos, long myEmojiId) {
+
+        return CommentResponse.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .commenterId(comment.getWriter().getId())
+                .createdAt(comment.getCreatedAt())
+                .emojiInfos(emojiInfos)
+                .myEmojiId(myEmojiId)
+                .build();
+    }
 }
