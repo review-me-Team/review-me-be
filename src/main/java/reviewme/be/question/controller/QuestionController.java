@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.question.request.*;
 import reviewme.be.question.response.*;
 import reviewme.be.util.CustomResponse;
@@ -19,12 +20,15 @@ import reviewme.be.util.response.LabelResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "question", description = "예상 질문(question) API")
 @RequestMapping("/resume/{resumeId}/question")
 @RestController
 @RequiredArgsConstructor
 public class QuestionController {
+
+    private final QuestionRepository questionRepository;
 
     @Operation(summary = "예상 질문 추가", description = "예상 질문을 추가합니다.")
     @PostMapping
@@ -74,19 +78,10 @@ public class QuestionController {
                         .count(3L)
                         .build());
 
-        List<QuestionResponse> sampleResponse = List.of(
-                QuestionResponse.builder()
-                        .id(1L)
-                        .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
-                        .writerId(1L)
-                        .labelId(1L)
-                        .createdAt(LocalDateTime.now())
-                        .countOfReplies(10L)
-                        .bookmarked(true)
-                        .checked(true)
-                        .emojiInfos(sampleEmojis)
-                        .myEmojiId(1L)
-                        .build());
+        List<QuestionResponse> questionsResponse = questionRepository.findByResumeIdAndResumePage(1L, 1)
+                .stream()
+                .map(question -> QuestionResponse.fromQuestionOfOwnResume(question, sampleEmojis, 1L))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -95,7 +90,7 @@ public class QuestionController {
                         200,
                         "예상 질문 목록 조회에 성공했습니다.",
                         QuestionPageResponse.builder()
-                                .questions(sampleResponse)
+                                .questions(questionsResponse)
                                 .build()
                 ));
     }
