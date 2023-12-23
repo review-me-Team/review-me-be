@@ -25,6 +25,12 @@ public class CommentOfQuestionResponse {
     @Schema(description = "댓글 작성자 ID", example = "1")
     private long writerId;
 
+    @Schema(description = "댓글 작성자 이름", example = "aken-you")
+    private String writerName;
+
+    @Schema(description = "댓글 작성자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
+    private String writerProfileUrl;
+
     @Schema(description = "댓글 작성 시간", example = "2023-12-15")
     private LocalDateTime createdAt;
 

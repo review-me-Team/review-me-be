@@ -143,7 +143,7 @@ public class ResumeController {
         ResumeResponse sampleUpdatedResumeResponse = ResumeResponse.builder()
                 .id(1L)
                 .title("네이버 신입 대비") // TODO: updateResumeRequest Title()
-                .writer("aken-you")
+                .writerName("aken-you")
                 .createdAt(LocalDateTime.now())
                 .scopeId(1L)    // TODO: updateResumeRequest ScopeId()
                 .occupationId(1)

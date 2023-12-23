@@ -33,7 +33,7 @@ public class CommentResponse {
     private LocalDateTime createdAt;;
 
     @Schema(description = "이모지 정보")
-    private List<Emoji> emojiInfos;
+    private List<Emoji> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private long myEmojiId;
@@ -47,7 +47,7 @@ public class CommentResponse {
                 .commenterName(comment.getWriter().getName())
                 .commenterProfileUrl(comment.getWriter().getProfileUrl())
                 .createdAt(comment.getCreatedAt())
-                .emojiInfos(emojiInfos)
+                .emojis(emojiInfos)
                 .myEmojiId(myEmojiId)
                 .build();
     }
