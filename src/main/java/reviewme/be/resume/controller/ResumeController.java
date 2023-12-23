@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.request.UpdateResumeRequest;
 import reviewme.be.resume.request.UploadResumeRequest;
 import reviewme.be.resume.response.ResumeDetailResponse;
@@ -23,12 +24,15 @@ import reviewme.be.util.CustomResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "resume", description = "이력서(resume) API")
 @RequestMapping("/resume")
 @RestController
 @RequiredArgsConstructor
 public class ResumeController {
+
+    private final ResumeRepository resumeRepository;
 
     @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
     @PostMapping
@@ -64,16 +68,14 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes(@PageableDefault(size=20) Pageable pageable) {
 
-        List<ResumeResponse> sampleResponse = List.of(
-                ResumeResponse.builder()
-                        .id(1L)
-                        .title("네이버 신입 대비")
-                        .writer("aken-you")
-                        .createdAt(LocalDateTime.now())
-                        .scopeId(1L)
-                        .occupationId(1)
-                        .year(0L)
-                        .build());
+
+        // 내 이력서 목록 조회
+        // TODO: pageable 적용
+
+        List<ResumeResponse> resumeResponse = resumeRepository.findByUserId(1L)
+                .stream()
+                .map(ResumeResponse::fromResume)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -82,7 +84,7 @@ public class ResumeController {
                         200,
                         "전체 공개 이력서 목록 조회에 성공했습니다.",
                         ResumePageResponse.builder()
-                                .resumes(sampleResponse)
+                                .resumes(resumeResponse)
                                 .build()
                 ));
     }

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.feedback.repository.FeedbackEmojiRepository;
+import reviewme.be.feedback.repository.FeedbackRepository;
 import reviewme.be.feedback.request.PostFeedbackRequest;
 import reviewme.be.feedback.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
@@ -17,15 +19,20 @@ import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 
+import javax.persistence.Tuple;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "feedback", description = "피드백(feedback) API")
 @RequestMapping("/resume/{resumeId}/feedback")
 @RestController
 @RequiredArgsConstructor
 public class FeedbackController {
+
+    private final FeedbackRepository feedbackRepository;
+    private final FeedbackEmojiRepository feedbackEmojiRepository;
 
     @Operation(summary = "피드백 추가", description = "피드백을 추가합니다.")
     @PostMapping
@@ -65,28 +72,20 @@ public class FeedbackController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<Emoji> sampleEmojis = List.of(
-                Emoji.builder()
-                        .id(1L)
-                        .count(10L)
-                        .build(),
-                Emoji.builder()
-                        .id(2L)
-                        .count(3L)
-                        .build());
+        List<Emoji> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L).stream()
+                .map(tuple
+                        -> Emoji.fromCountEmojiTuple(
+                        tuple.get("id", Integer.class),
+                        tuple.get("count", Long.class))
+                ).collect(Collectors.toList());
 
-        List<FeedbackResponse> sampleResponse = List.of(
-                FeedbackResponse.builder()
-                        .id(1L)
-                        .content("뭔가 이력서에 문제 해결과 관련된 내용이 부족한 것같아요.")
-                        .writerId(1L)
-                        .labelId(1L)
-                        .createdAt(LocalDateTime.now())
-                        .countOfReplies(10L)
-                        .checked(true)
-                        .emojiInfos(sampleEmojis)
-                        .myEmojiId(1L)
-                        .build());
+        int myEmojiId = feedbackEmojiRepository.findByFeedbackIdAndUserId(1L, 1L)
+                .getEmoji().getId();
+
+        List<FeedbackResponse> feedbacksResponse = feedbackRepository.findByResumeIdAndResumePage(1, 1)
+                .stream()
+                .map(feedback -> FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -95,7 +94,7 @@ public class FeedbackController {
                         200,
                         "피드백 목록 조회에 성공했습니다.",
                         FeedbackPageResponse.builder()
-                                .feedbacks(sampleResponse)
+                                .feedbacks(feedbacksResponse)
                                 .build()
                 ));
     }
@@ -112,11 +111,11 @@ public class FeedbackController {
 
         List<Emoji> sampleEmojis = List.of(
                 Emoji.builder()
-                        .id(1L)
+                        .id(1)
                         .count(10L)
                         .build(),
                 Emoji.builder()
-                        .id(2L)
+                        .id(2)
                         .count(3L)
                         .build());
 

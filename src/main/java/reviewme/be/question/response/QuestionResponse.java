@@ -3,6 +3,7 @@ package reviewme.be.question.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.question.entity.Question;
 import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;
@@ -32,14 +33,43 @@ public class QuestionResponse {
     private long countOfReplies;
 
     @Schema(description = "북마크 여부", example = "true")
-    private boolean bookmarked;
+    private Boolean bookmarked;
 
     @Schema(description = "체크 여부", example = "true")
-    private boolean checked;
+    private Boolean checked;
 
     @Schema(description = "이모지 정보")
-    private List<Emoji> emojiInfos;
+    private List<Emoji> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private long myEmojiId;
+
+    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<Emoji> emojiInfos, long myEmojiId) {
+
+        return QuestionResponse.builder()
+                .id(question.getId())
+                .content(question.getContent())
+                .writerId(question.getWriter().getId())
+                .labelId(question.getLabel().getId())
+                .createdAt(question.getCreatedAt())
+                .countOfReplies(question.getChildCnt())
+                .bookmarked(question.getBookmarked())
+                .checked(question.getChecked())
+                .emojis(emojiInfos)
+                .myEmojiId(myEmojiId)
+                .build();
+    }
+
+    public static QuestionResponse fromQuestionOfOtherResume(Question question, List<Emoji> emojiInfos) {
+
+        return QuestionResponse.builder()
+                .id(question.getId())
+                .content(question.getContent())
+                .writerId(question.getWriter().getId())
+                .labelId(question.getLabel().getId())
+                .createdAt(question.getCreatedAt())
+                .countOfReplies(question.getChildCnt())
+                .emojis(emojiInfos)
+                .build();
+    }
 }

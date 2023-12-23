@@ -9,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.comment.entity.CommentEmoji;
+import reviewme.be.comment.repository.CommentEmojiRepository;
+import reviewme.be.comment.repository.CommentRepository;
 import reviewme.be.comment.request.PostCommentRequest;
 import reviewme.be.comment.request.UpdateCommentContentRequest;
 import reviewme.be.comment.request.UpdateCommentEmojiRequest;
@@ -20,12 +23,16 @@ import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "comment", description = "댓글(comment) API")
 @RequestMapping("/resume/{resumeId}/comment")
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
+
+    private final CommentRepository commentRepository;
+    private final CommentEmojiRepository commentEmojiRepository;
 
     @Operation(summary = "댓글 추가", description = "이력서에 대한 댓글을 추가합니다.")
     @PostMapping
@@ -63,34 +70,20 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable) {
 
-        List<Emoji> sampleEmojis = List.of(
-                Emoji.builder()
-                        .id(1L)
-                        .count(10L)
-                        .build(),
-                Emoji.builder()
-                        .id(2L)
-                        .count(3L)
-                        .build());
+        List<Emoji> emojis = commentEmojiRepository.countByCommentIdGroupByEmojiId(2L)
+                .stream()
+                .map(tuple -> Emoji.fromCountEmojiTuple(
+                        tuple.get("id", Integer.class),
+                        tuple.get("count", Long.class))
+                ).collect(Collectors.toList());
 
-        List<CommentResponse> sampleResponse = List.of(
-                CommentResponse.builder()
-                        .id(1L)
-                        .content("전반적으로 이력서를 읽기가 편한 것같아요")
-                        .commenterId(1L)
-                        .createdAt(LocalDateTime.now())
-                        .emojiInfos(sampleEmojis)
-                        .myEmojiId(1L)
-                        .build(),
-                CommentResponse.builder()
-                        .id(2L)
-                        .content("이력서가 너무 길어요")
-                        .commenterId(2L)
-                        .createdAt(LocalDateTime.now())
-                        .emojiInfos(sampleEmojis)
-                        .myEmojiId(2L)
-                        .build()
-        );
+        CommentEmoji myCommentEmoji = commentEmojiRepository.findByCommentIdAndUserId(2L, 1L);
+        int myEmojiId = myCommentEmoji == null ? 0 : myCommentEmoji.getEmoji().getId();
+
+        List<CommentResponse> commentsResponse = commentRepository.findByResumeIdOrderByCreatedAtDesc(resumeId)
+                .stream()
+                .map(comment -> CommentResponse.fromComment(comment, emojis, myEmojiId))
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -99,7 +92,7 @@ public class CommentController {
                         200,
                         "이력서에 달린 댓글 목록 조회에 성공했습니다.",
                         CommentPageResponse.builder()
-                                .comments(sampleResponse)
+                                .comments(commentsResponse)
                                 .build()
                 ));
     }

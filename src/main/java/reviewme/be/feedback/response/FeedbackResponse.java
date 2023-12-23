@@ -3,6 +3,7 @@ package reviewme.be.feedback.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.feedback.entity.Feedback;
 import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;
@@ -35,8 +36,23 @@ public class FeedbackResponse {
     private boolean checked;
 
     @Schema(description = "이모지 정보")
-    private List<Emoji> emojiInfos;
+    private List<Emoji> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
-    private long myEmojiId;
+    private Integer myEmojiId;
+
+    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback, List<Emoji> emojis, Integer myEmojiId) {
+
+        return FeedbackResponse.builder()
+                .id(feedback.getId())
+                .content(feedback.getContent())
+                .writerId(feedback.getWriter().getId())
+                .labelId(feedback.getLabel().getId())
+                .createdAt(feedback.getCreatedAt())
+                .countOfReplies(feedback.getChildCnt())
+                .checked(feedback.getChecked())
+                .emojis(emojis)
+                .myEmojiId(myEmojiId)
+                .build();
+    }
 }

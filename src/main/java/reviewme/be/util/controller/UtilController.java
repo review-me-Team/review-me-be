@@ -10,14 +10,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.User;
+import reviewme.be.util.entity.Emoji;
+import reviewme.be.util.repository.*;
 import reviewme.be.util.response.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "util", description = "공통 API")
 @RestController
 @RequiredArgsConstructor
 public class UtilController {
+
+    private final UserRepository userRepository;
+    private final ScopeRepository scopeRepository;
+    private final EmojiRepository emojiRepository;
+    private final OccupationRepository occupationRepository;
+    private final LabelRepository labelRepository;
 
     @Operation(summary = "개인 정보 조회", description = "자신의 정보를 조회합니다.")
     @GetMapping("/info")
@@ -27,11 +36,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<User>> showUserInfo() {
 
-        User sampleResponse = User.builder()
-                .id(1L)
-                .name("aken-you")
-                .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .build();
+        User userResponse = User.fromUser(userRepository.findById(1L).get());
 
         return ResponseEntity
                 .ok()
@@ -39,7 +44,7 @@ public class UtilController {
                         "success",
                         200,
                         "개인 정보 조회에 성공했습니다.",
-                        sampleResponse
+                        userResponse
                 ));
     }
 
@@ -51,19 +56,9 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<ScopePageResponse>> showScopes() {
 
-        List<ScopeResponse> sampleResponse = List.of(
-                ScopeResponse.builder()
-                        .id(1L)
-                        .scope("public")
-                        .build(),
-                ScopeResponse.builder()
-                        .id(2L)
-                        .scope("private")
-                        .build(),
-                ScopeResponse.builder()
-                        .id(3L)
-                        .scope("friend")
-                        .build());
+        List<ScopeResponse> scopeResponses = scopeRepository.findAll()
+                .stream().map(ScopeResponse::fromScope)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -72,7 +67,7 @@ public class UtilController {
                         200,
                         "공개 범위 목록 조회에 성공했습니다.",
                         ScopePageResponse.builder()
-                                .scopes(sampleResponse)
+                                .scopes(scopeResponses)
                                 .build()
                 ));
     }
@@ -85,27 +80,9 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<EmojiPageResponse>> showEmojis() {
 
-        List<EmojiResponse> sampleResponse = List.of(
-                EmojiResponse.builder()
-                        .id(1L)
-                        .emoji("🤔")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(2L)
-                        .emoji("👍")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(3L)
-                        .emoji("👀")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(4L)
-                        .emoji("😎")
-                        .build(),
-                EmojiResponse.builder()
-                        .id(5L)
-                        .emoji("🙏")
-                        .build());
+        List<EmojiResponse> emojiResponses = emojiRepository.findAll()
+                .stream().map(EmojiResponse::fromEmoji)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -114,7 +91,7 @@ public class UtilController {
                         200,
                         "이모지 목록 조회에 성공했습니다.",
                         EmojiPageResponse.builder()
-                                .emojis(sampleResponse)
+                                .emojis(emojiResponses)
                                 .build()
                 ));
     }
@@ -127,32 +104,9 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<OccupationPageResponse>> showOccupations() {
 
-        List<OccupationResponse> sampleResponse = List.of(
-                OccupationResponse.builder()
-                        .id(1L)
-                        .occupation("Frontend")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(2L)
-                        .occupation("Backend")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(3L)
-                        .occupation("Android")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(4L)
-                        .occupation("iOS")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(5L)
-                        .occupation("AI/ML")
-                        .build(),
-                OccupationResponse.builder()
-                        .id(6L)
-                        .occupation("Data Engineering")
-                        .build()
-                );
+        List<OccupationResponse> occupationResponses = occupationRepository.findAll()
+                .stream().map(OccupationResponse::fromOccupation)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -161,7 +115,7 @@ public class UtilController {
                         200,
                         "직군 목록 조회에 성공했습니다.",
                         OccupationPageResponse.builder()
-                                .occupations(sampleResponse)
+                                .occupations(occupationResponses)
                                 .build()
                 ));
     }
@@ -174,23 +128,10 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<LabelPageResponse>> showFeedbackLabels() {
 
-        List<LabelResponse> sampleResponse = List.of(
-                LabelResponse.builder()
-                        .id(1L)
-                        .label("프로젝트")
-                        .build(),
-                LabelResponse.builder()
-                        .id(2L)
-                        .label("자기소개")
-                        .build(),
-                LabelResponse.builder()
-                        .id(3L)
-                        .label("협업")
-                        .build(),
-                LabelResponse.builder()
-                        .id(4L)
-                        .label("기타")
-                        .build());
+        List<LabelResponse> labelsResponse = labelRepository.findByResumeIsNull()
+                .stream()
+                .map(LabelResponse::fromLabel)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -199,7 +140,7 @@ public class UtilController {
                         200,
                         "피드백 라벨 목록 조회에 성공했습니다.",
                         LabelPageResponse.builder()
-                                .labels(sampleResponse)
+                                .labels(labelsResponse)
                                 .build()
                 ));
     }

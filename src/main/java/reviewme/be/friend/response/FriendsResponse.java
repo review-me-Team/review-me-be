@@ -13,8 +13,8 @@ import java.util.List;
 public class FriendsResponse {
 
     @Schema(description = "친구 정보 목록")
-    private List<User> userInfos;
+    private List<User> users;
 
     @Schema(description = "친구 수", example = "1")
-    private Integer count;
+    private long count;
 }

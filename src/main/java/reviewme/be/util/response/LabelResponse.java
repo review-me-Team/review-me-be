@@ -3,6 +3,7 @@ package reviewme.be.util.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.util.entity.Label;
 
 @Getter
 @Builder
@@ -14,4 +15,12 @@ public class LabelResponse {
 
     @Schema(description = "라벨", example = "react-query")
     private String label;
+
+    public static LabelResponse fromLabel(Label label) {
+
+        return LabelResponse.builder()
+                .id(label.getId())
+                .label(label.getContent())
+                .build();
+    }
 }
