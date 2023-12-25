@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
@@ -23,6 +24,6 @@ public class PostFeedbackRequest {
     private Long labelId;
 
     @Schema(description = "이력서 페이지", example = "1")
-    @NotBlank(message = "이력서의 몇 페이지에 질문을 하는 지는 필수 입력 값입니다.")
+    @NotNull(message = "이력서의 몇 페이지에 질문을 하는 지는 필수 입력 값입니다.")
     private Long resumePage;
 }

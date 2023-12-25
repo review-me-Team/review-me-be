@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
@@ -19,7 +20,6 @@ import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 
-import javax.persistence.Tuple;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,15 +40,17 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 추가 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostFeedbackResponse>> postFeedback(@RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostFeedbackResponse>> postFeedback(@Validated @RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
 
         PostFeedbackResponse sampleResponse = PostFeedbackResponse.builder()
-                .resumeId(1L)
+                .id(2L)
+                .resumeId(resumeId)
                 .writerId(1L)
                 .writerName("aken-you")
                 .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .resumePage(1L)
-                .feedbackId(1L)
+                .content(postFeedbackRequest.getContent())
+                .resumePage(postFeedbackRequest.getResumePage())
+                .parentFeedbackId(postFeedbackRequest.getFeedbackId())
                 .createdAt(LocalDateTime.now())
                 .build();
 
