@@ -15,13 +15,13 @@ import java.util.List;
 public class QuestionResponse {
 
     @Schema(description = "예상 질문 ID", example = "1")
-    private long id;
+    private Long id;
 
     @Schema(description = "예상 질문 내용", example = "프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
     private String content;
 
     @Schema(description = "질문자 ID", example = "1")
-    private long writerId;
+    private Long writerId;
 
     @Schema(description = "질문자 이름", example = "aken-you")
     private String writerName;
@@ -30,13 +30,13 @@ public class QuestionResponse {
     private String writerProfileUrl;
 
     @Schema(description = "예상 질문 라벨 ID", example = "1")
-    private long labelId;
+    private Long labelId;
 
     @Schema(description = "예상 질문 작성 시간", example = "2023-12-15")
     private LocalDateTime createdAt;
 
     @Schema(description = "대댓글 개수", example = "10")
-    private long countOfReplies;
+    private Long countOfReplies;
 
     @Schema(description = "북마크 여부", example = "true")
     private Boolean bookmarked;
@@ -48,9 +48,9 @@ public class QuestionResponse {
     private List<Emoji> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
-    private long myEmojiId;
+    private Integer myEmojiId;
 
-    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<Emoji> emojiInfos, long myEmojiId) {
+    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<Emoji> emojiInfos, Integer myEmojiId) {
 
         return QuestionResponse.builder()
                 .id(question.getId())

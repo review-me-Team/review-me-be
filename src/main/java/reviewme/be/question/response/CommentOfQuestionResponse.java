@@ -14,16 +14,16 @@ import java.util.List;
 public class CommentOfQuestionResponse {
 
     @Schema(description = "예상 질문 댓글 ID", example = "1")
-    private long id;
+    private Long id;
 
     @Schema(description = "예상 질문 ID", example = "1")
-    private long questionId;
+    private Long questionId;
 
     @Schema(description = "댓글 내용", example = "흠.. 그러게요... 조금 더 공부해보겠습니다!")
     private String content;
 
     @Schema(description = "댓글 작성자 ID", example = "1")
-    private long writerId;
+    private Long writerId;
 
     @Schema(description = "댓글 작성자 이름", example = "aken-you")
     private String writerName;
@@ -38,5 +38,5 @@ public class CommentOfQuestionResponse {
     private List<Emoji> emojiInfos;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
-    private long myEmojiId;
+    private Long myEmojiId;
 }
