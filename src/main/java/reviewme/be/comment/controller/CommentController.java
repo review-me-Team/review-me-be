@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.comment.entity.CommentEmoji;
 import reviewme.be.comment.repository.CommentEmojiRepository;
@@ -40,7 +41,7 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostCommentResponse>> postCommentOfResume(@RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostCommentResponse>> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
 
         PostCommentResponse sampleResponse = PostCommentResponse.builder()
                 .resumeId(1L)
@@ -122,7 +123,7 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentContent(@RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse> updateCommentContent(@Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
 
         return ResponseEntity
                 .ok()
@@ -139,7 +140,7 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentEmoji(@RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse> updateCommentEmoji(@Validated @RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
 
         return ResponseEntity
                 .ok()

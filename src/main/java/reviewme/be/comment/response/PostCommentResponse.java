@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 public class PostCommentResponse {
 
     @Schema(description = "이력서 ID", example = "1")
-    private long resumeId;
+    private Long resumeId;
 
     @Schema(description = "댓글 ID", example = "1")
-    private long commentId;
+    private Long commentId;
 
     @Schema(description = "댓글 작성자 ID", example = "1")
-    private long commenterId;
+    private Long commenterId;
 
     @Schema(description = "댓글 작성자 이름", example = "aken-you")
     private String commenterName;
