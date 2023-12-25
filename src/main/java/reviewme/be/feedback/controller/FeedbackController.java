@@ -171,7 +171,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackContent(@RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackContent(@Validated @RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
 
         return ResponseEntity
                 .ok()
@@ -188,7 +188,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 체크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackCheck(@Valid @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackCheck(@Validated @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
         // TODO: feedback이 댓글이 아닌 feedback인 경우에만 체크 상태 수정 가능
@@ -208,7 +208,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackEmoji(@RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackEmoji(@Validated @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
 
         return ResponseEntity
                 .ok()
