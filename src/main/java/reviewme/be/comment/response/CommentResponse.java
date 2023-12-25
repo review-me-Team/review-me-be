@@ -30,15 +30,15 @@ public class CommentResponse {
     private String commenterProfileUrl;
 
     @Schema(description = "댓글 작성 시간", example = "2023-12-15")
-    private LocalDateTime createdAt;;
+    private LocalDateTime createdAt;
 
     @Schema(description = "이모지 정보")
     private List<Emoji> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
-    private Long myEmojiId;
+    private Integer myEmojiId;
 
-    public static CommentResponse fromComment(Comment comment, List<Emoji> emojiInfos, long myEmojiId) {
+    public static CommentResponse fromComment(Comment comment, List<Emoji> emojiInfos, Integer myEmojiId) {
 
         return CommentResponse.builder()
                 .id(comment.getId())
