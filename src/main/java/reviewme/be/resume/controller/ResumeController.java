@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.repository.ResumeRepository;
@@ -138,7 +139,7 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 수정 실패")
     })
-    public ResponseEntity<CustomResponse<ResumeResponse>> updateResume(@PathVariable Long resumeId, @RequestBody UpdateResumeRequest updateResumeRequest) {
+    public ResponseEntity<CustomResponse<ResumeResponse>> updateResume(@Validated @RequestBody UpdateResumeRequest updateResumeRequest, @PathVariable Long resumeId) {
 
         ResumeResponse sampleUpdatedResumeResponse = ResumeResponse.builder()
                 .id(1L)

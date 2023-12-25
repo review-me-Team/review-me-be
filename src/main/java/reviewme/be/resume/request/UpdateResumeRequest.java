@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
@@ -18,6 +19,6 @@ public class UpdateResumeRequest {
     private String title;
 
     @Schema(description = "이력서 공개 범위 ID", example = "1")
-    @NotBlank(message = "공개 범위 선택은 필수입니다.")
+    @NotNull(message = "공개 범위 선택은 필수입니다.")
     private Long scopeId;
 }
