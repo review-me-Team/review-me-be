@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.friend.request.AcceptFriendRequest;
@@ -33,7 +34,7 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "친구 요청 성공"),
             @ApiResponse(responseCode = "400", description = "친구 요청 실패")
     })
-    public ResponseEntity<CustomResponse> followFriend(@RequestBody FollowFriendRequest followFriendRequest) {
+    public ResponseEntity<CustomResponse> followFriend(@Validated @RequestBody FollowFriendRequest followFriendRequest) {
 
         return ResponseEntity
                 .ok()
@@ -50,7 +51,7 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "친구 요청 수락 성공"),
             @ApiResponse(responseCode = "400", description = "친구 요청 수락 실패")
     })
-    public ResponseEntity<CustomResponse> acceptFriend(@RequestBody AcceptFriendRequest acceptFriendRequest) {
+    public ResponseEntity<CustomResponse> acceptFriend(@Validated @RequestBody AcceptFriendRequest acceptFriendRequest) {
 
         // TODO: 친구 요청 목록에 있는지 검증
 
