@@ -10,5 +10,5 @@ import lombok.Getter;
 public class UploadResumeResponse {
 
     @Schema(description = "이력서 ID", example = "1")
-    private long id;
+    private Long id;
 }
