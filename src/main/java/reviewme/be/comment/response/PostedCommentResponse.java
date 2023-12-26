@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Schema(description = "추가된 댓글")
-public class PostCommentResponse {
+public class PostedCommentResponse {
 
     @Schema(description = "이력서 ID", example = "1")
     private Long resumeId;
@@ -26,6 +26,9 @@ public class PostCommentResponse {
     @Schema(description = "댓글 작성자 프로필 url", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
     private String commenterProfileUrl;
 
-    @Schema(description = "피드백 작성 시간", example = "2023-11-23 09:27")
+    @Schema(description = "댓글 내용", example = "뭔가 이력서에 문제 해결과 관련된 내용이 부족해보이는 것같아요.")
+    private String content;
+
+    @Schema(description = "댓글 작성 시간", example = "2023-11-23 09:27")
     private LocalDateTime createdAt;
 }

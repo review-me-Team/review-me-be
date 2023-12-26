@@ -22,6 +22,7 @@ import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "feedback", description = "피드백(feedback) API")
@@ -39,15 +40,16 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 추가 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostFeedbackResponse>> postFeedback(@Validated @RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostedFeedbackResponse>> postFeedback(@Validated @RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
 
-        PostFeedbackResponse sampleResponse = PostFeedbackResponse.builder()
+        PostedFeedbackResponse sampleResponse = PostedFeedbackResponse.builder()
                 .id(2L)
                 .resumeId(resumeId)
                 .writerId(1L)
                 .writerName("aken-you")
                 .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                 .content(postFeedbackRequest.getContent())
+                .labelContent("프로젝트")
                 .resumePage(postFeedbackRequest.getResumePage())
                 .parentFeedbackId(postFeedbackRequest.getFeedbackId())
                 .createdAt(LocalDateTime.now())

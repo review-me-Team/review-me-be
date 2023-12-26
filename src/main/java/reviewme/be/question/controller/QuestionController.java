@@ -38,13 +38,15 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 추가 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostQuestionResponse>> postQuestions(@Validated @RequestBody PostQuestionRequest postQuestionRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostedQuestionResponse>> postQuestions(@Validated @RequestBody PostQuestionRequest postQuestionRequest, @PathVariable long resumeId) {
 
-        PostQuestionResponse sampleResponse = PostQuestionResponse.builder()
+        PostedQuestionResponse sampleResponse = PostedQuestionResponse.builder()
                 .resumeId(1L)
                 .writerId(1L)
                 .writerName("aken-you")
                 .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .content(postQuestionRequest.getContent())
+                .labelContent("react-query")
                 .resumePage(1)
                 .questionId(1L)
                 .createdAt(LocalDateTime.now())

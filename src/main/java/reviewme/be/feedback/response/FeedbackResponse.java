@@ -39,7 +39,7 @@ public class FeedbackResponse {
     private Long countOfReplies;
 
     @Schema(description = "체크 여부", example = "true")
-    private boolean checked;
+    private Boolean checked;
 
     @Schema(description = "이모지 정보")
     private List<Emoji> emojis;

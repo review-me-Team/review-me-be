@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Getter
@@ -22,8 +23,10 @@ public class UploadResumeRequest {
     private Long scopeId;
 
     @Schema(description = "직군 ID", example = "1")
+    @NotNull(message = "직군 선택은 필수입니다.")
     private Long occupationId;
 
     @Schema(description = "년차", example = "0")
+    @NotNull(message = "재직 년차 선택은 필수입니다.")
     private Long year;
 }

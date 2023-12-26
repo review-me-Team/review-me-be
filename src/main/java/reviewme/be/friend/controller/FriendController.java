@@ -151,7 +151,7 @@ public class FriendController {
                         "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다.",
                         FriendsResponse.builder()
                                 .users(sampleResponse)
-                                .count(2)
+                                .count(2L)
                                 .build()
                 ));
     }
