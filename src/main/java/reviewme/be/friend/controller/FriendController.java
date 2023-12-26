@@ -155,4 +155,23 @@ public class FriendController {
                                 .build()
                 ));
     }
+
+    @Operation(summary = "친구 삭제", description = "친구를 삭제합니다.")
+    @DeleteMapping("/{friendId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "친구 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "친구 삭제 실패")
+    })
+    public ResponseEntity<CustomResponse> deleteFriend(@PathVariable Long friendId) {
+
+        // TODO: HTTP request를 보낸 사람과 친구 관계인지 검증 (follower, following이 누구인지 찾아야 함)
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "친구 삭제에 성공했습니다."
+                ));
+    }
 }
