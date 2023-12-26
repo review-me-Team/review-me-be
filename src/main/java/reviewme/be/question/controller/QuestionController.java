@@ -124,7 +124,7 @@ public class QuestionController {
                         .writerName("aken-you")
                         .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .createdAt(LocalDateTime.now())
-                        .emojiInfos(sampleEmojis)
+                        .emojis(sampleEmojis)
                         .myEmojiId(1L)
                         .build());
 
