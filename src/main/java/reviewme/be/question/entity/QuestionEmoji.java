@@ -15,7 +15,7 @@ public class QuestionEmoji {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
     @OneToOne
     @JoinColumn(name = "question_id")

@@ -38,5 +38,5 @@ public class CommentOfQuestionResponse {
     private List<Emoji> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
-    private Long myEmojiId;
+    private Integer myEmojiId;
 }

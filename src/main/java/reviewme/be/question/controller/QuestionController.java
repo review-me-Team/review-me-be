@@ -45,7 +45,7 @@ public class QuestionController {
                 .writerId(1L)
                 .writerName("aken-you")
                 .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .resumePage(1L)
+                .resumePage(1)
                 .questionId(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -125,7 +125,7 @@ public class QuestionController {
                         .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .createdAt(LocalDateTime.now())
                         .emojis(sampleEmojis)
-                        .myEmojiId(1L)
+                        .myEmojiId(1)
                         .build());
 
         return ResponseEntity

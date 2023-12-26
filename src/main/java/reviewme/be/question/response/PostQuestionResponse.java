@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 public class PostQuestionResponse {
 
     @Schema(description = "이력서 ID", example = "1")
-    private long resumeId;
+    private Long resumeId;
 
     @Schema(description = "예상 질문 작성자 ID", example = "1")
-    private long writerId;
+    private Long writerId;
 
     @Schema(description = "예상 질문 작성자 이름", example = "aken-you")
     private String writerName;
@@ -24,10 +24,10 @@ public class PostQuestionResponse {
     private String writerProfileUrl;
 
     @Schema(description = "질문한 이력서의 페이지", example = "1")
-    private long resumePage;
+    private Integer resumePage;
 
     @Schema(description = "예상 질문 ID", example = "1")
-    private long questionId;
+    private Long questionId;
 
     @Schema(description = "예상 질문 작성 시간", example = "2023-11-23 09:27")
     private LocalDateTime createdAt;

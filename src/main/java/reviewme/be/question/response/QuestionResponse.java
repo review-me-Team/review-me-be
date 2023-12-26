@@ -29,8 +29,8 @@ public class QuestionResponse {
     @Schema(description = "질문자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
     private String writerProfileUrl;
 
-    @Schema(description = "예상 질문 라벨 ID", example = "1")
-    private Long labelId;
+    @Schema(description = "예상 질문 라벨", example = "react-query")
+    private String labelContent;
 
     @Schema(description = "예상 질문 작성 시간", example = "2023-12-15")
     private LocalDateTime createdAt;
@@ -76,7 +76,7 @@ public class QuestionResponse {
                 .writerId(question.getWriter().getId())
                 .writerName(question.getWriter().getName())
                 .writerProfileUrl(question.getWriter().getProfileUrl())
-                .labelId(question.getLabel().getId())
+                .labelContent(question.getLabel().getContent())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())
                 .emojis(emojiInfos)
