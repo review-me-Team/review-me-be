@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.repository.ResumeRepository;
@@ -23,7 +24,9 @@ import reviewme.be.resume.response.UploadResumeResponse;
 import reviewme.be.util.CustomResponse;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "resume", description = "이력서(resume) API")
@@ -103,6 +106,10 @@ public class ResumeController {
 
         ResumeDetailResponse sampleResponse = ResumeDetailResponse.builder()
                 .resumeUrl("https://review-me-resume.s3.ap-northeast-2.amazonaws.com/resume/7562857e-130f-4f9a-9ca1-441908180b31_%E1%84%8B%E1%85%B5%E1%84%85%E1%85%A7%E1%86%A8%E1%84%89%E1%85%A5_%E1%84%89%E1%85%A2%E1%86%B7%E1%84%91%E1%85%B3%E1%86%AF.pdf")
+                .title("네이버 신입 개발자 준비")
+                .writerName("aken-you")
+                .occupation("Frontend")
+                .year(0)
                 .build();
 
         return ResponseEntity
@@ -138,16 +145,28 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 수정 실패")
     })
-    public ResponseEntity<CustomResponse<ResumeResponse>> updateResume(@PathVariable Long resumeId, @RequestBody UpdateResumeRequest updateResumeRequest) {
+    public ResponseEntity<CustomResponse<ResumeResponse>> updateResume(@Validated @RequestBody UpdateResumeRequest updateResumeRequest, @PathVariable Long resumeId) {
+
+        Map<Integer, String> scopes = new HashMap<>();
+        scopes.put(1, "public");
+        scopes.put(2, "private");
+        scopes.put(3, "friends");
+
+        Map<Integer, String> occupations = new HashMap<>();
+        occupations.put(1, "Frontend");
+        occupations.put(2, "Backend");
+        occupations.put(3, "Fullstack");
+        occupations.put(4, "Android");
+        occupations.put(5, "iOS");
 
         ResumeResponse sampleUpdatedResumeResponse = ResumeResponse.builder()
                 .id(1L)
-                .title("네이버 신입 대비") // TODO: updateResumeRequest Title()
+                .title(updateResumeRequest.getTitle()) // TODO: updateResumeRequest Title()
                 .writerName("aken-you")
                 .createdAt(LocalDateTime.now())
-                .scopeId(1L)    // TODO: updateResumeRequest ScopeId()
-                .occupationId(1)
-                .year(0L)
+                .scope(scopes.get(updateResumeRequest.getScopeId()))    // TODO: updateResumeRequest ScopeId()
+                .occupation(occupations.get(updateResumeRequest.getOccupationId())) // TODO: updateResumeRequest OccupationId(
+                .year(updateResumeRequest.getYear())
                 .build();
 
         return ResponseEntity

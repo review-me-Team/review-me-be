@@ -15,13 +15,13 @@ import java.util.List;
 public class FeedbackResponse {
 
     @Schema(description = "피드백 ID", example = "1")
-    private long id;
+    private Long id;
 
     @Schema(description = "피드백 내용", example = "뭔가 이력서에 문제 해결과 관련된 내용이 부족한 것같아요.")
     private String content;
 
     @Schema(description = "피드백을 남긴 사용자 ID", example = "1")
-    private long writerId;
+    private Long writerId;
 
     @Schema(description = "피드백을 남긴 사용자 이름", example = "aken-you")
     private String writerName;
@@ -29,17 +29,17 @@ public class FeedbackResponse {
     @Schema(description = "피드백을 남긴 사용자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
     private String writerProfileUrl;
 
-    @Schema(description = "피드백 라벨 ID", example = "1")
-    private long labelId;
+    @Schema(description = "피드백 라벨", example = "프로젝트")
+    private String labelContent ;
 
     @Schema(description = "피드백 작성 시간", example = "2023-12-15")
     private LocalDateTime createdAt;
 
     @Schema(description = "댓글 개수", example = "10")
-    private long countOfReplies;
+    private Long countOfReplies;
 
     @Schema(description = "체크 여부", example = "true")
-    private boolean checked;
+    private Boolean checked;
 
     @Schema(description = "이모지 정보")
     private List<Emoji> emojis;
@@ -55,7 +55,7 @@ public class FeedbackResponse {
                 .writerId(feedback.getWriter().getId())
                 .writerName(feedback.getWriter().getName())
                 .writerProfileUrl(feedback.getWriter().getProfileUrl())
-                .labelId(feedback.getLabel().getId())
+                .labelContent(feedback.getLabel().getContent())
                 .createdAt(feedback.getCreatedAt())
                 .countOfReplies(feedback.getChildCnt())
                 .checked(feedback.getChecked())

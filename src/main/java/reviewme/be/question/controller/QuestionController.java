@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.repository.QuestionEmojiRepository;
 import reviewme.be.question.repository.QuestionRepository;
@@ -18,7 +19,6 @@ import reviewme.be.util.dto.Emoji;
 import reviewme.be.util.response.LabelPageResponse;
 import reviewme.be.util.response.LabelResponse;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,14 +38,16 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 추가 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostQuestionResponse>> postQuestions(@RequestBody PostQuestionRequest postQuestionRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostedQuestionResponse>> postQuestions(@Validated @RequestBody PostQuestionRequest postQuestionRequest, @PathVariable long resumeId) {
 
-        PostQuestionResponse sampleResponse = PostQuestionResponse.builder()
+        PostedQuestionResponse sampleResponse = PostedQuestionResponse.builder()
                 .resumeId(1L)
                 .writerId(1L)
                 .writerName("aken-you")
                 .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .resumePage(1L)
+                .content(postQuestionRequest.getContent())
+                .labelContent("react-query")
+                .resumePage(1)
                 .questionId(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -124,8 +126,8 @@ public class QuestionController {
                         .writerName("aken-you")
                         .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .createdAt(LocalDateTime.now())
-                        .emojiInfos(sampleEmojis)
-                        .myEmojiId(1L)
+                        .emojis(sampleEmojis)
+                        .myEmojiId(1)
                         .build());
 
         return ResponseEntity
@@ -165,7 +167,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionContent(@RequestBody UpdateQuestionContentRequest updateQuestionContentRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse> updateQuestionContent(@Validated @RequestBody UpdateQuestionContentRequest updateQuestionContentRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         return ResponseEntity
                 .ok()
@@ -182,7 +184,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 체크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionCheck(@Valid @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse> updateQuestionCheck(@Validated @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
         // TODO: question이 댓글이 아닌 question인 경우에만 체크 상태 수정 가능
@@ -202,7 +204,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 북마크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 북마크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionBookmark(@Valid @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse> updateQuestionBookmark(@Validated @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
 
@@ -251,7 +253,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 이모지 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 이모지 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionEmoji(@RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse> updateQuestionEmoji(@Validated @RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         return ResponseEntity
                 .ok()

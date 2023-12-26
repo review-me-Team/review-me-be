@@ -15,7 +15,7 @@ public class FeedbackEmoji {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "feedback_id")

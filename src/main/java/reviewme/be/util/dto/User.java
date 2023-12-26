@@ -10,7 +10,7 @@ import lombok.Getter;
 public class User {
 
     @Schema(description = "사용자 ID", example = "2")
-    private long id;
+    private Long id;
 
     @Schema(description = "사용자 이름", example = "acceptor-gyu")
     private String name;

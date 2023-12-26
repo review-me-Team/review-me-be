@@ -11,7 +11,7 @@ import reviewme.be.util.entity.Emoji;
 public class EmojiResponse {
 
     @Schema(description = "이모지 ID", example = "1")
-    private int id;
+    private Integer id;
 
     @Schema(description = "이모지", example = "🤔")
     private String emoji;

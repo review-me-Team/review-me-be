@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
@@ -19,10 +20,9 @@ import reviewme.be.feedback.response.*;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 
-import javax.persistence.Tuple;
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "feedback", description = "피드백(feedback) API")
@@ -40,15 +40,18 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 추가 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostFeedbackResponse>> postFeedback(@RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostedFeedbackResponse>> postFeedback(@Validated @RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
 
-        PostFeedbackResponse sampleResponse = PostFeedbackResponse.builder()
-                .resumeId(1L)
+        PostedFeedbackResponse sampleResponse = PostedFeedbackResponse.builder()
+                .id(2L)
+                .resumeId(resumeId)
                 .writerId(1L)
                 .writerName("aken-you")
                 .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .resumePage(1L)
-                .feedbackId(1L)
+                .content(postFeedbackRequest.getContent())
+                .labelContent("프로젝트")
+                .resumePage(postFeedbackRequest.getResumePage())
+                .parentFeedbackId(postFeedbackRequest.getFeedbackId())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -124,11 +127,10 @@ public class FeedbackController {
                         .id(1L)
                         .feedbackId(1L)
                         .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
-                        .writerId(1L)
                         .writerName("aken-you")
                         .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .createdAt(LocalDateTime.now())
-                        .emojiInfos(sampleEmojis)
+                        .emojis(sampleEmojis)
                         .myEmojiId(1L)
                         .build());
 
@@ -169,7 +171,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackContent(@RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackContent(@Validated @RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
 
         return ResponseEntity
                 .ok()
@@ -186,7 +188,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 체크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackCheck(@Valid @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackCheck(@Validated @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
         // TODO: feedback이 댓글이 아닌 feedback인 경우에만 체크 상태 수정 가능
@@ -206,7 +208,7 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackEmoji(@RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackEmoji(@Validated @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
 
         return ResponseEntity
                 .ok()

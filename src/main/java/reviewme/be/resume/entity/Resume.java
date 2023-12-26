@@ -17,7 +17,7 @@ public class Resume {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -33,8 +33,8 @@ public class Resume {
 
     private String title;
     private String url;
-    private int year;
-    private int commentCnt;
+    private Integer year;
+    private Integer commentCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 }

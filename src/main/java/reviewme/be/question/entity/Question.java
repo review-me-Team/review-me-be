@@ -17,7 +17,7 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -36,10 +36,10 @@ public class Question {
     private Resume resume;
 
     private String content;
-    private int resumePage;
+    private Integer resumePage;
     private Boolean bookmarked;
     private Boolean checked;
-    private int childCnt;
+    private Long childCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 }

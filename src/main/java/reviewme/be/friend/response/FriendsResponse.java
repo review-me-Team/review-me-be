@@ -16,5 +16,5 @@ public class FriendsResponse {
     private List<User> users;
 
     @Schema(description = "친구 수", example = "1")
-    private long count;
+    private Long count;
 }

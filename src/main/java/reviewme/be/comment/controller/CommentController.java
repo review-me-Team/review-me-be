@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.comment.entity.CommentEmoji;
 import reviewme.be.comment.repository.CommentEmojiRepository;
@@ -17,7 +18,7 @@ import reviewme.be.comment.request.UpdateCommentContentRequest;
 import reviewme.be.comment.request.UpdateCommentEmojiRequest;
 import reviewme.be.comment.response.CommentPageResponse;
 import reviewme.be.comment.response.CommentResponse;
-import reviewme.be.comment.response.PostCommentResponse;
+import reviewme.be.comment.response.PostedCommentResponse;
 import reviewme.be.util.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 
@@ -40,14 +41,15 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostCommentResponse>> postCommentOfResume(@RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostedCommentResponse>> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
 
-        PostCommentResponse sampleResponse = PostCommentResponse.builder()
+        PostedCommentResponse sampleResponse = PostedCommentResponse.builder()
                 .resumeId(1L)
                 .commentId(1L)
                 .commenterId(1L)
                 .commenterName("aken-you")
                 .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .content(postCommentRequest.getContent())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -122,7 +124,7 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentContent(@RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse> updateCommentContent(@Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
 
         return ResponseEntity
                 .ok()
@@ -139,7 +141,7 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentEmoji(@RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse> updateCommentEmoji(@Validated @RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
 
         return ResponseEntity
                 .ok()

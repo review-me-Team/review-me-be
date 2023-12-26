@@ -18,9 +18,6 @@ public class ResumeResponse {
     @Schema(description = "이력서 제목", example = "네이버 신입 개발자 준비")
     private String title;
 
-    @Schema(description = "이력서 작성자 ID", example = "1")
-    private long writerId;
-
     @Schema(description = "이력서 작성자 이름", example = "aken-you")
     private String writerName;
 
@@ -30,25 +27,24 @@ public class ResumeResponse {
     @Schema(description = "이력서 작성 시간", example = "2023-11-22")
     private LocalDateTime createdAt;
 
-    @Schema(description = "공개 범위", example = "1")
-    private long scopeId;
+    @Schema(description = "공개 범위", example = "public")
+    private String scope;
 
-    @Schema(description = "직군 ID", example = "1")
-    private int occupationId;
+    @Schema(description = "직군", example = "1")
+    private String occupation;
 
     @Schema(description = "년차", example = "0")
-    private long year;
+    private Integer year;
 
     public static ResumeResponse fromResume(Resume resume) {
         return ResumeResponse.builder()
                 .id(resume.getId())
                 .title(resume.getTitle())
-                .writerId(resume.getUser().getId())
                 .writerName(resume.getUser().getName())
                 .writerProfileUrl(resume.getUser().getProfileUrl())
                 .createdAt(resume.getCreatedAt())
-                .scopeId(resume.getScope().getId())
-                .occupationId(resume.getOccupation().getId())
+                .scope(resume.getScope().getScope())
+                .occupation(resume.getOccupation().getOccupation())
                 .year(resume.getYear())
                 .build();
     }
