@@ -58,7 +58,7 @@ public class QuestionResponse {
                 .writerId(question.getWriter().getId())
                 .writerName(question.getWriter().getName())
                 .writerProfileUrl(question.getWriter().getProfileUrl())
-                .labelId(question.getLabel().getId())
+                .labelContent(question.getLabel().getContent())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())
                 .bookmarked(question.getBookmarked())
