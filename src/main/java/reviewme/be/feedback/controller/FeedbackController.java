@@ -125,7 +125,6 @@ public class FeedbackController {
                         .id(1L)
                         .feedbackId(1L)
                         .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
-                        .writerId(1L)
                         .writerName("aken-you")
                         .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .createdAt(LocalDateTime.now())
