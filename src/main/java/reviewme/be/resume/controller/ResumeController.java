@@ -21,7 +21,7 @@ import reviewme.be.resume.response.ResumeDetailResponse;
 import reviewme.be.resume.response.ResumePageResponse;
 import reviewme.be.resume.response.ResumeResponse;
 import reviewme.be.resume.response.UploadResumeResponse;
-import reviewme.be.util.CustomResponse;
+import reviewme.be.custom.CustomResponse;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

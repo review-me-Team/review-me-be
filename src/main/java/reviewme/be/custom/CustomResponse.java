@@ -1,4 +1,4 @@
-package reviewme.be.util;
+package reviewme.be.custom;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

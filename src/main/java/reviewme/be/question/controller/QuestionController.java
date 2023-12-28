@@ -14,7 +14,7 @@ import reviewme.be.question.repository.QuestionEmojiRepository;
 import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.question.request.*;
 import reviewme.be.question.response.*;
-import reviewme.be.util.CustomResponse;
+import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 import reviewme.be.util.response.LabelPageResponse;
 import reviewme.be.util.response.LabelResponse;
