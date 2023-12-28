@@ -1,4 +1,4 @@
-package reviewme.be.comment.controller;
+package reviewme.be.util.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
 
 @RestControllerAdvice
-public class CommentExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
