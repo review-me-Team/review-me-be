@@ -45,7 +45,7 @@ public class ResumeController {
             @ApiResponse(responseCode = "400", description = "이력서 업로드 실패")
     })
     public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
-            @Parameter(description = "PDF 파일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
+            @Parameter(description = "이력서 업로드 정보(파일 포함)", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
             @ModelAttribute UploadResumeRequest uploadResumeRequest
     ) {
 
