@@ -8,12 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.request.UpdateResumeRequest;
 import reviewme.be.resume.request.UploadResumeRequest;
@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "resume", description = "이력서(resume) API")
+@Slf4j
 @RequestMapping("/resume")
 @RestController
 @RequiredArgsConstructor
@@ -45,9 +46,14 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
             @Parameter(description = "PDF 파일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
-            @RequestPart MultipartFile pdf,
-            @RequestPart UploadResumeRequest uploadResumeRequest
+            @ModelAttribute UploadResumeRequest uploadResumeRequest
     ) {
+
+        log.info("upload pdf: {}", uploadResumeRequest.getPdf());
+        log.info("upload title: {}", uploadResumeRequest.getTitle());
+        log.info("upload scopeId: {}", uploadResumeRequest.getScopeId());
+        log.info("upload occupationId: {}", uploadResumeRequest.getOccupationId());
+        log.info("upload year: {}", uploadResumeRequest.getYear());
 
         UploadResumeResponse createdResumeId = UploadResumeResponse.builder()
                 .id(1L)
