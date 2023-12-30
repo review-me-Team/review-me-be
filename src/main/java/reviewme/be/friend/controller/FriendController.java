@@ -14,7 +14,7 @@ import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.friend.request.AcceptFriendRequest;
 import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.friend.response.FriendsResponse;
-import reviewme.be.util.CustomResponse;
+import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.User;
 
 import java.util.List;

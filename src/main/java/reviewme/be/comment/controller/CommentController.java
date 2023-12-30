@@ -19,7 +19,7 @@ import reviewme.be.comment.request.UpdateCommentEmojiRequest;
 import reviewme.be.comment.response.CommentPageResponse;
 import reviewme.be.comment.response.CommentResponse;
 import reviewme.be.comment.response.PostedCommentResponse;
-import reviewme.be.util.CustomResponse;
+import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;

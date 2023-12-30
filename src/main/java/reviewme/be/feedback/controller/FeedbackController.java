@@ -17,12 +17,11 @@ import reviewme.be.feedback.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.feedback.response.*;
-import reviewme.be.util.CustomResponse;
+import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "feedback", description = "피드백(feedback) API")
