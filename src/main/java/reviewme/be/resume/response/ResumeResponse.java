@@ -18,6 +18,9 @@ public class ResumeResponse {
     @Schema(description = "이력서 제목", example = "네이버 신입 개발자 준비")
     private String title;
 
+    @Schema(description = "이력서 작성자 ID", example = "1")
+    private Long writerId;
+
     @Schema(description = "이력서 작성자 이름", example = "aken-you")
     private String writerName;
 
@@ -40,6 +43,7 @@ public class ResumeResponse {
         return ResumeResponse.builder()
                 .id(resume.getId())
                 .title(resume.getTitle())
+                .writerId(resume.getUser().getId())
                 .writerName(resume.getUser().getName())
                 .writerProfileUrl(resume.getUser().getProfileUrl())
                 .createdAt(resume.getCreatedAt())

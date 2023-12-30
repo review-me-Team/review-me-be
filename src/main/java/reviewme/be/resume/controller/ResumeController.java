@@ -168,6 +168,7 @@ public class ResumeController {
         ResumeResponse sampleUpdatedResumeResponse = ResumeResponse.builder()
                 .id(1L)
                 .title(updateResumeRequest.getTitle()) // TODO: updateResumeRequest Title()
+                .writerId(1L)
                 .writerName("aken-you")
                 .createdAt(LocalDateTime.now())
                 .scope(scopes.get(updateResumeRequest.getScopeId()))    // TODO: updateResumeRequest ScopeId()
