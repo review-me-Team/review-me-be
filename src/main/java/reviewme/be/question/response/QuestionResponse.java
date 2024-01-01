@@ -50,7 +50,7 @@ public class QuestionResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<Emoji> emojiInfos, Integer myEmojiId) {
+    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<Emoji> emojis, Integer myEmojiId) {
 
         return QuestionResponse.builder()
                 .id(question.getId())
@@ -63,12 +63,12 @@ public class QuestionResponse {
                 .countOfReplies(question.getChildCnt())
                 .bookmarked(question.getBookmarked())
                 .checked(question.getChecked())
-                .emojis(emojiInfos)
+                .emojis(emojis)
                 .myEmojiId(myEmojiId)
                 .build();
     }
 
-    public static QuestionResponse fromQuestionOfOtherResume(Question question, List<Emoji> emojiInfos) {
+    public static QuestionResponse fromQuestionOfOtherResume(Question question, List<Emoji> emojis) {
 
         return QuestionResponse.builder()
                 .id(question.getId())
@@ -79,7 +79,7 @@ public class QuestionResponse {
                 .labelContent(question.getLabel().getContent())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())
-                .emojis(emojiInfos)
+                .emojis(emojis)
                 .build();
     }
 }
