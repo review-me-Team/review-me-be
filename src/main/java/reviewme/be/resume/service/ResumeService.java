@@ -35,7 +35,7 @@ public class ResumeService {
 
         String url = sb.append("https://")
                 .append(bucketName)
-                .append(".s3.ap-northeast-2.amazonaws.com/resume/")
+                .append(".s3.ap-northeast-2.amazonaws.com/")
                 .append(fileName)
                 .toString();
 
