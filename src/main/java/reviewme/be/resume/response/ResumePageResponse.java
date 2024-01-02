@@ -13,4 +13,10 @@ public class ResumePageResponse {
 
     @Schema(description = "이력서 목록")
     private List<ResumeResponse> resumes;
+
+    public static ResumePageResponse fromResumes(List<ResumeResponse> resumes) {
+        return ResumePageResponse.builder()
+                .resumes(resumes)
+                .build();
+    }
 }

@@ -53,17 +53,13 @@ public class ResumeController {
 
         Long id = resumeService.saveResume(uploadResumeRequest);
 
-        UploadResumeResponse createdResumeId = UploadResumeResponse.builder()
-                .id(id)
-                .build();
-
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "이력서 업로드에 성공했습니다.",
-                        createdResumeId
+                        UploadResumeResponse.fromSavedResumeId(id)
                 ));
     }
 

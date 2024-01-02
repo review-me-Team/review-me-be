@@ -11,4 +11,10 @@ public class UploadResumeResponse {
 
     @Schema(description = "이력서 ID", example = "1")
     private Long id;
+
+    public static UploadResumeResponse fromSavedResumeId(Long id) {
+        return UploadResumeResponse.builder()
+                .id(id)
+                .build();
+    }
 }

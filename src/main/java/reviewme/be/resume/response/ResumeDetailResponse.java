@@ -3,6 +3,7 @@ package reviewme.be.resume.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.resume.entity.Resume;
 
 @Getter
 @Builder
@@ -23,4 +24,14 @@ public class ResumeDetailResponse {
 
     @Schema(description = "재직 기간", example = "0")
     private Integer year;
+
+    public static ResumeDetailResponse fromResume(Resume resume) {
+        return ResumeDetailResponse.builder()
+                .resumeUrl(resume.getUrl())
+                .title(resume.getTitle())
+                .writerName(resume.getUser().getName())
+                .occupation(resume.getOccupation().getOccupation())
+                .year(resume.getYear())
+                .build();
+    }
 }
