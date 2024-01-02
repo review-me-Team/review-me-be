@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.repository.ResumeRepository;
+import reviewme.be.resume.request.UploadResumeRequest;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -22,13 +23,29 @@ public class ResumeService {
     @Value("${AWS_S3_BUCKET_NAME}")
     private String bucketName;
 
+    @Value("${BUCKET_URL}")
+    private String bucketUrl;
+
+    public Long saveResume(UploadResumeRequest resumeRequest) {
+
+        String resumeFileName = uploadResumeFile(resumeRequest.getPdf());
+
+        // TODO: save newResume Entity
+
+        long savedResumeId = 1L;
+
+        return savedResumeId;
+    }
+
     /**
      * Take MultiFile data, create a url, and upload to S3
      * Recursively recreate URLs if they are duplicates
+     * delete the bucket URL and return it
+     *
      * @param resumeFile
-     * @return url
+     * @return String with the bucket URL deleted
      */
-    public String uploadResumeFile(MultipartFile resumeFile) {
+    private String uploadResumeFile(MultipartFile resumeFile) {
 
         StringBuilder sb = new StringBuilder();
         String fileName =  createFileNameWithUUID(resumeFile.getOriginalFilename());
@@ -49,6 +66,13 @@ public class ResumeService {
 
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(resumeFile.getInputStream(), resumeFile.getSize()));
+
+            sb.setLength(0);
+
+            String modifiedFileName = sb.append(url)
+                    .delete(0, bucketUrl.length())
+                    .toString();
+
             return url;
         } catch (Exception e) {
             throw new IllegalStateException("Failed to upload file", e);

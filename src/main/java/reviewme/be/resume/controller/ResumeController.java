@@ -51,14 +51,10 @@ public class ResumeController {
             @ModelAttribute UploadResumeRequest uploadResumeRequest
     ) {
 
-        String resumeFileUrl = resumeService.uploadResumeFile(uploadResumeRequest.getPdf());
-
-        log.info("resumeFileUrl: {}", resumeFileUrl);
-
-        // TODO: save newResume Entity
+        Long id = resumeService.saveResume(uploadResumeRequest);
 
         UploadResumeResponse createdResumeId = UploadResumeResponse.builder()
-                .id(1L)
+                .id(id)
                 .build();
 
         return ResponseEntity
