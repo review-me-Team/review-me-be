@@ -22,7 +22,9 @@ import reviewme.be.resume.response.ResumePageResponse;
 import reviewme.be.resume.response.ResumeResponse;
 import reviewme.be.resume.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.resume.service.ResumeService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ResumeController {
 
+    private final ResumeService resumeService;
     private final ResumeRepository resumeRepository;
 
     @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
@@ -47,13 +50,13 @@ public class ResumeController {
     public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
             @Parameter(description = "이력서 업로드 정보(파일 포함)", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
             @ModelAttribute UploadResumeRequest uploadResumeRequest
-    ) {
+    ) throws IOException {
 
-        log.info("upload pdf: {}", uploadResumeRequest.getPdf());
-        log.info("upload title: {}", uploadResumeRequest.getTitle());
-        log.info("upload scopeId: {}", uploadResumeRequest.getScopeId());
-        log.info("upload occupationId: {}", uploadResumeRequest.getOccupationId());
-        log.info("upload year: {}", uploadResumeRequest.getYear());
+        String resumeFileUrl = resumeService.uploadResume(uploadResumeRequest.getPdf());
+
+        log.info("resumeFileUrl: {}", resumeFileUrl);
+
+        // TODO: save newResume Entity
 
         UploadResumeResponse createdResumeId = UploadResumeResponse.builder()
                 .id(1L)
