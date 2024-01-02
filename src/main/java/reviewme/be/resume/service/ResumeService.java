@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +21,10 @@ public class ResumeService {
     @Value("${AWS_S3_BUCKET_NAME}")
     private String bucketName;
 
-    public String uploadResume(MultipartFile resumeFile) throws IOException {
+    public String uploadResume(MultipartFile resumeFile) {
 
         StringBuilder sb = new StringBuilder();
-        String fileName = resumeFile.getOriginalFilename();
+        String fileName =  createRandomFileId() + resumeFile.getOriginalFilename();
         String contentTypeOfResumeFile = resumeFile.getContentType();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -45,5 +46,9 @@ public class ResumeService {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to upload file", e);
         }
+    }
+
+    private String createRandomFileId() {
+        return UUID.randomUUID().toString();
     }
 }
