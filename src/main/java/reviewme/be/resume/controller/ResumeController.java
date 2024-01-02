@@ -24,7 +24,6 @@ import reviewme.be.resume.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.resume.service.ResumeService;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +49,7 @@ public class ResumeController {
     public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
             @Parameter(description = "이력서 업로드 정보(파일 포함)", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
             @ModelAttribute UploadResumeRequest uploadResumeRequest
-    ) throws IOException {
+    ) {
 
         String resumeFileUrl = resumeService.uploadResume(uploadResumeRequest.getPdf());
 
