@@ -22,7 +22,13 @@ public class ResumeService {
     @Value("${AWS_S3_BUCKET_NAME}")
     private String bucketName;
 
-    public String uploadResume(MultipartFile resumeFile) {
+    /**
+     * Take MultiFile data, create a url, and upload to S3
+     * Recursively recreate URLs if they are duplicates
+     * @param resumeFile
+     * @return url
+     */
+    public String uploadResumeFile(MultipartFile resumeFile) {
 
         StringBuilder sb = new StringBuilder();
         String fileName =  createFileNameWithUUID(resumeFile.getOriginalFilename());

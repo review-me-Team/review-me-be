@@ -51,7 +51,7 @@ public class ResumeController {
             @ModelAttribute UploadResumeRequest uploadResumeRequest
     ) {
 
-        String resumeFileUrl = resumeService.uploadResume(uploadResumeRequest.getPdf());
+        String resumeFileUrl = resumeService.uploadResumeFile(uploadResumeRequest.getPdf());
 
         log.info("resumeFileUrl: {}", resumeFileUrl);
 
