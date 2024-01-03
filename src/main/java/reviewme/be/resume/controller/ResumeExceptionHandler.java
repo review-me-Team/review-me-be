@@ -10,7 +10,7 @@ import reviewme.be.resume.exception.BadFileExtensionException;
 public class ResumeExceptionHandler {
 
     @ExceptionHandler(BadFileExtensionException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistingStoreDetail(BadFileExtensionException ex) {
+    public ResponseEntity<CustomErrorResponse> badFileExtension(BadFileExtensionException ex) {
 
         return ResponseEntity
                 .badRequest()
