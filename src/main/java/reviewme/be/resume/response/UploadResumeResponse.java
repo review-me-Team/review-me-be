@@ -10,9 +10,9 @@ import lombok.Getter;
 public class UploadResumeResponse {
 
     @Schema(description = "이력서 ID", example = "1")
-    private Long id;
+    private long id;
 
-    public static UploadResumeResponse fromSavedResumeId(Long id) {
+    public static UploadResumeResponse fromSavedResumeId(long id) {
         return UploadResumeResponse.builder()
                 .id(id)
                 .build();

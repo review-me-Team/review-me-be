@@ -4,7 +4,9 @@ package reviewme.be.resume.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.request.UploadResumeRequest;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -26,7 +28,7 @@ public class ResumeService {
     @Value("${BUCKET_URL}")
     private String bucketUrl;
 
-    public Long saveResume(UploadResumeRequest resumeRequest) {
+    public long saveResume(UploadResumeRequest resumeRequest) {
 
         String resumeFileName = uploadResumeFile(resumeRequest.getPdf());
 
@@ -46,6 +48,8 @@ public class ResumeService {
      * @return String with the bucket URL deleted
      */
     private String uploadResumeFile(MultipartFile resumeFile) {
+
+        validateFileExtension(resumeFile);
 
         StringBuilder sb = new StringBuilder();
         String fileName =  createFileNameWithUUID(resumeFile.getOriginalFilename());
@@ -92,5 +96,16 @@ public class ResumeService {
         );
 
         return newFileName;
+    }
+
+    private void validateFileExtension(MultipartFile resumeFile) {
+
+        String extension = StringUtils.getFilenameExtension(resumeFile.getOriginalFilename());
+
+        System.out.println(extension);
+
+        if (extension == null || !extension.equals("pdf")) {
+            throw new BadFileExtensionException("pdf 파일만 업로드 가능합니다.");
+        }
     }
 }

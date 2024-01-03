@@ -51,7 +51,7 @@ public class ResumeController {
             @ModelAttribute UploadResumeRequest uploadResumeRequest
     ) {
 
-        Long id = resumeService.saveResume(uploadResumeRequest);
+        long id = resumeService.saveResume(uploadResumeRequest);
 
         return ResponseEntity
                 .ok()
