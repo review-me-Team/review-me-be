@@ -1,5 +1,6 @@
 package reviewme.be.feedback.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class CommentOfFeedbackResponse {
     private String writerProfileUrl;
 
     @Schema(description = "댓글 작성 시간", example = "2023-12-15")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     @Schema(description = "이모지 정보")

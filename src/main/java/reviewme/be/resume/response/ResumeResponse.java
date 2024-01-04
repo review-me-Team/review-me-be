@@ -1,5 +1,6 @@
 package reviewme.be.resume.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,13 +19,17 @@ public class ResumeResponse {
     @Schema(description = "이력서 제목", example = "네이버 신입 개발자 준비")
     private String title;
 
+    @Schema(description = "이력서 작성자 ID", example = "1")
+    private Long writerId;
+
     @Schema(description = "이력서 작성자 이름", example = "aken-you")
     private String writerName;
 
     @Schema(description = "이력서 작성자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
     private String writerProfileUrl;
 
-    @Schema(description = "이력서 작성 시간", example = "2023-11-22")
+    @Schema(description = "이력서 작성 시간", example = "2024-01-02 01:32")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     @Schema(description = "공개 범위", example = "public")
@@ -40,6 +45,7 @@ public class ResumeResponse {
         return ResumeResponse.builder()
                 .id(resume.getId())
                 .title(resume.getTitle())
+                .writerId(resume.getUser().getId())
                 .writerName(resume.getUser().getName())
                 .writerProfileUrl(resume.getUser().getProfileUrl())
                 .createdAt(resume.getCreatedAt())

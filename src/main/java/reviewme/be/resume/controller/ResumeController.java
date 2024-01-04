@@ -8,12 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.request.UpdateResumeRequest;
 import reviewme.be.resume.request.UploadResumeRequest;
@@ -22,6 +22,7 @@ import reviewme.be.resume.response.ResumePageResponse;
 import reviewme.be.resume.response.ResumeResponse;
 import reviewme.be.resume.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.resume.service.ResumeService;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -30,11 +31,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "resume", description = "이력서(resume) API")
+@Slf4j
 @RequestMapping("/resume")
 @RestController
 @RequiredArgsConstructor
 public class ResumeController {
 
+    private final ResumeService resumeService;
     private final ResumeRepository resumeRepository;
 
     @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
@@ -44,14 +47,11 @@ public class ResumeController {
             @ApiResponse(responseCode = "400", description = "이력서 업로드 실패")
     })
     public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
-            @Parameter(description = "PDF 파일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
-            @RequestPart MultipartFile pdf,
-            @RequestPart UploadResumeRequest uploadResumeRequest
+            @Parameter(description = "이력서 업로드 정보(파일 포함)", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
+            @ModelAttribute UploadResumeRequest uploadResumeRequest
     ) {
 
-        UploadResumeResponse createdResumeId = UploadResumeResponse.builder()
-                .id(1L)
-                .build();
+        long id = resumeService.saveResume(uploadResumeRequest);
 
         return ResponseEntity
                 .ok()
@@ -59,7 +59,7 @@ public class ResumeController {
                         "success",
                         200,
                         "이력서 업로드에 성공했습니다.",
-                        createdResumeId
+                        UploadResumeResponse.fromSavedResumeId(id)
                 ));
     }
 
@@ -162,6 +162,7 @@ public class ResumeController {
         ResumeResponse sampleUpdatedResumeResponse = ResumeResponse.builder()
                 .id(1L)
                 .title(updateResumeRequest.getTitle()) // TODO: updateResumeRequest Title()
+                .writerId(1L)
                 .writerName("aken-you")
                 .createdAt(LocalDateTime.now())
                 .scope(scopes.get(updateResumeRequest.getScopeId()))    // TODO: updateResumeRequest ScopeId()

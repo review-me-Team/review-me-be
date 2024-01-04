@@ -1,5 +1,6 @@
 package reviewme.be.question.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +33,8 @@ public class QuestionResponse {
     @Schema(description = "예상 질문 라벨", example = "react-query")
     private String labelContent;
 
-    @Schema(description = "예상 질문 작성 시간", example = "2023-12-15")
+    @Schema(description = "예상 질문 작성 시간", example = "2024-01-02 01:32")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     @Schema(description = "대댓글 개수", example = "10")
@@ -50,7 +52,7 @@ public class QuestionResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<Emoji> emojiInfos, Integer myEmojiId) {
+    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<Emoji> emojis, Integer myEmojiId) {
 
         return QuestionResponse.builder()
                 .id(question.getId())
@@ -63,12 +65,12 @@ public class QuestionResponse {
                 .countOfReplies(question.getChildCnt())
                 .bookmarked(question.getBookmarked())
                 .checked(question.getChecked())
-                .emojis(emojiInfos)
+                .emojis(emojis)
                 .myEmojiId(myEmojiId)
                 .build();
     }
 
-    public static QuestionResponse fromQuestionOfOtherResume(Question question, List<Emoji> emojiInfos) {
+    public static QuestionResponse fromQuestionOfOtherResume(Question question, List<Emoji> emojis) {
 
         return QuestionResponse.builder()
                 .id(question.getId())
@@ -79,7 +81,7 @@ public class QuestionResponse {
                 .labelContent(question.getLabel().getContent())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())
-                .emojis(emojiInfos)
+                .emojis(emojis)
                 .build();
     }
 }

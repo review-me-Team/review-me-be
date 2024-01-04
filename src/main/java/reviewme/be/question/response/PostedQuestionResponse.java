@@ -1,5 +1,6 @@
 package reviewme.be.question.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +37,7 @@ public class PostedQuestionResponse {
     private Long questionId;
 
     @Schema(description = "예상 질문 작성 시간", example = "2023-11-23 09:27")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
 }
