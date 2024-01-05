@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.login.request.OAuthCodeRequest;
-import reviewme.be.login.response.UserProfileResponse;
+import reviewme.be.login.dto.OAuthCodeRequest;
+import reviewme.be.login.dto.request.OAuthCodeRequest;
+import reviewme.be.login.dto.response.UserProfileResponse;
 import reviewme.be.login.service.OAuthLoginService;
-import reviewme.be.login.token.GitHubOAuthApp;
 
 @Tag(name = "login", description = "로그인(login) API")
 @RequestMapping("/login/oauth")

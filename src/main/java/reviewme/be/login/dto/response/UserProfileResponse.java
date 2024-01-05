@@ -1,4 +1,4 @@
-package reviewme.be.login.response;
+package reviewme.be.login.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

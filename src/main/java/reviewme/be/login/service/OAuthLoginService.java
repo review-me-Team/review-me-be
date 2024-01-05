@@ -2,12 +2,11 @@ package reviewme.be.login.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import reviewme.be.login.response.UserProfileResponse;
+import reviewme.be.login.dto.response.UserProfileResponse;
 import reviewme.be.login.token.GitHubOAuthApp;
 
 import java.util.HashMap;
