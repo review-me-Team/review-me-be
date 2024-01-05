@@ -9,6 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import reviewme.be.login.dto.UserGitHubAccessToken;
 import reviewme.be.login.dto.response.UserProfileResponse;
+import reviewme.be.login.exception.InvalidCodeException;
 import reviewme.be.login.token.GitHubOAuthApp;
 
 import java.util.HashMap;
@@ -53,8 +54,10 @@ public class OAuthLoginService {
                 request,
                 UserGitHubAccessToken.class);
 
-        if (response.getBody().getAccessToken() == null) {
-            // TODO: throw exception
+        String accessToken = response.getBody().getAccessToken();
+
+        if (accessToken == null) {
+            throw new InvalidCodeException("유효하지 않은 코드입니다.");
         }
 
         return response.getBody().getAccessToken();
