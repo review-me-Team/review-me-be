@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LoginController {
 
-    @Operation(summary = "GitHub을 통해 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
+    @Operation(summary = "GitHub으로 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
