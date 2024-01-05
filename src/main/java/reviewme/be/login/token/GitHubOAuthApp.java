@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class GitHubOAuthAppInfo {
+public class GitHubOAuthApp {
 
 
     @Value("${GITHUB_CLIENT_ID_BE_LOCAL}")

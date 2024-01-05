@@ -1,9 +1,6 @@
 package reviewme.be.login.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,15 +10,17 @@ import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.login.request.OAuthCodeRequest;
 import reviewme.be.login.response.UserProfileResponse;
-
-import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
+import reviewme.be.login.service.OAuthLoginService;
+import reviewme.be.login.token.GitHubOAuthApp;
 
 @Tag(name = "login", description = "로그인(login) API")
 @RequestMapping("/login/oauth")
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
+
+    private final GitHubOAuthApp gitHubOAuthApp;
+    private final OAuthLoginService oAuthLoginService;
 
     @Operation(summary = "GitHub으로 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
     @PostMapping
@@ -30,14 +29,9 @@ public class LoginController {
             @ApiResponse(responseCode = "400", description = "로그인 실패")
     })
     public ResponseEntity<CustomResponse<UserProfileResponse>> loginWithGitHub(
-            @RequestBody OAuthCodeRequest oAuthCodeRequest,
-            HttpServletResponse response) {
+            @RequestBody OAuthCodeRequest request) {
 
-        UserProfileResponse sampleResponse = UserProfileResponse.builder()
-                .id(1L)
-                .name("aken-you")
-                .avatarUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .build();
+        UserProfileResponse sampleResponse = oAuthLoginService.getUserProfile(request.getCode());
 
         return ResponseEntity
                 .ok()
