@@ -19,7 +19,6 @@ import reviewme.be.login.token.GitHubOAuthApp;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final GitHubOAuthApp gitHubOAuthApp;
     private final OAuthLoginService oAuthLoginService;
 
     @Operation(summary = "GitHub으로 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
