@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.login.request.OAuthCodeRequest;
 import reviewme.be.login.response.UserProfileResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,14 +24,13 @@ import java.time.LocalDateTime;
 public class LoginController {
 
     @Operation(summary = "GitHub을 통해 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
-    @GetMapping
+    @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "로그인 실패")
     })
     public ResponseEntity<CustomResponse<UserProfileResponse>> loginWithGitHub(
-            @Parameter(description = "사용자가 GitHub 정보 허가를 통해 얻은 code", schema = @Schema(example = "obtainedThroughTheServiceUsersGitHubAuthentication"))
-            String code,
+            @RequestBody OAuthCodeRequest oAuthCodeRequest,
             HttpServletResponse response) {
 
         UserProfileResponse sampleResponse = UserProfileResponse.builder()
