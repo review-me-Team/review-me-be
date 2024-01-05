@@ -2,10 +2,12 @@ package reviewme.be.login.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import reviewme.be.login.dto.UserGitHubAccessToken;
 import reviewme.be.login.dto.response.UserProfileResponse;
 import reviewme.be.login.token.GitHubOAuthApp;
 
@@ -21,6 +23,17 @@ public class OAuthLoginService {
 
     public UserProfileResponse getUserProfile(String code) {
 
+        String accessToken = getAccessToken(code);
+
+        return UserProfileResponse.builder()
+                .id(1L)
+                .name("aken-you")
+                .avatarUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .build();
+    }
+
+    private String getAccessToken(String code) {
+
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> header = new HashMap<>();
         header.put("Accept", "application/json");
@@ -29,18 +42,21 @@ public class OAuthLoginService {
 
         MultiValueMap<String, String> payloads = new LinkedMultiValueMap<>();
         Map<String, String> payload = new HashMap<>();
-        payload.put("grant_type", "authorization_code");
         payload.put("client_id", gitHubOAuthApp.getClientId());
         payload.put("client_secret", gitHubOAuthApp.getClientSecret());
         payload.put("code", code);
         payloads.setAll(payload);
 
         HttpEntity<?> request = new HttpEntity<>(payloads, headers);
+        ResponseEntity<UserGitHubAccessToken> response = restTemplate.postForEntity(
+                gitHubOAuthApp.getAccessTokenEndpoint(),
+                request,
+                UserGitHubAccessToken.class);
 
-        return UserProfileResponse.builder()
-                .id(1L)
-                .name("aken-you")
-                .avatarUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .build();
+        if (response.getBody().getAccessToken() == null) {
+            // TODO: throw exception
+        }
+
+        return response.getBody().getAccessToken();
     }
 }

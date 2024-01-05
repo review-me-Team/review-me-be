@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.login.dto.OAuthCodeRequest;
 import reviewme.be.login.dto.request.OAuthCodeRequest;
 import reviewme.be.login.dto.response.UserProfileResponse;
 import reviewme.be.login.service.OAuthLoginService;

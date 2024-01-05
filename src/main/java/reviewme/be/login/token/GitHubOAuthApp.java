@@ -18,6 +18,6 @@ public class GitHubOAuthApp {
     @Value("${GITHUB_CLIENT_SECRET_BE_LOCAL}")
     private String clientSecret;
 
-    @Value("${GITHUB_REDIRECT_URI_BE_LOCAL}")
-    private String redirectUri;
+    @Value("${GITHUB_ACCESSTOKEN_ENDPOINT}")
+    private String accessTokenEndpoint;
 }

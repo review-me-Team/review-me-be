@@ -11,6 +11,4 @@ import lombok.NoArgsConstructor;
 public class UserGitHubAccessToken {
 
     private String accessToken;
-    private String scope;
-    private String tokenType;
 }
