@@ -1,13 +1,13 @@
 package reviewme.be.login.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import reviewme.be.login.dto.UserGitHubAccessToken;
+import reviewme.be.login.dto.UserGitHubProfile;
 import reviewme.be.login.dto.response.UserProfileResponse;
 import reviewme.be.login.exception.InvalidCodeException;
 import reviewme.be.login.token.GitHubOAuthApp;
@@ -25,14 +25,21 @@ public class OAuthLoginService {
     public UserProfileResponse getUserProfile(String code) {
 
         String accessToken = getAccessToken(code);
+        UserGitHubProfile userGitHubProfile = getUserGitHubProfile(accessToken);
 
         return UserProfileResponse.builder()
                 .id(1L)
-                .name("aken-you")
-                .avatarUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .name(userGitHubProfile.getLogin())
+                .avatarUrl(userGitHubProfile.getAvatarUrl())
                 .build();
     }
 
+    /**
+     * Call the GitHub API with the code to get the accessToken.
+     *
+     * @param code
+     * @return accessToken
+     */
     private String getAccessToken(String code) {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -61,5 +68,26 @@ public class OAuthLoginService {
         }
 
         return response.getBody().getAccessToken();
+    }
+
+    /**
+     * Call the GitHub API with the accessToken to get the user information.
+     *
+     * @param accessToken
+     * @return UserGitHubProfile
+     */
+    private UserGitHubProfile getUserGitHubProfile(String accessToken) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<?> request = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(
+                gitHubOAuthApp.getUserProfileEndpoint(),
+                HttpMethod.GET,
+                request,
+                UserGitHubProfile.class).getBody();
     }
 }

@@ -20,4 +20,7 @@ public class GitHubOAuthApp {
 
     @Value("${GITHUB_ACCESSTOKEN_ENDPOINT}")
     private String accessTokenEndpoint;
+
+    @Value("${GITHUB_USER_PROFILE_ENDPOINT}")
+    private String userProfileEndpoint;
 }
