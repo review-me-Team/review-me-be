@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
+import reviewme.be.user.service.UserService;
+import reviewme.be.util.entity.User;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -21,6 +23,7 @@ public class ResumeService {
 
     private final S3Client s3Client;
     private final ResumeRepository resumeRepository;
+    private final UserService userService;
 
     @Value("${AWS_S3_BUCKET_NAME}")
     private String bucketName;
@@ -35,6 +38,7 @@ public class ResumeService {
         // TODO: save newResume Entity
 
         // TODO: 로그인 기능 구현 전까지 userId가 1인 user로 사용
+        User user = userService.getUserById(1L);
 
         long savedResumeId = 1L;
 
