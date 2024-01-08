@@ -11,7 +11,7 @@ import reviewme.be.util.entity.Occupation;
 public class OccupationResponse {
 
     @Schema(description = "직군 ID", example = "1")
-    private Integer id;
+    private Long id;
 
     @Schema(description = "직군", example = "frontend")
     private String occupation;

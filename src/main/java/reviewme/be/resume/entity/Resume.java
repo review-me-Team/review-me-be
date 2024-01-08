@@ -1,6 +1,7 @@
 package reviewme.be.resume.entity;
 
 import lombok.*;
+import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
 import reviewme.be.util.entity.User;
@@ -33,8 +34,21 @@ public class Resume {
 
     private String title;
     private String url;
-    private Integer year;
+    private int year;
     private Integer commentCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public static Resume ofCreated(UploadResumeRequest uploadResumeRequest, User user, Scope scope, Occupation occupation, String fileName) {
+        return Resume.builder()
+                .user(user)
+                .scope(scope)
+                .occupation(occupation)
+                .title(uploadResumeRequest.getTitle())
+                .url(fileName)
+                .year(uploadResumeRequest.getYear())
+                .commentCnt(0)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
 }

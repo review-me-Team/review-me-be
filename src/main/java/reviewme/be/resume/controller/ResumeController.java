@@ -15,12 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.resume.repository.ResumeRepository;
-import reviewme.be.resume.request.UpdateResumeRequest;
-import reviewme.be.resume.request.UploadResumeRequest;
-import reviewme.be.resume.response.ResumeDetailResponse;
-import reviewme.be.resume.response.ResumePageResponse;
-import reviewme.be.resume.response.ResumeResponse;
-import reviewme.be.resume.response.UploadResumeResponse;
+import reviewme.be.resume.dto.request.UpdateResumeRequest;
+import reviewme.be.resume.dto.request.UploadResumeRequest;
+import reviewme.be.resume.dto.response.ResumeDetailResponse;
+import reviewme.be.resume.dto.response.ResumePageResponse;
+import reviewme.be.resume.dto.response.ResumeResponse;
+import reviewme.be.resume.dto.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.resume.service.ResumeService;
 

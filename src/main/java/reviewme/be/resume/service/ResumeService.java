@@ -6,9 +6,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.repository.ResumeRepository;
-import reviewme.be.resume.request.UploadResumeRequest;
+import reviewme.be.resume.dto.request.UploadResumeRequest;
+import reviewme.be.user.service.UserService;
+import reviewme.be.util.entity.Occupation;
+import reviewme.be.util.entity.Scope;
+import reviewme.be.util.entity.User;
+import reviewme.be.util.service.UtilService;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -21,6 +27,8 @@ public class ResumeService {
 
     private final S3Client s3Client;
     private final ResumeRepository resumeRepository;
+    private final UserService userService;
+    private final UtilService utilService;
 
     @Value("${AWS_S3_BUCKET_NAME}")
     private String bucketName;
@@ -32,9 +40,16 @@ public class ResumeService {
 
         String resumeFileName = uploadResumeFile(resumeRequest.getPdf());
 
-        // TODO: save newResume Entity
+        // TODO: 로그인 기능 구현 전까지 userId가 1인 user로 사용
+        User user = userService.getUserById(1L);
+        Scope scope = utilService.getScopeById(resumeRequest.getScopeId());
+        Occupation occupation = utilService.getOccupationById(resumeRequest.getOccupationId());
 
-        long savedResumeId = 1L;
+        Resume createdResume = resumeRepository.save(
+                Resume.ofCreated(resumeRequest, user, scope, occupation, resumeFileName)
+        );
+
+        long savedResumeId = createdResume.getId();
 
         return savedResumeId;
     }
@@ -62,22 +77,10 @@ public class ResumeService {
                 .contentType(contentTypeOfResumeFile)
                 .build();
 
-        String url = sb.append("https://")
-                .append(bucketName)
-                .append(".s3.ap-northeast-2.amazonaws.com/")
-                .append(fileName)
-                .toString();
-
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(resumeFile.getInputStream(), resumeFile.getSize()));
 
-            sb.setLength(0);
-
-            String modifiedFileName = sb.append(url)
-                    .delete(0, bucketUrl.length())
-                    .toString();
-
-            return url;
+            return fileName;
         } catch (Exception e) {
             throw new IllegalStateException("Failed to upload file", e);
         }
@@ -101,8 +104,6 @@ public class ResumeService {
     private void validateFileExtension(MultipartFile resumeFile) {
 
         String extension = StringUtils.getFilenameExtension(resumeFile.getOriginalFilename());
-
-        System.out.println(extension);
 
         if (extension == null || !extension.equals("pdf")) {
             throw new BadFileExtensionException("pdf 파일만 업로드 가능합니다.");

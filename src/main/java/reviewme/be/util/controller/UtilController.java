@@ -21,31 +21,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UtilController {
 
-    private final UserRepository userRepository;
     private final ScopeRepository scopeRepository;
     private final EmojiRepository emojiRepository;
     private final OccupationRepository occupationRepository;
     private final LabelRepository labelRepository;
-
-    @Operation(summary = "개인 정보 조회", description = "자신의 정보를 조회합니다.")
-    @GetMapping("/info")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "개인 정보 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "개인 정보 조회 실패")
-    })
-    public ResponseEntity<CustomResponse<User>> showUserInfo() {
-
-        User userResponse = User.fromUser(userRepository.findById(1L).get());
-
-        return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "개인 정보 조회에 성공했습니다.",
-                        userResponse
-                ));
-    }
 
     @Operation(summary = "공개 범위 목록 조회", description = "공개 범위 목록을 조회합니다.")
     @GetMapping("/scope")
