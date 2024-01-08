@@ -98,11 +98,11 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 상세 내용 조회 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 상세 내용 조회 실패")
     })
-    public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(@PathVariable Long resumeId) {
+    public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(@PathVariable long resumeId) {
 
-        // TODO: S3 연결 후, sample resume 세팅
-        // TODO: findByResumeId -> get resumeUrl
         // TODO: pdf url 암호화 필요할 수 있음 (회의 후 결정)
+
+        resumeService.getResumeDetail(resumeId);
 
         ResumeDetailResponse sampleResponse = ResumeDetailResponse.builder()
                 .resumeUrl("https://review-me-resume.s3.ap-northeast-2.amazonaws.com/resume/7562857e-130f-4f9a-9ca1-441908180b31_%E1%84%8B%E1%85%B5%E1%84%85%E1%85%A7%E1%86%A8%E1%84%89%E1%85%A5_%E1%84%89%E1%85%A2%E1%86%B7%E1%84%91%E1%85%B3%E1%86%AF.pdf")

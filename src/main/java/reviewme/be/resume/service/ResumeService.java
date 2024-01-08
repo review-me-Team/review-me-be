@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import reviewme.be.resume.dto.response.ResumeDetailResponse;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.exception.BadFileExtensionException;
+import reviewme.be.resume.exception.NonExistResumeException;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.user.service.UserService;
@@ -49,9 +51,15 @@ public class ResumeService {
                 Resume.ofCreated(resumeRequest, user, scope, occupation, resumeFileName)
         );
 
-        long savedResumeId = createdResume.getId();
+        return createdResume.getId();
+    }
 
-        return savedResumeId;
+    public ResumeDetailResponse getResumeDetail(long resumeId) {
+
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+
+        return ResumeDetailResponse.fromResume(resume);
     }
 
     /**
