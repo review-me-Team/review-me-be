@@ -77,22 +77,10 @@ public class ResumeService {
                 .contentType(contentTypeOfResumeFile)
                 .build();
 
-        String url = sb.append("https://")
-                .append(bucketName)
-                .append(".s3.ap-northeast-2.amazonaws.com/")
-                .append(fileName)
-                .toString();
-
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(resumeFile.getInputStream(), resumeFile.getSize()));
 
-            sb.setLength(0);
-
-            String modifiedFileName = sb.append(url)
-                    .delete(0, bucketUrl.length())
-                    .toString();
-
-            return url;
+            return fileName;
         } catch (Exception e) {
             throw new IllegalStateException("Failed to upload file", e);
         }
