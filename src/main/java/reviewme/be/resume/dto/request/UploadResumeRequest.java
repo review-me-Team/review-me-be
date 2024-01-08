@@ -1,14 +1,11 @@
 package reviewme.be.resume.dto.request;
 
-import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 
 @Getter
 @Builder
@@ -27,13 +24,13 @@ public class UploadResumeRequest {
 
     @Schema(description = "이력서 공개 범위 ID", example = "1")
     @NotBlank(message = "공개 범위 선택은 필수입니다.")
-    private Long scopeId;
+    private int scopeId;
 
     @Schema(description = "직군 ID", example = "1")
     @NotNull(message = "직군 선택은 필수입니다.")
-    private Long occupationId;
+    private int occupationId;
 
     @Schema(description = "년차", example = "0")
     @NotNull(message = "재직 년차 선택은 필수입니다.")
-    private Long year;
+    private int year;
 }
