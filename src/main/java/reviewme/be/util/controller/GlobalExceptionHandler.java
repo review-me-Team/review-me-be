@@ -25,6 +25,18 @@ public class GlobalExceptionHandler {
                         e.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<CustomErrorResponse> handleNumberFormatException(NumberFormatException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        "숫자만 입력 가능합니다."));
+    }
+
     @ExceptionHandler(NonExistScopeException.class)
     public ResponseEntity<CustomErrorResponse> nonExistScope(NonExistScopeException ex) {
 
