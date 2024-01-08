@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
+import reviewme.be.util.exception.NonExistScopeException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,4 +24,14 @@ public class GlobalExceptionHandler {
                         e.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
     }
 
+    @ExceptionHandler(NonExistScopeException.class)
+    public ResponseEntity<CustomErrorResponse> nonExistScope(NonExistScopeException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
 }
