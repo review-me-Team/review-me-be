@@ -1,4 +1,4 @@
-package reviewme.be.login.exception;
+package reviewme.be.user.exception;
 
 public class InvalidCodeException extends RuntimeException {
 

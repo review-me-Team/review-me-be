@@ -1,4 +1,4 @@
-package reviewme.be.login.token;
+package reviewme.be.user.token;
 
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;

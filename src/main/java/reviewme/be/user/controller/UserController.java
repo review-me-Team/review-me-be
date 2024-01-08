@@ -1,4 +1,4 @@
-package reviewme.be.login.controller;
+package reviewme.be.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,15 +8,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.login.dto.request.OAuthCodeRequest;
-import reviewme.be.login.dto.response.UserProfileResponse;
-import reviewme.be.login.service.OAuthLoginService;
+import reviewme.be.user.dto.request.OAuthCodeRequest;
+import reviewme.be.user.dto.response.UserProfileResponse;
+import reviewme.be.user.service.OAuthLoginService;
 
 @Tag(name = "login", description = "로그인(login) API")
 @RequestMapping("/login/oauth")
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+public class UserController {
 
     private final OAuthLoginService oAuthLoginService;
 

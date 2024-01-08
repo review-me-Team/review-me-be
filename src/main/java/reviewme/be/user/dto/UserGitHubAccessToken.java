@@ -1,4 +1,4 @@
-package reviewme.be.login.dto;
+package reviewme.be.user.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

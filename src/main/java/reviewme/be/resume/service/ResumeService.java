@@ -34,6 +34,8 @@ public class ResumeService {
 
         // TODO: save newResume Entity
 
+        // TODO: 로그인 기능 구현 전까지 userId가 1인 user로 사용
+
         long savedResumeId = 1L;
 
         return savedResumeId;

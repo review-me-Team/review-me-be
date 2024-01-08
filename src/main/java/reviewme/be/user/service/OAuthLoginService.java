@@ -1,4 +1,4 @@
-package reviewme.be.login.service;
+package reviewme.be.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import reviewme.be.login.dto.UserGitHubAccessToken;
-import reviewme.be.login.dto.UserGitHubProfile;
-import reviewme.be.login.dto.response.UserProfileResponse;
-import reviewme.be.login.exception.InvalidCodeException;
-import reviewme.be.login.token.GitHubOAuthApp;
+import reviewme.be.user.dto.UserGitHubAccessToken;
+import reviewme.be.user.dto.UserGitHubProfile;
+import reviewme.be.user.dto.response.UserProfileResponse;
+import reviewme.be.user.exception.InvalidCodeException;
+import reviewme.be.user.token.GitHubOAuthApp;
 
 import java.util.HashMap;
 import java.util.Map;
