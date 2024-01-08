@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.repository.ResumeRepository;
-import reviewme.be.resume.request.UploadResumeRequest;
+import reviewme.be.resume.dto.request.UploadResumeRequest;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;

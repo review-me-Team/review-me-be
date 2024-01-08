@@ -1,4 +1,4 @@
-package reviewme.be.resume.request;
+package reviewme.be.resume.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
