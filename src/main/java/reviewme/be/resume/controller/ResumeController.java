@@ -40,6 +40,9 @@ public class ResumeController {
     private final ResumeService resumeService;
     private final ResumeRepository resumeRepository;
 
+    // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
+    private long userId = 1L;
+
     @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
     @PostMapping
     @ApiResponses({
@@ -51,7 +54,7 @@ public class ResumeController {
             @ModelAttribute UploadResumeRequest uploadResumeRequest
     ) {
 
-        long id = resumeService.saveResume(uploadResumeRequest);
+        long id = resumeService.saveResume(uploadResumeRequest, userId);
 
         return ResponseEntity
                 .ok()
@@ -98,19 +101,11 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 상세 내용 조회 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 상세 내용 조회 실패")
     })
-    public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(@PathVariable Long resumeId) {
+    public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(@PathVariable long resumeId) {
 
-        // TODO: S3 연결 후, sample resume 세팅
-        // TODO: findByResumeId -> get resumeUrl
         // TODO: pdf url 암호화 필요할 수 있음 (회의 후 결정)
 
-        ResumeDetailResponse sampleResponse = ResumeDetailResponse.builder()
-                .resumeUrl("https://review-me-resume.s3.ap-northeast-2.amazonaws.com/resume/7562857e-130f-4f9a-9ca1-441908180b31_%E1%84%8B%E1%85%B5%E1%84%85%E1%85%A7%E1%86%A8%E1%84%89%E1%85%A5_%E1%84%89%E1%85%A2%E1%86%B7%E1%84%91%E1%85%B3%E1%86%AF.pdf")
-                .title("네이버 신입 개발자 준비")
-                .writerName("aken-you")
-                .occupation("Frontend")
-                .year(0)
-                .build();
+        ResumeDetailResponse resumeDetail = resumeService.getResumeDetail(resumeId, userId);
 
         return ResponseEntity
                 .ok()
@@ -118,7 +113,7 @@ public class ResumeController {
                         "success",
                         200,
                         "이력서 상세 내용 조회에 성공했습니다.",
-                        sampleResponse
+                        resumeDetail
                 ));
     }
 

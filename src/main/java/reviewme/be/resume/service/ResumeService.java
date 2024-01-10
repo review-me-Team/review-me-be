@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import reviewme.be.friend.service.FriendService;
+import reviewme.be.resume.dto.response.ResumeDetailResponse;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.exception.BadFileExtensionException;
+import reviewme.be.resume.exception.NonExistResumeException;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.user.service.UserService;
@@ -27,6 +30,8 @@ public class ResumeService {
 
     private final S3Client s3Client;
     private final ResumeRepository resumeRepository;
+
+    private final FriendService friendService;
     private final UserService userService;
     private final UtilService utilService;
 
@@ -36,12 +41,12 @@ public class ResumeService {
     @Value("${BUCKET_URL}")
     private String bucketUrl;
 
-    public long saveResume(UploadResumeRequest resumeRequest) {
+    public long saveResume(UploadResumeRequest resumeRequest, long userId) {
 
         String resumeFileName = uploadResumeFile(resumeRequest.getPdf());
 
         // TODO: 로그인 기능 구현 전까지 userId가 1인 user로 사용
-        User user = userService.getUserById(1L);
+        User user = userService.getUserById(userId);
         Scope scope = utilService.getScopeById(resumeRequest.getScopeId());
         Occupation occupation = utilService.getOccupationById(resumeRequest.getOccupationId());
 
@@ -49,9 +54,26 @@ public class ResumeService {
                 Resume.ofCreated(resumeRequest, user, scope, occupation, resumeFileName)
         );
 
-        long savedResumeId = createdResume.getId();
+        return createdResume.getId();
+    }
 
-        return savedResumeId;
+    public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
+
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+
+        String scope = resume.getScope().getScope();
+        long resumeOwnerId = resume.getUser().getId();
+
+        if (scope.equals("private") && resumeOwnerId != userId) {
+            throw new NonExistResumeException("해당 이력서가 존재하지 않습니다.");
+        }
+
+        if (scope.equals("friend") && !(friendService.isFriend(userId, resumeOwnerId))) {
+            throw new NonExistResumeException("해당 이력서가 존재하지 않습니다.");
+        }
+
+        return ResumeDetailResponse.fromResume(resume);
     }
 
     /**
