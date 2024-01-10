@@ -80,7 +80,8 @@ public class ResumeService {
         return ResumeDetailResponse.fromResume(resume);
     }
 
-    public void softDeleteResume(long resumeId, long userId) {
+    @Transactional
+    public void deleteResume(long resumeId, long userId) {
 
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
@@ -91,6 +92,7 @@ public class ResumeService {
             throw new NotYourResumeException("이력서를 삭제할 권한이 없습니다.");
         }
 
+        resume.softDelete();
     }
 
     /**

@@ -51,4 +51,9 @@ public class Resume {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    public void softDelete() {
+
+        this.deletedAt = LocalDateTime.now();
+    }
 }
