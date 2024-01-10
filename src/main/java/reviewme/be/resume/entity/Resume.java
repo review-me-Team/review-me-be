@@ -1,6 +1,7 @@
 package reviewme.be.resume.entity;
 
 import lombok.*;
+import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
@@ -55,5 +56,12 @@ public class Resume {
     public void softDelete() {
 
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void update(UpdateResumeRequest uploadResumeRequest, Scope scope, Occupation occupation, String fileName) {
+        this.title = uploadResumeRequest.getTitle();
+        this.scope = scope;
+        this.occupation = occupation;
+        this.year = uploadResumeRequest.getYear();
     }
 }
