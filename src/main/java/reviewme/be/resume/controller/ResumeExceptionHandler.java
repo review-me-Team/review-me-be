@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
 import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.exception.NonExistResumeException;
+import reviewme.be.resume.exception.NotYourResumeException;
 
 @RestControllerAdvice
 public class ResumeExceptionHandler {
@@ -31,6 +32,17 @@ public class ResumeExceptionHandler {
                 .body(new CustomErrorResponse(
                         "Not Found",
                         404,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NotYourResumeException.class)
+    public ResponseEntity<CustomErrorResponse> notYourResume(NotYourResumeException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Forbidden",
+                        403,
                         ex.getMessage()));
     }
 }

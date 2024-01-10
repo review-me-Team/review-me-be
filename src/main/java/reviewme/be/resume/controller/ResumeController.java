@@ -125,6 +125,8 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse> deleteResume(@PathVariable Long resumeId) {
 
+        resumeService.deleteResume(resumeId, userId);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(

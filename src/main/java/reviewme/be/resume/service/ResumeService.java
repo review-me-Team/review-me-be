@@ -4,6 +4,7 @@ package reviewme.be.resume.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.friend.service.FriendService;
@@ -11,6 +12,7 @@ import reviewme.be.resume.dto.response.ResumeDetailResponse;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.exception.NonExistResumeException;
+import reviewme.be.resume.exception.NotYourResumeException;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.user.service.UserService;
@@ -41,6 +43,7 @@ public class ResumeService {
     @Value("${BUCKET_URL}")
     private String bucketUrl;
 
+    @Transactional
     public long saveResume(UploadResumeRequest resumeRequest, long userId) {
 
         String resumeFileName = uploadResumeFile(resumeRequest.getPdf());
@@ -57,6 +60,7 @@ public class ResumeService {
         return createdResume.getId();
     }
 
+    @Transactional(readOnly = true)
     public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
 
         Resume resume = resumeRepository.findById(resumeId)
@@ -76,6 +80,21 @@ public class ResumeService {
         return ResumeDetailResponse.fromResume(resume);
     }
 
+    @Transactional
+    public void deleteResume(long resumeId, long userId) {
+
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+
+        User owner = resume.getUser();
+
+        if (owner.getId() != userId) {
+            throw new NotYourResumeException("이력서를 삭제할 권한이 없습니다.");
+        }
+
+        resume.softDelete();
+    }
+
     /**
      * Take MultiFile data, create a url, and upload to S3
      * Recursively recreate URLs if they are duplicates
@@ -88,7 +107,6 @@ public class ResumeService {
 
         validateFileExtension(resumeFile);
 
-        StringBuilder sb = new StringBuilder();
         String fileName =  createFileNameWithUUID(resumeFile.getOriginalFilename());
         String contentTypeOfResumeFile = resumeFile.getContentType();
 
