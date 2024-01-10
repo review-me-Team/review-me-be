@@ -4,6 +4,7 @@ package reviewme.be.resume.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.friend.service.FriendService;
@@ -41,6 +42,7 @@ public class ResumeService {
     @Value("${BUCKET_URL}")
     private String bucketUrl;
 
+    @Transactional
     public long saveResume(UploadResumeRequest resumeRequest, long userId) {
 
         String resumeFileName = uploadResumeFile(resumeRequest.getPdf());
@@ -57,6 +59,7 @@ public class ResumeService {
         return createdResume.getId();
     }
 
+    @Transactional(readOnly = true)
     public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
 
         Resume resume = resumeRepository.findById(resumeId)
