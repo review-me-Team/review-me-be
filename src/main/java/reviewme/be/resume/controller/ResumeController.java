@@ -24,10 +24,7 @@ import reviewme.be.resume.dto.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.resume.service.ResumeService;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "resume", description = "이력서(resume) API")
@@ -78,7 +75,7 @@ public class ResumeController {
         // 내 이력서 목록 조회
         // TODO: pageable 적용
 
-        List<ResumeResponse> resumeResponse = resumeRepository.findByUserId(1L)
+        List<ResumeResponse> resumeResponse = resumeRepository.findByUserIdAndDeletedAtIsNull(1L)
                 .stream()
                 .map(ResumeResponse::fromResume)
                 .collect(Collectors.toList());

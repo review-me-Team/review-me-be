@@ -62,6 +62,13 @@ public class ResumeService {
     }
 
     @Transactional(readOnly = true)
+    public void getResumes(long userId, int page, int size) {
+
+
+
+    }
+
+    @Transactional(readOnly = true)
     public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
 
         Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
@@ -153,7 +160,7 @@ public class ResumeService {
                 .append(fileName)
                 .toString();
 
-        resumeRepository.findByUrl(newFileName).ifPresent(
+        resumeRepository.findByUrlAndDeletedAtIsNull(newFileName).ifPresent(
                 resumeByUrl -> createFileNameWithUUID(fileName)
         );
 
