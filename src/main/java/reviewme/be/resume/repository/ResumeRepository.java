@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
+    Optional<Resume> findByIdAndDeletedAtIsNull(long id);
+
     Optional<Resume> findByUrl(String url);
     List<Resume> findByUserId(long userId);
 }
