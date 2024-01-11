@@ -108,7 +108,10 @@ public class ResumeService {
             throw new NotYourResumeException("이력서를 수정할 권한이 없습니다.");
         }
 
-        updateResume(request, resumeId, userId);
+        Scope modifiedScope = utilService.getScopeById(request.getScopeId());
+        Occupation modifiedOccupation = utilService.getOccupationById(request.getOccupationId());
+
+        resume.update(request, modifiedScope, modifiedOccupation);
     }
 
     /**

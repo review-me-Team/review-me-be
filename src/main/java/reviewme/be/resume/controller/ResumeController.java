@@ -142,38 +142,16 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 수정 실패")
     })
-    public ResponseEntity<CustomResponse<ResumeResponse>> updateResume(@Validated @RequestBody UpdateResumeRequest updateResumeRequest, @PathVariable Long resumeId) {
+    public ResponseEntity<CustomResponse> updateResume(@Validated @RequestBody UpdateResumeRequest updateResumeRequest, @PathVariable Long resumeId) {
 
-        Map<Integer, String> scopes = new HashMap<>();
-        scopes.put(1, "public");
-        scopes.put(2, "private");
-        scopes.put(3, "friends");
-
-        Map<Integer, String> occupations = new HashMap<>();
-        occupations.put(1, "Frontend");
-        occupations.put(2, "Backend");
-        occupations.put(3, "Fullstack");
-        occupations.put(4, "Android");
-        occupations.put(5, "iOS");
-
-        ResumeResponse sampleUpdatedResumeResponse = ResumeResponse.builder()
-                .id(1L)
-                .title(updateResumeRequest.getTitle()) // TODO: updateResumeRequest Title()
-                .writerId(1L)
-                .writerName("aken-you")
-                .createdAt(LocalDateTime.now())
-                .scope(scopes.get(updateResumeRequest.getScopeId()))    // TODO: updateResumeRequest ScopeId()
-                .occupation(occupations.get(updateResumeRequest.getOccupationId())) // TODO: updateResumeRequest OccupationId(
-                .year(updateResumeRequest.getYear())
-                .build();
+        resumeService.updateResume(updateResumeRequest, resumeId, userId);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "이력서 수정에 성공했습니다.",
-                        sampleUpdatedResumeResponse
+                        "이력서 수정에 성공했습니다."
                 ));
     }
 }

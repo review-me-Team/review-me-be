@@ -58,10 +58,11 @@ public class Resume {
         this.deletedAt = LocalDateTime.now();
     }
 
-    public void update(UpdateResumeRequest uploadResumeRequest, Scope scope, Occupation occupation, String fileName) {
-        this.title = uploadResumeRequest.getTitle();
+    public void update(UpdateResumeRequest updateResumeRequest, Scope scope, Occupation occupation) {
+
+        this.title = updateResumeRequest.getTitle();
         this.scope = scope;
         this.occupation = occupation;
-        this.year = uploadResumeRequest.getYear();
+        this.year = updateResumeRequest.getYear();
     }
 }
