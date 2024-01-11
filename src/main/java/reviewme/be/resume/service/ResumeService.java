@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.friend.service.FriendService;
+import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.exception.BadFileExtensionException;
@@ -63,7 +64,7 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
 
-        Resume resume = resumeRepository.findById(resumeId)
+        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
                 .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
 
         String scope = resume.getScope().getScope();
@@ -83,7 +84,7 @@ public class ResumeService {
     @Transactional
     public void deleteResume(long resumeId, long userId) {
 
-        Resume resume = resumeRepository.findById(resumeId)
+        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
                 .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
 
         User owner = resume.getUser();
@@ -93,6 +94,24 @@ public class ResumeService {
         }
 
         resume.softDelete();
+    }
+
+    @Transactional
+    public void updateResume(UpdateResumeRequest request, long resumeId, long userId) {
+
+        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
+                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+
+        User owner = resume.getUser();
+
+        if (owner.getId() != userId) {
+            throw new NotYourResumeException("이력서를 수정할 권한이 없습니다.");
+        }
+
+        Scope modifiedScope = utilService.getScopeById(request.getScopeId());
+        Occupation modifiedOccupation = utilService.getOccupationById(request.getOccupationId());
+
+        resume.update(request, modifiedScope, modifiedOccupation);
     }
 
     /**
