@@ -1,5 +1,6 @@
 package reviewme.be.util.controller;
 
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +36,18 @@ public class GlobalExceptionHandler {
                         "fail",
                         400,
                         "숫자만 입력 가능합니다."));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TypeMismatchException.class)
+    public ResponseEntity<CustomErrorResponse> handleTypeMismatchException(TypeMismatchException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        "잘못된 형식입니다."));
     }
 
     @ExceptionHandler(NonExistScopeException.class)
