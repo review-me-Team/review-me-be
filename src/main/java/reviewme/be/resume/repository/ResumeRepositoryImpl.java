@@ -5,8 +5,10 @@ import org.springframework.data.domain.Pageable;
 import reviewme.be.resume.dto.ResumeSearchCondition;
 import reviewme.be.resume.dto.response.ResumeResponse;
 
-public interface ResumeRepositoryCustom {
+public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
 
-    Page<ResumeResponse> findAllByDeletedAtIsNull(ResumeSearchCondition searchCondition, Pageable pageable);
-
+    @Override
+    public Page<ResumeResponse> findAllByDeletedAtIsNull(ResumeSearchCondition searchCondition, Pageable pageable) {
+        return null;
+    }
 }
