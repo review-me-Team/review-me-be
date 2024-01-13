@@ -1,6 +1,7 @@
 package reviewme.be.resume.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +43,7 @@ public class ResumeResponse {
     private Integer year;
 
     public static ResumeResponse fromResume(Resume resume) {
+
         return ResumeResponse.builder()
                 .id(resume.getId())
                 .title(resume.getTitle())
@@ -53,5 +55,18 @@ public class ResumeResponse {
                 .occupation(resume.getOccupation().getOccupation())
                 .year(resume.getYear())
                 .build();
+    }
+
+    @QueryProjection
+    public ResumeResponse(Long id, String title, Long writerId, String writerName, String writerProfileUrl, LocalDateTime createdAt, String scope, String occupation, Integer year) {
+        this.id = id;
+        this.title = title;
+        this.writerId = writerId;
+        this.writerName = writerName;
+        this.writerProfileUrl = writerProfileUrl;
+        this.createdAt = createdAt;
+        this.scope = scope;
+        this.occupation = occupation;
+        this.year = year;
     }
 }
