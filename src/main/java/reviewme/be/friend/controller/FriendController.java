@@ -183,12 +183,14 @@ public class FriendController {
     }
 
     @Operation(summary = "친구 요청 거절", description = "친구 요청을 거절합니다.")
-    @DeleteMapping("/{friendId}")
+    @PatchMapping("/{friendId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "친구 요청 거절 성공"),
             @ApiResponse(responseCode = "400", description = "친구 요청 거절 실패")
     })
     public ResponseEntity<CustomResponse> rejectFriendRequest(@PathVariable long friendId) {
+
+        friendService.cancelFriendRequest(userId, friendId);
 
         return ResponseEntity
                 .ok()
