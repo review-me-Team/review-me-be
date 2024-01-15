@@ -32,13 +32,13 @@ public class FriendService {
         }
 
         friendRepository.save(
-                Friend.ofCreated(followerUser, followingUser));
+                Friend.newRequest(followerUser, followingUser));
     }
 
     @Transactional
     public void acceptFriend(long userId, long followingUserId) {
 
-        User followerUser = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         User followingUser = userService.getUserById(followingUserId);
 
         if (friendRepository.isFriend(userId, followingUserId)) {
@@ -48,6 +48,13 @@ public class FriendService {
         if (!friendRepository.isRequested(userId, followingUserId)) {
             throw new RuntimeException("친구 요청 목록에 없습니다.");
         }
+
+        Friend friend = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsFalse(userId, followingUserId);
+
+        friend.acceptRequest();
+
+        friendRepository.save(
+                Friend.newRelation(followingUser, user));
     }
 
     public boolean isFriend(long userId, long friendId) {

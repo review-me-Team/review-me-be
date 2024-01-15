@@ -60,7 +60,7 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse> acceptFriend(@Validated @RequestBody AcceptFriendRequest acceptFriendRequest) {
 
-        // TODO: 친구 요청 목록에 있는지 검증
+        friendService.acceptFriend(userId, acceptFriendRequest.getUserId());
 
         return ResponseEntity
                 .ok()
