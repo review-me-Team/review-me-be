@@ -68,6 +68,8 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public Page<ResumeResponse> getResumes(ResumeSearchCondition searchCondition, Pageable pageable) {
 
+        // TODO: 친구 여부 검증 로직 필요
+
         return resumeRepository.findAllByDeletedAtIsNull(searchCondition, pageable);
     }
 
