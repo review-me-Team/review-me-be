@@ -19,14 +19,10 @@ import reviewme.be.resume.dto.ResumeSearchCondition;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
-import reviewme.be.resume.dto.response.ResumePageResponse;
 import reviewme.be.resume.dto.response.ResumeResponse;
 import reviewme.be.resume.dto.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.resume.service.ResumeService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "resume", description = "이력서(resume) API")
 @Slf4j
@@ -74,8 +70,6 @@ public class ResumeController {
             @ModelAttribute ResumeSearchCondition searchCondition
     ) {
 
-        // TODO: pageable 적용
-
         Page<ResumeResponse> resumes = resumeService.getResumes(searchCondition, pageable);
 
         return ResponseEntity
@@ -96,7 +90,7 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(@PathVariable long resumeId) {
 
-        // TODO: pdf url 암호화 필요할 수 있음 (회의 후 결정)
+        // TODO: pdf url 암호화 필요
 
         ResumeDetailResponse resumeDetail = resumeService.getResumeDetail(resumeId, userId);
 
