@@ -23,5 +23,5 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             "AND friend.accepted = true")
     boolean isFriend(long userId, long friendId);
 
-    void followOther(long userId, long friendId);
+     Friend save(Friend createdFriendRequest);
 }
