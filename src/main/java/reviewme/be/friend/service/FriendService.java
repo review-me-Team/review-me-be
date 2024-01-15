@@ -18,21 +18,36 @@ public class FriendService {
     private final UserService userService;
 
     @Transactional
-    public void requestFriend(long userId, long friendId) {
+    public void requestFriend(long userId, long followingUserId) {
 
         User followerUser = userService.getUserById(userId);
-        User followingUser = userService.getUserById(friendId);
+        User followingUser = userService.getUserById(followingUserId);
 
-        if (friendRepository.isRequested(userId, friendId)) {
+        if (friendRepository.isRequested(userId, followingUserId)) {
             throw new AlreadyFriendRequestedException("이미 친구 요청을 보냈습니다.");
         }
 
-        if (friendRepository.isFriend(userId, friendId)) {
+        if (friendRepository.isFriend(userId, followingUserId)) {
             throw new AlreadyFriendRelationException("이미 친구 관계인 회원입니다.");
         }
 
         friendRepository.save(
                 Friend.ofCreated(followerUser, followingUser));
+    }
+
+    @Transactional
+    public void acceptFriend(long userId, long followingUserId) {
+
+        User followerUser = userService.getUserById(userId);
+        User followingUser = userService.getUserById(followingUserId);
+
+        if (friendRepository.isFriend(userId, followingUserId)) {
+            throw new AlreadyFriendRelationException("이미 친구 관계인 회원입니다.");
+        }
+
+        if (!friendRepository.isRequested(userId, followingUserId)) {
+            throw new RuntimeException("친구 요청 목록에 없습니다.");
+        }
     }
 
     public boolean isFriend(long userId, long friendId) {
