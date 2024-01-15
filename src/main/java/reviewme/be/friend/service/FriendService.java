@@ -12,6 +12,9 @@ import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.entity.User;
 
+
+// TODO: Follower, follwing 관계 다시 확인하기
+
 @Service
 @RequiredArgsConstructor
 public class FriendService {
@@ -60,20 +63,37 @@ public class FriendService {
     }
 
     @Transactional
-    public void deleteFriend(long userId, long followingUserId) {
+    public void deleteFriend(long userId, long friendId) {
 
         User user = userService.getUserById(userId);
-        User followingUser = userService.getUserById(followingUserId);
+        User friend = userService.getUserById(friendId);
 
-        if (!friendRepository.isFriend(userId, followingUserId)) {
+        if (!friendRepository.isFriend(userId, friendId)) {
             throw new NotOnTheFriendRelationException("친구 관계가 아닙니다.");
         }
 
-        Friend friendRequested = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(userId, followingUserId);
-        Friend friendRelation = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(followingUserId, userId);
+        Friend friendRequested = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(userId, friendId);
+        Friend friendRelation = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(friendId, userId);
 
         friendRepository.delete(friendRequested);
         friendRepository.delete(friendRelation);
+    }
+
+    @Transactional
+    public void cancelFriendRequest(long userId, long followerUserId) {
+
+        // followerUserId가 userId에게 보낸 친구 요청을 취소한다. (Follower: 나를 팔로우 하는 사람!)
+
+        User user = userService.getUserById(userId);
+        User followerUser = userService.getUserById(followerUserId);
+
+        if (!friendRepository.isRequested(followerUserId, userId)) {
+            throw new NotOnTheFriendRequestException("친구 요청 목록에 없습니다.");
+        }
+
+        Friend friend = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsFalse(followerUserId, userId);
+
+        friendRepository.delete(friend);
     }
 
     public boolean isFriend(long userId, long friendId) {
