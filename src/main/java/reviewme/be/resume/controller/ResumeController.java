@@ -9,12 +9,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import reviewme.be.resume.repository.ResumeRepository;
+import reviewme.be.resume.dto.ResumeSearchCondition;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
@@ -35,7 +36,6 @@ import java.util.stream.Collectors;
 public class ResumeController {
 
     private final ResumeService resumeService;
-    private final ResumeRepository resumeRepository;
 
     // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
     private long userId = 1L;
@@ -69,26 +69,22 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes(@PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<Page<ResumeResponse>>> showResumes(
+            @PageableDefault(size=20) Pageable pageable,
+            @ModelAttribute ResumeSearchCondition searchCondition
+    ) {
 
-
-        // 내 이력서 목록 조회
         // TODO: pageable 적용
 
-        List<ResumeResponse> resumeResponse = resumeRepository.findByUserIdAndDeletedAtIsNull(1L)
-                .stream()
-                .map(ResumeResponse::fromResume)
-                .collect(Collectors.toList());
+        Page<ResumeResponse> resumes = resumeService.getResumes(searchCondition, pageable);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "전체 공개 이력서 목록 조회에 성공했습니다.",
-                        ResumePageResponse.builder()
-                                .resumes(resumeResponse)
-                                .build()
+                        "이력서 목록 조회에 성공했습니다.",
+                        resumes
                 ));
     }
 
