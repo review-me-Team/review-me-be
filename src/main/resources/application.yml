@@ -10,9 +10,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-logging.level:
-    org.hibernate.sql: debug
+        show_sql: true
 
 # Swagger springdoc-ui Configuration
 springdoc:

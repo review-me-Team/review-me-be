@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import reviewme.be.friend.entity.Friend;
 import reviewme.be.friend.exception.AlreadyFriendRelationException;
 import reviewme.be.friend.exception.AlreadyFriendRequestedException;
+import reviewme.be.friend.exception.NotOnTheFriendRelationException;
+import reviewme.be.friend.exception.NotOnTheFriendRequestException;
 import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.entity.User;
@@ -46,7 +48,7 @@ public class FriendService {
         }
 
         if (!friendRepository.isRequested(userId, followingUserId)) {
-            throw new RuntimeException("친구 요청 목록에 없습니다.");
+            throw new NotOnTheFriendRequestException("친구 요청 목록에 없습니다.");
         }
 
         Friend friend = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsFalse(userId, followingUserId);
@@ -55,6 +57,23 @@ public class FriendService {
 
         friendRepository.save(
                 Friend.newRelation(followingUser, user));
+    }
+
+    @Transactional
+    public void deleteFriend(long userId, long followingUserId) {
+
+        User user = userService.getUserById(userId);
+        User followingUser = userService.getUserById(followingUserId);
+
+        if (!friendRepository.isFriend(userId, followingUserId)) {
+            throw new NotOnTheFriendRelationException("친구 관계가 아닙니다.");
+        }
+
+        Friend friendRequested = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(userId, followingUserId);
+        Friend friendRelation = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(followingUserId, userId);
+
+        friendRepository.delete(friendRequested);
+        friendRepository.delete(friendRelation);
     }
 
     public boolean isFriend(long userId, long friendId) {

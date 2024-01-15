@@ -169,9 +169,9 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "친구 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "친구 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteFriend(@PathVariable Long friendId) {
+    public ResponseEntity<CustomResponse> deleteFriend(@PathVariable long friendId) {
 
-        // TODO: HTTP request를 보낸 사람과 친구 관계인지 검증 (follower, following이 누구인지 찾아야 함)
+        friendService.deleteFriend(userId, friendId);
 
         return ResponseEntity
                 .ok()
