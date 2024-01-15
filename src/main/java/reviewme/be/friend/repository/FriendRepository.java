@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
+    Friend save(Friend createdFriendRequest);
+
     List<Friend> findByFollowingUserIdAndAcceptedIsTrue(long followingUserId);
 
     long countByFollowingUserIdAndAcceptedIsTrue(long followingUserId);
@@ -18,10 +20,15 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     @Query(value = "SELECT CASE WHEN COUNT(friend) > 0 THEN true ELSE false END " +
             "FROM Friend friend " +
-            "WHERE friend.followingUser.id = :userId " +
-            "AND friend.followerUser.id = :friendId " +
+            "WHERE friend.followerUser.id = :userId " +
+            "AND friend.followingUser.id = :friendId " +
             "AND friend.accepted = true")
     boolean isFriend(long userId, long friendId);
 
-     Friend save(Friend createdFriendRequest);
+    @Query(value = "SELECT CASE WHEN COUNT(friend) > 0 THEN true ELSE false END " +
+            "FROM Friend friend " +
+            "WHERE friend.followerUser.id = :userId " +
+            "AND friend.followingUser.id = :friendId " +
+            "AND friend.accepted = false")
+    boolean isRequested(long userId, long friendId);
 }
