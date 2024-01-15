@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewme.be.friend.entity.Friend;
+import reviewme.be.friend.exception.AlreadyFriendRelationException;
 import reviewme.be.friend.exception.AlreadyFriendRequestedException;
 import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.user.service.UserService;
@@ -27,7 +28,7 @@ public class FriendService {
         }
 
         if (friendRepository.isFriend(userId, friendId)) {
-            throw new AlreadyFriendRequestedException("이미 친구 관계인 회원입니다.");
+            throw new AlreadyFriendRelationException("이미 친구 관계인 회원입니다.");
         }
 
         friendRepository.save(

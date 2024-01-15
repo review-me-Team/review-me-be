@@ -2,6 +2,7 @@ package reviewme.be.friend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import reviewme.be.friend.entity.Friend;
 
 import java.util.List;
@@ -21,14 +22,14 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     @Query(value = "SELECT CASE WHEN COUNT(friend) > 0 THEN true ELSE false END " +
             "FROM Friend friend " +
             "WHERE friend.followerUser.id = :userId " +
-            "AND friend.followingUser.id = :friendId " +
+            "AND friend.followingUser.id = :followingUserId " +
             "AND friend.accepted = true")
-    boolean isFriend(long userId, long friendId);
+    boolean isFriend(@Param("userId") long userId, @Param("followingUserId") long followingUserId);
 
     @Query(value = "SELECT CASE WHEN COUNT(friend) > 0 THEN true ELSE false END " +
             "FROM Friend friend " +
             "WHERE friend.followerUser.id = :userId " +
-            "AND friend.followingUser.id = :friendId " +
+            "AND friend.followingUser.id = :followingUserId " +
             "AND friend.accepted = false")
-    boolean isRequested(long userId, long friendId);
+    boolean isRequested(@Param("userId") long userId, @Param("followingUserId")long followingUserId);
 }
