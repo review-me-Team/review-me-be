@@ -25,4 +25,13 @@ public class Friend {
     private User followingUser;
 
     private Boolean accepted;
+
+    public static Friend ofCreated(User followerUser, User followingUser) {
+
+        return Friend.builder()
+                .followerUser(followerUser)
+                .followingUser(followingUser)
+                .accepted(false)
+                .build();
+    }
 }

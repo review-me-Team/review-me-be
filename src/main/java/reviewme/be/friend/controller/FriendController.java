@@ -15,6 +15,7 @@ import reviewme.be.friend.request.AcceptFriendRequest;
 import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.friend.response.FriendsResponse;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.friend.service.FriendService;
 import reviewme.be.util.dto.User;
 
 import java.util.List;
@@ -26,7 +27,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FriendController {
 
+    private final FriendService friendService;
     private final FriendRepository friendRepository;
+
+    // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
+    private long userId = 1L;
 
     @Operation(summary = "친구 요청", description = "친구를 요청합니다.")
     @PostMapping
@@ -35,6 +40,8 @@ public class FriendController {
             @ApiResponse(responseCode = "400", description = "친구 요청 실패")
     })
     public ResponseEntity<CustomResponse> followFriend(@Validated @RequestBody FollowFriendRequest followFriendRequest) {
+
+        friendService.requestFriend(userId, followFriendRequest.getUserId());
 
         return ResponseEntity
                 .ok()

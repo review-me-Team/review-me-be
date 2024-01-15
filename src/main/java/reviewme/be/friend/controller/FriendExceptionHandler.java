@@ -1,17 +1,17 @@
-package reviewme.be.user.controller;
+package reviewme.be.friend.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
-import reviewme.be.user.exception.InvalidCodeException;
-import reviewme.be.user.exception.NonExistUserException;
+import reviewme.be.friend.exception.AlreadyFriendRelationException;
+import reviewme.be.friend.exception.AlreadyFriendRequestedException;
 
 @RestControllerAdvice
-public class UserExceptionHandler {
+public class FriendExceptionHandler {
 
-    @ExceptionHandler(InvalidCodeException.class)
-    public ResponseEntity<CustomErrorResponse> invalidCode(InvalidCodeException ex) {
+    @ExceptionHandler(AlreadyFriendRequestedException.class)
+    public ResponseEntity<CustomErrorResponse> invalidCode(AlreadyFriendRequestedException ex) {
 
         return ResponseEntity
                 .badRequest()
@@ -21,8 +21,8 @@ public class UserExceptionHandler {
                         ex.getMessage()));
     }
 
-    @ExceptionHandler(NonExistUserException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistUser(NonExistUserException ex) {
+    @ExceptionHandler(AlreadyFriendRelationException.class)
+    public ResponseEntity<CustomErrorResponse> invalidCode(AlreadyFriendRelationException ex) {
 
         return ResponseEntity
                 .badRequest()
