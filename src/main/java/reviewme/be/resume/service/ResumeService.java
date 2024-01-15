@@ -3,13 +3,17 @@ package reviewme.be.resume.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.friend.service.FriendService;
+import reviewme.be.resume.dto.ResumeSearchCondition;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
+import reviewme.be.resume.dto.response.ResumeResponse;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.exception.NonExistResumeException;
@@ -59,6 +63,12 @@ public class ResumeService {
         );
 
         return createdResume.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ResumeResponse> getResumes(ResumeSearchCondition searchCondition, Pageable pageable) {
+
+        return resumeRepository.findAllByDeletedAtIsNull(searchCondition, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -153,7 +163,7 @@ public class ResumeService {
                 .append(fileName)
                 .toString();
 
-        resumeRepository.findByUrl(newFileName).ifPresent(
+        resumeRepository.findByUrlAndDeletedAtIsNull(newFileName).ifPresent(
                 resumeByUrl -> createFileNameWithUUID(fileName)
         );
 
