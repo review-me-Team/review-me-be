@@ -26,12 +26,16 @@ public class FriendService {
             throw new AlreadyFriendRequestedException("이미 친구 요청을 보냈습니다.");
         }
 
+        if (friendRepository.isFriend(userId, friendId)) {
+            throw new AlreadyFriendRequestedException("이미 친구 관계인 회원입니다.");
+        }
+
         friendRepository.save(
                 Friend.ofCreated(followerUser, followingUser));
     }
 
     public boolean isFriend(long userId, long friendId) {
 
-        return friendRepository.isFriend(userId, friendId) || friendRepository.isFriend(friendId, userId);
+        return friendRepository.isFriend(userId, friendId);
     }
 }
