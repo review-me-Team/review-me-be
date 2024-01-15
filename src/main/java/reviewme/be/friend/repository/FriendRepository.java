@@ -11,6 +11,8 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     Friend save(Friend createdFriendRequest);
 
+    Friend findByFollowerUserIdAndFollowingUserIdAndAcceptedIsFalse(long followerUserId, long followingUserId);
+
     List<Friend> findByFollowingUserIdAndAcceptedIsTrue(long followingUserId);
 
     long countByFollowingUserIdAndAcceptedIsTrue(long followingUserId);

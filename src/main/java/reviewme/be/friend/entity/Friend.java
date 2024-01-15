@@ -26,12 +26,26 @@ public class Friend {
 
     private Boolean accepted;
 
-    public static Friend ofCreated(User followerUser, User followingUser) {
+    public static Friend newRequest(User followerUser, User followingUser) {
 
         return Friend.builder()
                 .followerUser(followerUser)
                 .followingUser(followingUser)
                 .accepted(false)
                 .build();
+    }
+
+    public static Friend newRelation(User followerUser, User followingUser) {
+
+        return Friend.builder()
+                .followerUser(followerUser)
+                .followingUser(followingUser)
+                .accepted(true)
+                .build();
+    }
+
+    public void acceptRequest() {
+
+        this.accepted = true;
     }
 }

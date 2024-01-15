@@ -6,12 +6,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
 import reviewme.be.friend.exception.AlreadyFriendRelationException;
 import reviewme.be.friend.exception.AlreadyFriendRequestedException;
+import reviewme.be.friend.exception.NotOnTheFriendRequestException;
 
 @RestControllerAdvice
 public class FriendExceptionHandler {
 
     @ExceptionHandler(AlreadyFriendRequestedException.class)
-    public ResponseEntity<CustomErrorResponse> invalidCode(AlreadyFriendRequestedException ex) {
+    public ResponseEntity<CustomErrorResponse> alreadyFriendRequested(AlreadyFriendRequestedException ex) {
 
         return ResponseEntity
                 .badRequest()
@@ -22,7 +23,18 @@ public class FriendExceptionHandler {
     }
 
     @ExceptionHandler(AlreadyFriendRelationException.class)
-    public ResponseEntity<CustomErrorResponse> invalidCode(AlreadyFriendRelationException ex) {
+    public ResponseEntity<CustomErrorResponse> alreadyFriendRelation(AlreadyFriendRelationException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NotOnTheFriendRequestException.class)
+    public ResponseEntity<CustomErrorResponse> notOnTheFriendRequest(NotOnTheFriendRequestException ex) {
 
         return ResponseEntity
                 .badRequest()
