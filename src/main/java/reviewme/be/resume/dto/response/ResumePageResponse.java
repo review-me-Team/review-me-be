@@ -15,11 +15,21 @@ public class ResumePageResponse {
     @Schema(description = "이력서 목록")
     private List<ResumeResponse> resumes;
 
-    // TODO: 회의 후 FE에서 필요한 정보 추가
+    @Schema(description = "현재 페이지", example = "1")
+    private int pageNumber;
+
+    @Schema(description = "페이징 적용 시 전체 페이지 수", example = "1")
+    private int lastPage;
+
+    @Schema(description = "페이징 적용 시 한 번에 받아오는 데이터 개수", example = "1")
+    private int pageSize;
 
     public static ResumePageResponse fromResumePageable(Page<ResumeResponse> resumePage) {
         return ResumePageResponse.builder()
                 .resumes(resumePage.getContent())
+                .pageNumber(resumePage.getNumber())
+                .lastPage(resumePage.getTotalPages() - 1)
+                .pageSize(resumePage.getSize())
                 .build();
     }
 }

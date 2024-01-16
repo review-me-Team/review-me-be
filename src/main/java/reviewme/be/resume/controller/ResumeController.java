@@ -19,6 +19,7 @@ import reviewme.be.resume.dto.ResumeSearchCondition;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
+import reviewme.be.resume.dto.response.ResumePageResponse;
 import reviewme.be.resume.dto.response.ResumeResponse;
 import reviewme.be.resume.dto.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
@@ -65,7 +66,7 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<Page<ResumeResponse>>> showResumes(
+    public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes(
             @PageableDefault(size=20) Pageable pageable,
             @ModelAttribute ResumeSearchCondition searchCondition
     ) {
@@ -78,7 +79,7 @@ public class ResumeController {
                         "success",
                         200,
                         "이력서 목록 조회에 성공했습니다.",
-                        resumes
+                        ResumePageResponse.fromResumePageable(resumes)
                 ));
     }
 
