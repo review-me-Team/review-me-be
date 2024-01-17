@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reviewme.be.user.exception.NonExistUserException;
 import reviewme.be.user.repository.UserRepository;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 
 @Service
 @RequiredArgsConstructor

@@ -23,7 +23,7 @@ import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 import reviewme.be.util.service.UtilService;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;

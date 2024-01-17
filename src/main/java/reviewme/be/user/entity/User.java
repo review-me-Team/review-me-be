@@ -1,4 +1,4 @@
-package reviewme.be.util.entity;
+package reviewme.be.user.entity;
 
 import lombok.*;
 

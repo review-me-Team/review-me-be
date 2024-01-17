@@ -2,7 +2,7 @@ package reviewme.be.comment.entity;
 
 import lombok.*;
 import reviewme.be.resume.entity.Resume;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package reviewme.be.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 
 import java.util.Optional;
 

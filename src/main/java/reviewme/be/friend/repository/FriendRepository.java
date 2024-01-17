@@ -7,7 +7,7 @@ import reviewme.be.friend.entity.Friend;
 
 import java.util.List;
 
-public interface FriendRepository extends JpaRepository<Friend, Long> {
+public interface FriendRepository extends JpaRepository<Friend, Long>, FriendRepositoryCustom {
 
     Friend save(Friend createdFriendRequest);
 

@@ -1,7 +1,7 @@
 package reviewme.be.friend.entity;
 
 import lombok.*;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 
 import javax.persistence.*;
 

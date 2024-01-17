@@ -59,6 +59,7 @@ public class ResumeResponse {
 
     @QueryProjection
     public ResumeResponse(Long id, String title, Long writerId, String writerName, String writerProfileUrl, LocalDateTime createdAt, String scope, String occupation, Integer year) {
+
         this.id = id;
         this.title = title;
         this.writerId = writerId;

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.friend.request.AcceptFriendRequest;
 import reviewme.be.friend.request.FollowFriendRequest;
-import reviewme.be.friend.response.FriendsResponse;
+import reviewme.be.friend.response.UserPageResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.friend.service.FriendService;
-import reviewme.be.util.dto.User;
+import reviewme.be.user.dto.UserResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,15 +78,9 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "친구 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "친구 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<FriendsResponse>> showFriends(@PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<UserPageResponse>> showFriends(@PageableDefault(size=20) Pageable pageable) {
 
-        List<User> friendsResponse = friendRepository.findByFollowingUserIdAndAcceptedIsTrue(1L)
-                .stream()
-                .map(friend
-                        -> User.fromUser(friend.getFollowerUser())
-                ).collect(Collectors.toList());
-
-        long count = friendRepository.countByFollowingUserIdAndAcceptedIsTrue(1L);
+        Page<UserResponse> friends = friendService.getFriends(userId, pageable);
 
         return ResponseEntity
                 .ok()
@@ -93,10 +88,7 @@ public class FriendController {
                         "success",
                         200,
                         "친구 목록 조회에 성공했습니다.",
-                        FriendsResponse.builder()
-                                .users(friendsResponse)
-                                .count(count)
-                                .build()
+                        UserPageResponse.fromUserPageable(friends)
                 ));
     }
 
@@ -106,12 +98,12 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "친구 요청 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "친구 요청 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<FriendsResponse>> showFollowFriends(@PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<UserPageResponse>> showFollowFriends(@PageableDefault(size=20) Pageable pageable) {
 
-        List<User> followersResponse = friendRepository.findByFollowingUserIdAndAcceptedIsFalse(1L)
+        List<UserResponse> followersResponse = friendRepository.findByFollowingUserIdAndAcceptedIsFalse(1L)
                 .stream()
                 .map(friend
-                        -> User.fromUser(friend.getFollowerUser())
+                        -> UserResponse.fromUser(friend.getFollowerUser())
                 ).collect(Collectors.toList());
 
         long count = friendRepository.countByFollowingUserIdAndAcceptedIsFalse(1L);
@@ -121,11 +113,7 @@ public class FriendController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "친구 요청 온 목록 조회에 성공했습니다.",
-                        FriendsResponse.builder()
-                                .users(followersResponse)
-                                .count(count)
-                                .build()
+                        "친구 요청 온 목록 조회에 성공했습니다."
                 ));
     }
 
@@ -135,15 +123,15 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "사용자 검색 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "사용자 검색 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<FriendsResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
+    public ResponseEntity<CustomResponse<UserPageResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
 
-        List<User> sampleResponse = List.of(
-                User.builder()
+        List<UserResponse> sampleResponse = List.of(
+                UserResponse.builder()
                         .id(1L)
                         .name("aken-you")
                         .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .build(),
-                User.builder()
+                UserResponse.builder()
                         .id(2L)
                         .name("acceptor-gyu")
                         .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")
@@ -155,11 +143,7 @@ public class FriendController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다.",
-                        FriendsResponse.builder()
-                                .users(sampleResponse)
-                                .count(2L)
-                                .build()
+                        "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다."
                 ));
     }
 
