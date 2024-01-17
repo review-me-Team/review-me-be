@@ -3,7 +3,7 @@ package reviewme.be.friend.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import reviewme.be.util.dto.User;
+import reviewme.be.user.dto.User;
 
 import java.util.List;
 

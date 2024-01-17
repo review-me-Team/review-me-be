@@ -1,4 +1,4 @@
-package reviewme.be.util.dto;
+package reviewme.be.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import lombok.Getter;
 public class User {
 
     @Schema(description = "사용자 ID", example = "2")
-    private Long id;
+    private long id;
 
     @Schema(description = "사용자 이름", example = "acceptor-gyu")
     private String name;

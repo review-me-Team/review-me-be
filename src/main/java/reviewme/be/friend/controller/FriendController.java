@@ -16,7 +16,7 @@ import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.friend.response.FriendsResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.friend.service.FriendService;
-import reviewme.be.util.dto.User;
+import reviewme.be.user.dto.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
