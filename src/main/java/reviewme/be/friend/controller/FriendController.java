@@ -20,7 +20,6 @@ import reviewme.be.friend.service.FriendService;
 import reviewme.be.user.dto.UserResponse;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "friend", description = "친구(friend) API")
 @RequestMapping("/friend")
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 public class FriendController {
 
     private final FriendService friendService;
-    private final FriendRepository friendRepository;
 
     // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
     private long userId = 1L;
@@ -120,18 +118,6 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
 
-        List<UserResponse> sampleResponse = List.of(
-                UserResponse.builder()
-                        .id(1L)
-                        .name("aken-you")
-                        .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                        .build(),
-                UserResponse.builder()
-                        .id(2L)
-                        .name("acceptor-gyu")
-                        .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")
-                        .build()
-        );
 
         return ResponseEntity
                 .ok()
