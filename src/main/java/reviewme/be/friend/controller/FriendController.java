@@ -11,15 +11,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.friend.request.AcceptFriendRequest;
 import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.friend.response.UserPageResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.friend.service.FriendService;
 import reviewme.be.user.dto.UserResponse;
-
-import java.util.List;
 
 @Tag(name = "friend", description = "친구(friend) API")
 @RequestMapping("/friend")
