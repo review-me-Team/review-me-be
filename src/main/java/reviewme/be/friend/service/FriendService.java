@@ -68,9 +68,18 @@ public class FriendService {
     @Transactional(readOnly = true)
     public Page<UserResponse> getFriends(long userId, Pageable pageable) {
 
-        return friendRepository.findFriendsByUserId(userId, pageable);
+        boolean isFriend = true;
+
+        return friendRepository.findFriendsByUserId(userId, isFriend, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getFriendRequests(long userId, Pageable pageable) {
+
+        boolean isFriend = false;
+
+        return friendRepository.findFriendsByUserId(userId, isFriend, pageable);
+    }
 
     @Transactional
     public void deleteFriend(long userId, long friendId) {
