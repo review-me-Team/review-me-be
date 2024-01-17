@@ -6,5 +6,5 @@ import reviewme.be.user.dto.UserResponse;
 
 public interface FriendRepositoryCustom {
 
-    Page<UserResponse> findFriendsByUserId(long userId, Pageable pageable);
+    Page<UserResponse> findFriendsByUserId(long userId, boolean accepted, Pageable pageable);
 }

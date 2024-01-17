@@ -100,20 +100,15 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showFollowFriends(@PageableDefault(size=20) Pageable pageable) {
 
-        List<UserResponse> followersResponse = friendRepository.findByFollowingUserIdAndAcceptedIsFalse(1L)
-                .stream()
-                .map(friend
-                        -> UserResponse.fromUser(friend.getFollowerUser())
-                ).collect(Collectors.toList());
-
-        long count = friendRepository.countByFollowingUserIdAndAcceptedIsFalse(1L);
+        Page<UserResponse> friendRequests = friendService.getFriendRequests(userId, pageable);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "친구 요청 온 목록 조회에 성공했습니다."
+                        "친구 요청 온 목록 조회에 성공했습니다.",
+                        UserPageResponse.fromUserPageable(friendRequests)
                 ));
     }
 

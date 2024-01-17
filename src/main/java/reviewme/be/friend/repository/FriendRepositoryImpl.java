@@ -22,7 +22,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<UserResponse> findFriendsByUserId(long userId, Pageable pageable) {
+    public Page<UserResponse> findFriendsByUserId(long userId, boolean accpeted, Pageable pageable) {
 
         // order by name asc
         QueryResults<UserResponse> results = queryFactory
@@ -35,7 +35,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
                 .leftJoin(friend.followingUser, user)
                 .where(
                         followingUserEq(userId),
-                        friend.accepted.isTrue()
+                        friend.accepted.eq(accpeted)
                 )
                 .orderBy(friend.followerUser.name.asc())
                 .offset(pageable.getOffset())
