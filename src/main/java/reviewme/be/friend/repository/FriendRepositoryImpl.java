@@ -27,9 +27,9 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
         // order by name asc
         QueryResults<UserResponse> results = queryFactory
                 .select(new QUserResponse(
-                        user.id,
-                        user.name,
-                        user.profileUrl
+                        friend.followerUser.id,
+                        friend.followerUser.name,
+                        friend.followerUser.profileUrl
                 ))
                 .from(friend)
                 .leftJoin(friend.followingUser, user)
@@ -37,7 +37,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
                         followingUserEq(userId),
                         friend.accepted.isTrue()
                 )
-                .orderBy(user.name.asc())
+                .orderBy(friend.followerUser.name.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();

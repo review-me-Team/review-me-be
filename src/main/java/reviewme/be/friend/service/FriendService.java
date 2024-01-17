@@ -1,6 +1,8 @@
 package reviewme.be.friend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewme.be.friend.entity.Friend;
@@ -9,6 +11,7 @@ import reviewme.be.friend.exception.AlreadyFriendRequestedException;
 import reviewme.be.friend.exception.NotOnTheFriendRelationException;
 import reviewme.be.friend.exception.NotOnTheFriendRequestException;
 import reviewme.be.friend.repository.FriendRepository;
+import reviewme.be.user.dto.UserResponse;
 import reviewme.be.user.service.UserService;
 import reviewme.be.user.entity.User;
 
@@ -61,6 +64,13 @@ public class FriendService {
         friendRepository.save(
                 Friend.newRelation(followingUser, user));
     }
+
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getFriends(long userId, Pageable pageable) {
+
+        return friendRepository.findFriendsByUserId(userId, pageable);
+    }
+
 
     @Transactional
     public void deleteFriend(long userId, long friendId) {
