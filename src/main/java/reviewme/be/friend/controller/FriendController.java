@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.friend.request.AcceptFriendRequest;
 import reviewme.be.friend.request.FollowFriendRequest;
-import reviewme.be.friend.response.UserPageResponse;
+import reviewme.be.user.dto.response.UserPageResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.friend.service.FriendService;
 import reviewme.be.user.dto.UserResponse;
@@ -104,24 +104,6 @@ public class FriendController {
                         200,
                         "친구 요청 온 목록 조회에 성공했습니다.",
                         UserPageResponse.fromUserPageable(friendRequests)
-                ));
-    }
-
-    @Operation(summary = "사용자 검색 목록 조회", description = "검색한 이름으로 시작하는 사용자 목록을 조회합니다.")
-    @GetMapping("/user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "사용자 검색 목록 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "사용자 검색 목록 조회 실패")
-    })
-    public ResponseEntity<CustomResponse<UserPageResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
-
-
-        return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다."
                 ));
     }
 
