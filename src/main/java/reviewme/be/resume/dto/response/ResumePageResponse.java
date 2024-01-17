@@ -25,6 +25,7 @@ public class ResumePageResponse {
     private int pageSize;
 
     public static ResumePageResponse fromResumePageable(Page<ResumeResponse> resumePage) {
+
         return ResumePageResponse.builder()
                 .resumes(resumePage.getContent())
                 .pageNumber(resumePage.getNumber())
