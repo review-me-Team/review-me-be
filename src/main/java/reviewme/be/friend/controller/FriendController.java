@@ -16,7 +16,7 @@ import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.friend.response.FriendsResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.friend.service.FriendService;
-import reviewme.be.user.dto.User;
+import reviewme.be.user.dto.UserResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,10 +79,10 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<FriendsResponse>> showFriends(@PageableDefault(size=20) Pageable pageable) {
 
-        List<User> friendsResponse = friendRepository.findByFollowingUserIdAndAcceptedIsTrue(1L)
+        List<UserResponse> friendsResponse = friendRepository.findByFollowingUserIdAndAcceptedIsTrue(1L)
                 .stream()
                 .map(friend
-                        -> User.fromUser(friend.getFollowerUser())
+                        -> UserResponse.fromUser(friend.getFollowerUser())
                 ).collect(Collectors.toList());
 
         long count = friendRepository.countByFollowingUserIdAndAcceptedIsTrue(1L);
@@ -108,10 +108,10 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<FriendsResponse>> showFollowFriends(@PageableDefault(size=20) Pageable pageable) {
 
-        List<User> followersResponse = friendRepository.findByFollowingUserIdAndAcceptedIsFalse(1L)
+        List<UserResponse> followersResponse = friendRepository.findByFollowingUserIdAndAcceptedIsFalse(1L)
                 .stream()
                 .map(friend
-                        -> User.fromUser(friend.getFollowerUser())
+                        -> UserResponse.fromUser(friend.getFollowerUser())
                 ).collect(Collectors.toList());
 
         long count = friendRepository.countByFollowingUserIdAndAcceptedIsFalse(1L);
@@ -137,13 +137,13 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<FriendsResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
 
-        List<User> sampleResponse = List.of(
-                User.builder()
+        List<UserResponse> sampleResponse = List.of(
+                UserResponse.builder()
                         .id(1L)
                         .name("aken-you")
                         .profileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .build(),
-                User.builder()
+                UserResponse.builder()
                         .id(2L)
                         .name("acceptor-gyu")
                         .profileUrl("https://avatars.githubusercontent.com/u/71162390?v=4")

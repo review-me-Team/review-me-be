@@ -10,7 +10,7 @@ import reviewme.be.friend.exception.NotOnTheFriendRelationException;
 import reviewme.be.friend.exception.NotOnTheFriendRequestException;
 import reviewme.be.friend.repository.FriendRepository;
 import reviewme.be.user.service.UserService;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 
 
 // TODO: Follower, follwing 관계 다시 확인하기

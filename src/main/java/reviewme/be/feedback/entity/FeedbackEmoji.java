@@ -2,7 +2,7 @@ package reviewme.be.feedback.entity;
 
 import lombok.*;
 import reviewme.be.util.entity.Emoji;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 
 import javax.persistence.*;
 

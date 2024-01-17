@@ -5,7 +5,7 @@ import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
-import reviewme.be.util.entity.User;
+import reviewme.be.user.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
