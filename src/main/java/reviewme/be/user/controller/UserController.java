@@ -15,6 +15,7 @@ import reviewme.be.user.dto.request.OAuthCodeRequest;
 import reviewme.be.user.dto.response.UserPageResponse;
 import reviewme.be.user.dto.response.UserProfileResponse;
 import reviewme.be.user.dto.response.UserResponse;
+import reviewme.be.user.exception.NoSearchConditionException;
 import reviewme.be.user.service.OAuthLoginService;
 import reviewme.be.user.service.UserService;
 
@@ -56,6 +57,10 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "사용자 검색 목록 조회 실패")
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
+
+        if (start == null) {
+            throw new NoSearchConditionException("검색할 이름을 입력해주세요.");
+        }
 
         Page<UserResponse> searchedUsers = userService.getUsersByStartName(start, pageable);
 
