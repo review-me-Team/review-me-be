@@ -28,11 +28,11 @@ public class DevCorsConfig implements Filter {
             if (request.getHeader("Origin").contains(allowedOrigins)) {
                 response.setHeader("Access-Control-Allow-Origin", allowedOrigins);
             } else {
-                response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+                response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8080");
             }
         }
         else {
-            response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+            response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8080");
         }
 
         response.setHeader("Access-Control-Allow-Credentials", "true");
