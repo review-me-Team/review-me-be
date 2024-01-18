@@ -56,9 +56,12 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "사용자 검색 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "사용자 검색 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<UserPageResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
+    public ResponseEntity<CustomResponse<UserPageResponse>> showUsersStartsWith(
+            @PageableDefault(size=20) Pageable pageable,
+            @RequestParam String start
+    ) {
 
-        if (start == null) {
+        if (start == null || start.isEmpty()) {
             throw new NoSearchConditionException("검색할 이름을 입력해주세요.");
         }
 
