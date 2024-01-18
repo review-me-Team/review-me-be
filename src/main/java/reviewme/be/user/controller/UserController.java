@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,9 @@ import reviewme.be.custom.CustomResponse;
 import reviewme.be.user.dto.request.OAuthCodeRequest;
 import reviewme.be.user.dto.response.UserPageResponse;
 import reviewme.be.user.dto.response.UserProfileResponse;
+import reviewme.be.user.dto.response.UserResponse;
 import reviewme.be.user.service.OAuthLoginService;
+import reviewme.be.user.service.UserService;
 
 @Tag(name = "user", description = "사용자(user), 로그인(login) API")
 @RequestMapping
@@ -22,6 +25,7 @@ import reviewme.be.user.service.OAuthLoginService;
 public class UserController {
 
     private final OAuthLoginService oAuthLoginService;
+    private final UserService userService;
 
     @Operation(summary = "GitHub으로 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
     @PostMapping("/login/oauth")
@@ -53,12 +57,15 @@ public class UserController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showUserInfoStartsWith(@PageableDefault(size=20) Pageable pageable, @RequestParam String start) {
 
+        Page<UserResponse> searchedUsers = userService.getUsersByStartName(start, pageable);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다."
+                        "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다.",
+                        UserPageResponse.fromUserPageable(searchedUsers)
                 ));
     }
 }
