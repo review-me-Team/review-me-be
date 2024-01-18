@@ -16,7 +16,7 @@ import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.user.dto.response.UserPageResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.friend.service.FriendService;
-import reviewme.be.user.dto.UserResponse;
+import reviewme.be.user.dto.response.UserResponse;
 
 @Tag(name = "friend", description = "친구(friend) API")
 @RequestMapping("/friend")

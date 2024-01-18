@@ -11,7 +11,7 @@ import reviewme.be.friend.exception.AlreadyFriendRequestedException;
 import reviewme.be.friend.exception.NotOnTheFriendRelationException;
 import reviewme.be.friend.exception.NotOnTheFriendRequestException;
 import reviewme.be.friend.repository.FriendRepository;
-import reviewme.be.user.dto.UserResponse;
+import reviewme.be.user.dto.response.UserResponse;
 import reviewme.be.user.service.UserService;
 import reviewme.be.user.entity.User;
 

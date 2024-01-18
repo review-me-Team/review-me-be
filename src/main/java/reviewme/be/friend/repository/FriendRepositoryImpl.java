@@ -8,12 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import reviewme.be.user.dto.QUserResponse;
-import reviewme.be.user.dto.UserResponse;
+import reviewme.be.user.dto.response.UserResponse;
 
 import java.util.List;
 
 import static reviewme.be.friend.entity.QFriend.friend;
-import static reviewme.be.resume.entity.QResume.resume;
 import static reviewme.be.user.entity.QUser.user;
 
 @RequiredArgsConstructor
