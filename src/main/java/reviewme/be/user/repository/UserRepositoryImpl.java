@@ -1,7 +1,6 @@
-package reviewme.be.friend.repository;
+package reviewme.be.user.repository;
 
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,31 +11,27 @@ import reviewme.be.user.dto.response.UserResponse;
 
 import java.util.List;
 
-import static reviewme.be.friend.entity.QFriend.friend;
 import static reviewme.be.user.entity.QUser.user;
 
 @RequiredArgsConstructor
-public class FriendRepositoryImpl implements FriendRepositoryCustom {
+public class UserRepositoryImpl implements UserRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<UserResponse> findFriendsByUserId(long userId, boolean accpeted, Pageable pageable) {
+    public Page<UserResponse> findUsersByStartName(String name, Pageable pageable) {
 
-        // order by name asc
         QueryResults<UserResponse> results = queryFactory
                 .select(new QUserResponse(
-                        friend.followerUser.id,
-                        friend.followerUser.name,
-                        friend.followerUser.profileUrl
+                        user.id,
+                        user.name,
+                        user.profileUrl
                 ))
-                .from(friend)
-                .leftJoin(friend.followingUser, user)
+                .from(user)
                 .where(
-                        followingUserEq(userId),
-                        friend.accepted.eq(accpeted)
+                        user.name.startsWith(name)
                 )
-                .orderBy(friend.followerUser.name.asc())
+                .orderBy(user.name.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -45,10 +40,5 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
-    }
-
-    private BooleanExpression followingUserEq(Long userId) {
-
-        return userId != null ? friend.followingUser.id.eq(userId) : null;
     }
 }
