@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import reviewme.be.user.dto.QUserResponse;
+import reviewme.be.user.dto.response.QUserResponse;
 import reviewme.be.user.dto.response.UserResponse;
 
 import java.util.List;
