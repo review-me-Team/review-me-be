@@ -16,8 +16,8 @@ import reviewme.be.question.request.*;
 import reviewme.be.question.response.*;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.Emoji;
-import reviewme.be.util.response.LabelPageResponse;
-import reviewme.be.util.response.LabelResponse;
+import reviewme.be.util.dto.response.LabelPageResponse;
+import reviewme.be.util.dto.response.LabelResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

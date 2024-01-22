@@ -1,4 +1,4 @@
-package reviewme.be.util.response;
+package reviewme.be.util.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.util.dto.response.*;
 import reviewme.be.util.repository.*;
-import reviewme.be.util.response.*;
+import reviewme.be.util.vo.EmojisVO;
+import reviewme.be.util.vo.FeedbackLabelVO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UtilController {
 
+    private final EmojisVO emojisVO;
+    private final FeedbackLabelVO feedbackLabelVO;
     private final ScopeRepository scopeRepository;
-    private final EmojiRepository emojiRepository;
     private final OccupationRepository occupationRepository;
-    private final LabelRepository labelRepository;
 
     @Operation(summary = "공개 범위 목록 조회", description = "공개 범위 목록을 조회합니다.")
     @GetMapping("/scope")
@@ -57,7 +59,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<EmojiPageResponse>> showEmojis() {
 
-        List<EmojiResponse> emojiResponses = emojiRepository.findAll()
+        List<EmojiResponse> emojiResponses = emojisVO.getEmojiList()
                 .stream().map(EmojiResponse::fromEmoji)
                 .collect(Collectors.toList());
 
@@ -105,7 +107,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<LabelPageResponse>> showFeedbackLabels() {
 
-        List<LabelResponse> labelsResponse = labelRepository.findByResumeIsNull()
+        List<LabelResponse> labelsResponse = feedbackLabelVO.getFeedbackLabelList()
                 .stream()
                 .map(LabelResponse::fromLabel)
                 .collect(Collectors.toList());
