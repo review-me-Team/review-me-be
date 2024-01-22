@@ -41,8 +41,14 @@ public class Comment {
                 .build();
     }
 
-    public void softDelete() {
+    public void softDelete(LocalDateTime deletedAt) {
 
-        this.deletedAt = LocalDateTime.now();
+        this.deletedAt = deletedAt;
+    }
+
+    public void updateContent(String content, LocalDateTime updatedAt) {
+
+        this.content = content;
+        this.updatedAt = updatedAt;
     }
 }

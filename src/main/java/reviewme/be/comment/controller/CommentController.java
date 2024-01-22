@@ -120,6 +120,8 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse> updateCommentContent(@Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
 
+        commentService.updateComment(userId, commentId, updateCommentContentRequest);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
