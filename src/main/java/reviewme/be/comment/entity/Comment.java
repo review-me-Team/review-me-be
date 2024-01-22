@@ -40,4 +40,9 @@ public class Comment {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    public void softDelete() {
+
+        this.deletedAt = LocalDateTime.now();
+    }
 }

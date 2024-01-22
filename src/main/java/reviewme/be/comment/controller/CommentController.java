@@ -101,7 +101,7 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse> deleteCommentOfResume(@PathVariable long resumeId, @PathVariable long commentId) {
 
-        // TODO: 본인이 작성한 댓글만 삭제 가능
+        commentService.deleteComment(userId, commentId);
 
         return ResponseEntity
                 .ok()

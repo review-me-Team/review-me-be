@@ -17,4 +17,6 @@ public interface CommentEmojiRepository extends JpaRepository<CommentEmoji, Long
             "WHERE commentEmoji.comment.id = :commentId " +
             "GROUP BY emoji.id")
     List<Tuple> countByCommentIdGroupByEmojiId(long commentId);
+
+    void deleteAllByCommentId(long commentId);
 }
