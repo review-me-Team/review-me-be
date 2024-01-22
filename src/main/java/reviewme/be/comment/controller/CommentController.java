@@ -35,31 +35,23 @@ public class CommentController {
     private final CommentRepository commentRepository;
     private final CommentEmojiRepository commentEmojiRepository;
 
+    // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
+    private long userId = 1L;
+
     @Operation(summary = "댓글 추가", description = "이력서에 대한 댓글을 추가합니다.")
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostedCommentResponse>> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
-
-        PostedCommentResponse sampleResponse = PostedCommentResponse.builder()
-                .resumeId(1L)
-                .commentId(1L)
-                .commenterId(1L)
-                .commenterName("aken-you")
-                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .content(postCommentRequest.getContent())
-                .createdAt(LocalDateTime.now())
-                .build();
+    public ResponseEntity<CustomResponse> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "댓글 추가에 성공했습니다.",
-                        sampleResponse
+                        "댓글 추가에 성공했습니다."
                 ));
     }
 
