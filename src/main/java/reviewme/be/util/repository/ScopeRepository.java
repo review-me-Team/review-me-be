@@ -6,7 +6,7 @@ import reviewme.be.util.entity.Scope;
 import java.util.List;
 import java.util.Optional;
 
-public interface ScopeRepository extends JpaRepository<Scope, Long> {
+public interface ScopeRepository extends JpaRepository<Scope, Integer> {
 
     List<Scope> findAll();
 

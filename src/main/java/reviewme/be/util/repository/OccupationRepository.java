@@ -6,7 +6,7 @@ import reviewme.be.util.entity.Occupation;
 import java.util.List;
 import java.util.Optional;
 
-public interface OccupationRepository extends JpaRepository<Occupation, Long> {
+public interface OccupationRepository extends JpaRepository<Occupation, Integer> {
 
     List<Occupation> findAll();
 
