@@ -74,7 +74,7 @@ public class CommentController {
                 ).collect(Collectors.toList());
 
         CommentEmoji myCommentEmoji = commentEmojiRepository.findByCommentIdAndUserId(2L, 1L);
-        int myEmojiId = myCommentEmoji == null ? 0 : myCommentEmoji.getEmoji().getId();
+        Integer myEmojiId = myCommentEmoji == null ? 0 : myCommentEmoji.getEmoji().getId();
 
         List<CommentResponse> commentsResponse = commentRepository.findByResumeIdOrderByCreatedAtDesc(resumeId)
                 .stream()
