@@ -11,7 +11,7 @@ import reviewme.be.util.entity.Scope;
 public class ScopeResponse {
 
     @Schema(description = "공개 범위 ID", example = "1")
-    private long id;
+    private int id;
 
     @Schema(description = "공개 범위", example = "public")
     private String scope;

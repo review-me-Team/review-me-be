@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reviewme.be.util.entity.Label;
+import reviewme.be.util.entity.Scope;
 import reviewme.be.util.repository.LabelRepository;
+import reviewme.be.util.repository.ScopeRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -14,22 +16,22 @@ import java.util.Map;
 @Getter
 @Component
 @RequiredArgsConstructor
-public class FeedbackLabelVO {
+public class ScopesVO {
 
-    private final LabelRepository labelRepository;
+    private final ScopeRepository scopeRepository;
 
-    private Map<Long, String> feedbackLabels;
-    private List<Label> feedbackLabelList;
+    private Map<Integer, String> scopes;
+    private List<Scope> scopeList;
 
     @PostConstruct
     public void init() {
 
-        feedbackLabelList = labelRepository.findByResumeIsNull();
+        scopeList = scopeRepository.findAll();
 
-        feedbackLabels = feedbackLabelList.stream()
+        scopes = scopeList.stream()
                 .collect(
                         HashMap::new,
-                        (map, label) -> map.put(label.getId(), label.getContent()),
+                        (map, scope) -> map.put(scope.getId(), scope.getScope()),
                         HashMap::putAll
                 );
     }
