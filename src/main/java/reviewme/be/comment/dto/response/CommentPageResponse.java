@@ -1,9 +1,8 @@
-package reviewme.be.comment.response;
+package reviewme.be.comment.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import reviewme.be.feedback.response.FeedbackResponse;
 
 import java.util.List;
 

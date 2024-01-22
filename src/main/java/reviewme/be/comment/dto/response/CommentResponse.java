@@ -1,4 +1,4 @@
-package reviewme.be.comment.response;
+package reviewme.be.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,9 +45,9 @@ public class CommentResponse {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .commenterId(comment.getWriter().getId())
-                .commenterName(comment.getWriter().getName())
-                .commenterProfileUrl(comment.getWriter().getProfileUrl())
+                .commenterId(comment.getCommenter().getId())
+                .commenterName(comment.getCommenter().getName())
+                .commenterProfileUrl(comment.getCommenter().getProfileUrl())
                 .createdAt(comment.getCreatedAt())
                 .emojis(emojis)
                 .myEmojiId(myEmojiId)

@@ -13,16 +13,15 @@ import org.springframework.web.bind.annotation.*;
 import reviewme.be.comment.entity.CommentEmoji;
 import reviewme.be.comment.repository.CommentEmojiRepository;
 import reviewme.be.comment.repository.CommentRepository;
-import reviewme.be.comment.request.PostCommentRequest;
-import reviewme.be.comment.request.UpdateCommentContentRequest;
-import reviewme.be.comment.request.UpdateCommentEmojiRequest;
-import reviewme.be.comment.response.CommentPageResponse;
-import reviewme.be.comment.response.CommentResponse;
-import reviewme.be.comment.response.PostedCommentResponse;
+import reviewme.be.comment.dto.request.PostCommentRequest;
+import reviewme.be.comment.dto.request.UpdateCommentContentRequest;
+import reviewme.be.comment.dto.request.UpdateCommentEmojiRequest;
+import reviewme.be.comment.dto.response.CommentPageResponse;
+import reviewme.be.comment.dto.response.CommentResponse;
+import reviewme.be.comment.service.CommentService;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.Emoji;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentController {
 
+    private final CommentService commentService;
     private final CommentRepository commentRepository;
     private final CommentEmojiRepository commentEmojiRepository;
 
@@ -45,6 +45,8 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
     })
     public ResponseEntity<CustomResponse> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
+
+        commentService.saveComment(userId, resumeId, postCommentRequest);
 
         return ResponseEntity
                 .ok()

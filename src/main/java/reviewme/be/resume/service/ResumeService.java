@@ -126,6 +126,13 @@ public class ResumeService {
         resume.update(request, modifiedScope, modifiedOccupation);
     }
 
+    @Transactional(readOnly = true)
+    public Resume getResumeById(long resumeId) {
+
+        return resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
+                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+    }
+
     /**
      * Take MultiFile data, create a url, and upload to S3
      * Recursively recreate URLs if they are duplicates
