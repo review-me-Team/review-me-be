@@ -1,5 +1,6 @@
 package reviewme.be.util.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,5 +21,11 @@ public class Emoji {
                 .id(id)
                 .count(count)
                 .build();
+    }
+
+    @QueryProjection
+    public Emoji(Integer id, Long count) {
+        this.id = id;
+        this.count = count;
     }
 }

@@ -5,9 +5,7 @@ import reviewme.be.comment.entity.Comment;
 
 import java.util.List;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
 
     List<Comment> findByResumeIdOrderByCreatedAtDesc(long resumeId);
-
-
 }

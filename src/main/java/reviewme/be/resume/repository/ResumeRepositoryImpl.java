@@ -61,7 +61,7 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
 
     private BooleanExpression occupationEq(Integer occupationId) {
 
-        return occupationId != null ? resume.occupation.id.eq(Long.valueOf(occupationId)) : null;
+        return occupationId != null ? resume.occupation.id.eq(occupationId) : null;
     }
 
     private BooleanExpression yearEq(Integer year) {

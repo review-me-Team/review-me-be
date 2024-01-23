@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
 public class CommentController {
 
     private final CommentService commentService;
-    private final CommentRepository commentRepository;
-    private final CommentEmojiRepository commentEmojiRepository;
 
     // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
     private long userId = 1L;
@@ -66,30 +64,13 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable) {
 
-        List<Emoji> emojis = commentEmojiRepository.countByCommentIdGroupByEmojiId(2L)
-                .stream()
-                .map(tuple -> Emoji.fromCountEmojiTuple(
-                        tuple.get("id", Integer.class),
-                        tuple.get("count", Long.class))
-                ).collect(Collectors.toList());
-
-        CommentEmoji myCommentEmoji = commentEmojiRepository.findByCommentIdAndUserId(2L, 1L);
-        Integer myEmojiId = myCommentEmoji == null ? 0 : myCommentEmoji.getEmoji().getId();
-
-        List<CommentResponse> commentsResponse = commentRepository.findByResumeIdOrderByCreatedAtDesc(resumeId)
-                .stream()
-                .map(comment -> CommentResponse.fromComment(comment, emojis, myEmojiId))
-                .collect(Collectors.toList());
-
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "이력서에 달린 댓글 목록 조회에 성공했습니다.",
-                        CommentPageResponse.builder()
-                                .comments(commentsResponse)
-                                .build()
+                        commentService.getComments(userId, resumeId, pageable)
                 ));
     }
 
