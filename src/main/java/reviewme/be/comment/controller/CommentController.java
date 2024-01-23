@@ -64,13 +64,15 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable) {
 
+        CommentPageResponse comments = commentService.getComments(userId, resumeId, pageable);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "이력서에 달린 댓글 목록 조회에 성공했습니다.",
-                        commentService.getComments(userId, resumeId, pageable)
+                        comments
                 ));
     }
 
