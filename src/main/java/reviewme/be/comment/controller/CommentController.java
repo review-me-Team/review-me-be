@@ -10,21 +10,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import reviewme.be.comment.entity.CommentEmoji;
-import reviewme.be.comment.repository.CommentEmojiRepository;
-import reviewme.be.comment.repository.CommentRepository;
-import reviewme.be.comment.request.PostCommentRequest;
-import reviewme.be.comment.request.UpdateCommentContentRequest;
-import reviewme.be.comment.request.UpdateCommentEmojiRequest;
-import reviewme.be.comment.response.CommentPageResponse;
-import reviewme.be.comment.response.CommentResponse;
-import reviewme.be.comment.response.PostedCommentResponse;
+import reviewme.be.comment.dto.request.PostCommentRequest;
+import reviewme.be.comment.dto.request.UpdateCommentContentRequest;
+import reviewme.be.comment.dto.request.UpdateCommentEmojiRequest;
+import reviewme.be.comment.dto.response.CommentPageResponse;
+import reviewme.be.comment.service.CommentService;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.util.dto.Emoji;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "comment", description = "댓글(comment) API")
 @RequestMapping("/resume/{resumeId}/comment")
@@ -32,8 +24,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentRepository commentRepository;
-    private final CommentEmojiRepository commentEmojiRepository;
+    private final CommentService commentService;
+
+    // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
+    private long userId = 1L;
 
     @Operation(summary = "댓글 추가", description = "이력서에 대한 댓글을 추가합니다.")
     @PostMapping
@@ -41,25 +35,16 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostedCommentResponse>> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
 
-        PostedCommentResponse sampleResponse = PostedCommentResponse.builder()
-                .resumeId(1L)
-                .commentId(1L)
-                .commenterId(1L)
-                .commenterName("aken-you")
-                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .content(postCommentRequest.getContent())
-                .createdAt(LocalDateTime.now())
-                .build();
+        commentService.saveComment(userId, resumeId, postCommentRequest);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "댓글 추가에 성공했습니다.",
-                        sampleResponse
+                        "댓글 추가에 성공했습니다."
                 ));
     }
 
@@ -72,20 +57,7 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable) {
 
-        List<Emoji> emojis = commentEmojiRepository.countByCommentIdGroupByEmojiId(2L)
-                .stream()
-                .map(tuple -> Emoji.fromCountEmojiTuple(
-                        tuple.get("id", Integer.class),
-                        tuple.get("count", Long.class))
-                ).collect(Collectors.toList());
-
-        CommentEmoji myCommentEmoji = commentEmojiRepository.findByCommentIdAndUserId(2L, 1L);
-        int myEmojiId = myCommentEmoji == null ? 0 : myCommentEmoji.getEmoji().getId();
-
-        List<CommentResponse> commentsResponse = commentRepository.findByResumeIdOrderByCreatedAtDesc(resumeId)
-                .stream()
-                .map(comment -> CommentResponse.fromComment(comment, emojis, myEmojiId))
-                .collect(Collectors.toList());
+        CommentPageResponse comments = commentService.getComments(userId, resumeId, pageable);
 
         return ResponseEntity
                 .ok()
@@ -93,9 +65,7 @@ public class CommentController {
                         "success",
                         200,
                         "이력서에 달린 댓글 목록 조회에 성공했습니다.",
-                        CommentPageResponse.builder()
-                                .comments(commentsResponse)
-                                .build()
+                        comments
                 ));
     }
 
@@ -107,7 +77,7 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse> deleteCommentOfResume(@PathVariable long resumeId, @PathVariable long commentId) {
 
-        // TODO: 본인이 작성한 댓글만 삭제 가능
+        commentService.deleteComment(userId, commentId);
 
         return ResponseEntity
                 .ok()
@@ -126,6 +96,8 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse> updateCommentContent(@Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
 
+        commentService.updateComment(userId, commentId, updateCommentContentRequest);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -141,7 +113,9 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentEmoji(@Validated @RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse> updateCommentEmoji(@RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+
+        commentService.updateCommentEmoji(userId, commentId, updateCommentEmojiRequest);
 
         return ResponseEntity
                 .ok()

@@ -9,8 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.util.repository.*;
-import reviewme.be.util.response.*;
+import reviewme.be.util.dto.response.*;
+import reviewme.be.util.vo.EmojisVO;
+import reviewme.be.util.vo.FeedbackLabelsVO;
+import reviewme.be.util.vo.OccupationsVO;
+import reviewme.be.util.vo.ScopesVO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +23,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UtilController {
 
-    private final ScopeRepository scopeRepository;
-    private final EmojiRepository emojiRepository;
-    private final OccupationRepository occupationRepository;
-    private final LabelRepository labelRepository;
+    private final EmojisVO emojisVO;
+    private final FeedbackLabelsVO feedbackLabelsVO;
+    private final ScopesVO scopesVO;
+    private final OccupationsVO occupationsVO;
 
     @Operation(summary = "공개 범위 목록 조회", description = "공개 범위 목록을 조회합니다.")
     @GetMapping("/scope")
@@ -33,7 +36,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<ScopePageResponse>> showScopes() {
 
-        List<ScopeResponse> scopeResponses = scopeRepository.findAll()
+        List<ScopeResponse> scopeResponses = scopesVO.getScopeList()
                 .stream().map(ScopeResponse::fromScope)
                 .collect(Collectors.toList());
 
@@ -57,7 +60,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<EmojiPageResponse>> showEmojis() {
 
-        List<EmojiResponse> emojiResponses = emojiRepository.findAll()
+        List<EmojiResponse> emojiResponses = emojisVO.getEmojiList()
                 .stream().map(EmojiResponse::fromEmoji)
                 .collect(Collectors.toList());
 
@@ -81,7 +84,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<OccupationPageResponse>> showOccupations() {
 
-        List<OccupationResponse> occupationResponses = occupationRepository.findAll()
+        List<OccupationResponse> occupationResponses = occupationsVO.getOccupationList()
                 .stream().map(OccupationResponse::fromOccupation)
                 .collect(Collectors.toList());
 
@@ -105,7 +108,7 @@ public class UtilController {
     })
     public ResponseEntity<CustomResponse<LabelPageResponse>> showFeedbackLabels() {
 
-        List<LabelResponse> labelsResponse = labelRepository.findByResumeIsNull()
+        List<LabelResponse> labelsResponse = feedbackLabelsVO.getFeedbackLabelList()
                 .stream()
                 .map(LabelResponse::fromLabel)
                 .collect(Collectors.toList());

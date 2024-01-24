@@ -5,7 +5,7 @@ import reviewme.be.util.entity.Emoji;
 
 import java.util.List;
 
-public interface EmojiRepository extends JpaRepository<Emoji, Long> {
+public interface EmojiRepository extends JpaRepository<Emoji, Integer> {
 
     List<Emoji> findAll();
 }

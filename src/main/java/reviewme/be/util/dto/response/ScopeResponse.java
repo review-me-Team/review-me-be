@@ -1,4 +1,4 @@
-package reviewme.be.util.response;
+package reviewme.be.util.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import reviewme.be.util.entity.Scope;
 public class ScopeResponse {
 
     @Schema(description = "공개 범위 ID", example = "1")
-    private long id;
+    private int id;
 
     @Schema(description = "공개 범위", example = "public")
     private String scope;

@@ -20,7 +20,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User writer;
+    private User commenter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id")
@@ -30,4 +30,25 @@ public class Comment {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
+
+    public static Comment ofCreated(User commenter, Resume resume, String content) {
+
+        return Comment.builder()
+                .commenter(commenter)
+                .resume(resume)
+                .content(content)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public void softDelete(LocalDateTime deletedAt) {
+
+        this.deletedAt = deletedAt;
+    }
+
+    public void updateContent(String content, LocalDateTime updatedAt) {
+
+        this.content = content;
+        this.updatedAt = updatedAt;
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
 import reviewme.be.util.exception.NonExistOccupationException;
 import reviewme.be.util.exception.NonExistScopeException;
+import reviewme.be.util.exception.NotYoursException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -77,6 +78,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NonExistOccupationException.class)
     public ResponseEntity<CustomErrorResponse> nonExistOccupation(NonExistOccupationException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NotYoursException.class)
+    public ResponseEntity<CustomErrorResponse> notYours(NotYoursException ex) {
 
         return ResponseEntity
                 .badRequest()
