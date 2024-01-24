@@ -19,6 +19,9 @@ public class ResumeDetailResponse {
     @Schema(description = "이력서 작성자 이름", example = "aken-you")
     private String writerName;
 
+    @Schema(description = "이력서 작성자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
+    private String writerProfileUrl;
+
     @Schema(description = "직군", example = "Frontend")
     private String occupation;
 
@@ -30,6 +33,7 @@ public class ResumeDetailResponse {
                 .resumeUrl(resume.getUrl())
                 .title(resume.getTitle())
                 .writerName(resume.getUser().getName())
+                .writerProfileUrl(resume.getUser().getProfileUrl())
                 .occupation(resume.getOccupation().getOccupation())
                 .year(resume.getYear())
                 .build();

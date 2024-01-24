@@ -9,6 +9,7 @@ public class LoginConfig {
 
     @Bean
     public RestTemplate restTemplate() {
+
         return new RestTemplate();
     }
 }
