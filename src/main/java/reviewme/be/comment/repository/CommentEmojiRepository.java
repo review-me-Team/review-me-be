@@ -8,10 +8,11 @@ import reviewme.be.comment.entity.CommentEmoji;
 
 import javax.persistence.Tuple;
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentEmojiRepository extends JpaRepository<CommentEmoji, Long>, CommentEmojiRepositoryCustom {
 
-    CommentEmoji findByCommentIdAndUserId(long commentId, long userId);
+    Optional<CommentEmoji> findByUserIdAndCommentId(long userId, long commentId);
 
     @Query(value = "SELECT commentEmoji " +
             "FROM CommentEmoji commentEmoji " +

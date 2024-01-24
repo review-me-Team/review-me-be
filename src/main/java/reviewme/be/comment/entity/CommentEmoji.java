@@ -25,8 +25,20 @@ public class CommentEmoji {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "emoji_id")
     private Emoji emoji;
+
+    public static CommentEmoji ofCreated(User user, Comment comment, Emoji emoji) {
+        return CommentEmoji.builder()
+                .user(user)
+                .comment(comment)
+                .emoji(emoji)
+                .build();
+    }
+
+    public void updateEmoji(Emoji emoji) {
+
+        this.emoji = emoji;
+    }
 }

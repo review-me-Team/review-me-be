@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import reviewme.be.feedback.entity.Feedback;
-import reviewme.be.util.dto.Emoji;
+import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,12 +44,12 @@ public class FeedbackResponse {
     private Boolean checked;
 
     @Schema(description = "이모지 정보")
-    private List<Emoji> emojis;
+    private List<EmojiCount> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback, List<Emoji> emojis, Integer myEmojiId) {
+    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback, List<EmojiCount> emojis, Integer myEmojiId) {
 
         return FeedbackResponse.builder()
                 .id(feedback.getId())

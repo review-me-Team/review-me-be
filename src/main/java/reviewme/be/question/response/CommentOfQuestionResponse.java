@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import reviewme.be.util.dto.Emoji;
+import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +37,7 @@ public class CommentOfQuestionResponse {
     private LocalDateTime createdAt;
 
     @Schema(description = "이모지 정보")
-    private List<Emoji> emojis;
+    private List<EmojiCount> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;

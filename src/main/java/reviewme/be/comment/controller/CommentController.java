@@ -10,20 +10,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import reviewme.be.comment.entity.CommentEmoji;
-import reviewme.be.comment.repository.CommentEmojiRepository;
-import reviewme.be.comment.repository.CommentRepository;
 import reviewme.be.comment.dto.request.PostCommentRequest;
 import reviewme.be.comment.dto.request.UpdateCommentContentRequest;
 import reviewme.be.comment.dto.request.UpdateCommentEmojiRequest;
 import reviewme.be.comment.dto.response.CommentPageResponse;
-import reviewme.be.comment.dto.response.CommentResponse;
 import reviewme.be.comment.service.CommentService;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.util.dto.Emoji;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "comment", description = "댓글(comment) API")
 @RequestMapping("/resume/{resumeId}/comment")
@@ -120,7 +113,9 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentEmoji(@Validated @RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse> updateCommentEmoji(@RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+
+        commentService.updateCommentEmoji(userId, commentId, updateCommentEmojiRequest);
 
         return ResponseEntity
                 .ok()

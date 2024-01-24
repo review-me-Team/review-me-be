@@ -18,7 +18,7 @@ public class EmojisVO {
 
     private final EmojiRepository emojiRepository;
 
-    private Map<Integer, String> emojis;
+    private static Map<Integer, Emoji> emojis;
     private List<Emoji> emojiList;
 
     @PostConstruct
@@ -29,8 +29,22 @@ public class EmojisVO {
         emojis = emojiList.stream()
                 .collect(
                         HashMap::new,
-                        (map, emoji) -> map.put(emoji.getId(), emoji.getEmoji()),
+                        (map, emoji) -> map.put(emoji.getId(), emoji),
                         HashMap::putAll
                 );
+    }
+
+    public boolean validateEmojiById(int emojiId) {
+
+        return emojis.containsKey(emojiId);
+    }
+
+    public Emoji findEmojiById(Integer emojiId) {
+
+        if (emojiId != null && !validateEmojiById(emojiId)) {
+            throw new IllegalArgumentException("존재하지 않는 이모지입니다.");
+        }
+
+        return emojis.get(emojiId);
     }
 }

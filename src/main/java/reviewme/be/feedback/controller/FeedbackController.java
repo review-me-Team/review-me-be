@@ -18,7 +18,7 @@ import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.feedback.response.*;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.util.dto.Emoji;
+import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -74,9 +74,9 @@ public class FeedbackController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<Emoji> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L).stream()
+        List<EmojiCount> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L).stream()
                 .map(tuple
-                        -> Emoji.fromCountEmojiTuple(
+                        -> EmojiCount.fromCountEmojiTuple(
                         tuple.get("id", Integer.class),
                         tuple.get("count", Long.class))
                 ).collect(Collectors.toList());
@@ -111,12 +111,12 @@ public class FeedbackController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<Emoji> sampleEmojis = List.of(
-                Emoji.builder()
+        List<EmojiCount> sampleEmojis = List.of(
+                EmojiCount.builder()
                         .id(1)
                         .count(10L)
                         .build(),
-                Emoji.builder()
+                EmojiCount.builder()
                         .id(2)
                         .count(3L)
                         .build());

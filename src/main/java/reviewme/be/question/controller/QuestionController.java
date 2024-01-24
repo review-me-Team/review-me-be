@@ -15,7 +15,6 @@ import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.question.request.*;
 import reviewme.be.question.response.*;
 import reviewme.be.custom.CustomResponse;
-import reviewme.be.util.dto.Emoji;
 import reviewme.be.util.dto.response.LabelPageResponse;
 import reviewme.be.util.dto.response.LabelResponse;
 
@@ -72,28 +71,12 @@ public class QuestionController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<Emoji> emojis = questionEmojiRepository.countByQuestionIdGroupByEmojiId(1L)
-                .stream()
-                .map(tuple -> Emoji.fromCountEmojiTuple(tuple.get("id", Integer.class), tuple.get("count", Long.class)))
-                .collect(Collectors.toList());
-
-        int myEmojiId = questionEmojiRepository.findByQuestionIdAndUserId(1L, 1L)
-                .getEmoji().getId();
-
-        List<QuestionResponse> questionsResponse = questionRepository.findByResumeIdAndResumePage(1L, 1)
-                .stream()
-                .map(question -> QuestionResponse.fromQuestionOfOwnResume(question, emojis, myEmojiId))
-                .collect(Collectors.toList());
-
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "예상 질문 목록 조회에 성공했습니다.",
-                        QuestionPageResponse.builder()
-                                .questions(questionsResponse)
-                                .build()
+                        "예상 질문 목록 조회에 성공했습니다."
                 ));
     }
 
@@ -107,38 +90,12 @@ public class QuestionController {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
-        List<Emoji> sampleEmojis = List.of(
-                Emoji.builder()
-                        .id(1)
-                        .count(10L)
-                        .build(),
-                Emoji.builder()
-                        .id(2)
-                        .count(3L)
-                        .build());
-
-        List<CommentOfQuestionResponse> sampleResponse = List.of(
-                CommentOfQuestionResponse.builder()
-                        .id(1L)
-                        .questionId(1L)
-                        .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
-                        .writerId(1L)
-                        .writerName("aken-you")
-                        .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                        .createdAt(LocalDateTime.now())
-                        .emojis(sampleEmojis)
-                        .myEmojiId(1)
-                        .build());
-
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "예상 질문 댓글 조회에 성공했습니다.",
-                        CommentOfQuestionPageResponse.builder()
-                                .comments(sampleResponse)
-                                .build()
+                        "예상 질문 댓글 조회에 성공했습니다."
                 ));
     }
 
