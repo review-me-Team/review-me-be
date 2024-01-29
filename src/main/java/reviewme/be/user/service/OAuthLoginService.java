@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import reviewme.be.user.dto.UserGitHubAccessToken;
+import reviewme.be.user.dto.UserGitHubToken;
 import reviewme.be.user.dto.UserGitHubProfile;
 import reviewme.be.user.dto.response.UserProfileResponse;
 import reviewme.be.user.exception.InvalidCodeException;
@@ -22,16 +22,12 @@ public class OAuthLoginService {
     private final RestTemplate restTemplate;
     private final GitHubOAuthApp gitHubOAuthApp;
 
-    public UserProfileResponse getUserProfile(String code) {
+    public UserGitHubProfile getUserProfile(String code) {
 
-        String accessToken = getAccessToken(code);
+        String accessToken = getAccessTokenByCode(code);
         UserGitHubProfile userGitHubProfile = getUserGitHubProfile(accessToken);
 
-        return UserProfileResponse.builder()
-                .id(1L)
-                .name(userGitHubProfile.getLogin())
-                .avatarUrl(userGitHubProfile.getAvatarUrl())
-                .build();
+        return userGitHubProfile;
     }
 
     /**
@@ -40,7 +36,7 @@ public class OAuthLoginService {
      * @param code
      * @return accessToken
      */
-    private String getAccessToken(String code) {
+    private String getAccessTokenByCode(String code) {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> header = new HashMap<>();
@@ -56,10 +52,10 @@ public class OAuthLoginService {
         payloads.setAll(payload);
 
         HttpEntity<?> request = new HttpEntity<>(payloads, headers);
-        ResponseEntity<UserGitHubAccessToken> response = restTemplate.postForEntity(
+        ResponseEntity<UserGitHubToken> response = restTemplate.postForEntity(
                 gitHubOAuthApp.getAccessTokenEndpoint(),
                 request,
-                UserGitHubAccessToken.class);
+                UserGitHubToken.class);
 
         String accessToken = response.getBody().getAccessToken();
 

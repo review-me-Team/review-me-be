@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor
-public class UserGitHubAccessToken {
+public class UserGitHubToken {
 
     private String accessToken;
+    private String refreshToken;
 }
