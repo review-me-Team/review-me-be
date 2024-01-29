@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.user.dto.UserGitHubProfile;
+import reviewme.be.user.dto.UserGitHubToken;
 import reviewme.be.user.dto.request.OAuthCodeRequest;
 import reviewme.be.user.dto.response.LoginUserResponse;
 import reviewme.be.user.dto.response.UserPageResponse;
@@ -22,6 +23,8 @@ import reviewme.be.user.service.JWTService;
 import reviewme.be.user.service.OAuthLoginService;
 import reviewme.be.user.service.UserService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Tag(name = "user", description = "사용자(user), 로그인(login) API")
@@ -30,7 +33,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final OAuthLoginService oAuthLoginService;
+    private final OAuthLoginService oauthLoginService;
     private final JWTService jwtService;
     private final UserService userService;
 
@@ -41,15 +44,19 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "로그인 실패")
     })
     public ResponseEntity<CustomResponse<LoginUserResponse>> loginWithGitHub(
-            @RequestBody OAuthCodeRequest request) {
+            @RequestBody OAuthCodeRequest request,
+            HttpServletResponse response) {
 
-        UserGitHubProfile userGitHubProfile = oAuthLoginService.getUserProfile(request.getCode());
+        UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(request.getCode());
+        UserGitHubProfile userGitHubProfile = oauthLoginService.getUserGitHubProfile(userGitHubToken.getAccessToken());
         UserProfileResponse userProfileResponse = userService.getUserByGithubProfile(userGitHubProfile);
 
         long currentTime = System.currentTimeMillis();
         long twoWeeksInMillis = 1000 * 60 * 60 * 24 * 14;
         Date expiredAt = new Date(currentTime + twoWeeksInMillis);
         String jwt = jwtService.createJwt(userProfileResponse, expiredAt);
+
+        setRefreshToken(response, userGitHubToken.getRefreshToken());
 
         return ResponseEntity
                 .ok()
@@ -88,5 +95,15 @@ public class UserController {
                         "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다.",
                         UserPageResponse.fromUserPageable(searchedUsers)
                 ));
+    }
+
+    private void setRefreshToken(HttpServletResponse response, String refreshToken) {
+
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(60 * 60 * 24 * 14);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

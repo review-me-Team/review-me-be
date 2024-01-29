@@ -8,7 +8,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import reviewme.be.user.dto.UserGitHubToken;
 import reviewme.be.user.dto.UserGitHubProfile;
-import reviewme.be.user.dto.response.UserProfileResponse;
 import reviewme.be.user.exception.InvalidCodeException;
 import reviewme.be.user.token.GitHubOAuthApp;
 
@@ -22,12 +21,9 @@ public class OAuthLoginService {
     private final RestTemplate restTemplate;
     private final GitHubOAuthApp gitHubOAuthApp;
 
-    public UserGitHubProfile getUserProfile(String code) {
+    public UserGitHubToken getUserGitHubToken(String code) {
 
-        String accessToken = getAccessTokenByCode(code);
-        UserGitHubProfile userGitHubProfile = getUserGitHubProfile(accessToken);
-
-        return userGitHubProfile;
+        return getUserGitHubTokenByCode(code);
     }
 
     /**
@@ -36,7 +32,7 @@ public class OAuthLoginService {
      * @param code
      * @return accessToken
      */
-    private String getAccessTokenByCode(String code) {
+    private UserGitHubToken getUserGitHubTokenByCode(String code) {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> header = new HashMap<>();
@@ -63,7 +59,7 @@ public class OAuthLoginService {
             throw new InvalidCodeException("[ERROR] 유효하지 않은 코드입니다.");
         }
 
-        return response.getBody().getAccessToken();
+        return response.getBody();
     }
 
     /**
@@ -72,7 +68,7 @@ public class OAuthLoginService {
      * @param accessToken
      * @return UserGitHubProfile
      */
-    private UserGitHubProfile getUserGitHubProfile(String accessToken) {
+    public UserGitHubProfile getUserGitHubProfile(String accessToken) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
