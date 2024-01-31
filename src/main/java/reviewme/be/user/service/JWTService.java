@@ -2,15 +2,14 @@ package reviewme.be.user.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reviewme.be.user.dto.UserGitHubProfile;
 import reviewme.be.user.dto.response.UserProfileResponse;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -36,25 +35,30 @@ public class JWTService {
     public boolean validateJwtIsExpired(String jwt) {
 
         try {
-
             Jws<Claims> claimsJws = Jwts.parser()
                     .setSigningKey(secret)
                     .parseClaimsJws(jwt);
 
             return claimsJws.getBody().getExpiration().before(new Date());
-
-        } catch (Exception e) {
-            return true;
+        } catch (JwtException e) {
+            return false;
         }
     }
 
-    public UserGitHubProfile getUserProfileFromJwt(String jwt) {
+    public boolean validateJwtIsManipulated(String jwt) {
 
-        Jws<Claims> claimsJws = Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(jwt);
+        try {
+            byte[] decodedSecret = java.util.Base64.getUrlDecoder().decode(jwt);
+            Key key = new SecretKeySpec(decodedSecret, 0, decodedSecret.length, "HmacSHA256");
 
-        return claimsJws.getBody().get(USER_PROFILE, UserGitHubProfile.class);
+            Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(jwt);
+
+            return false;
+        } catch (JwtException e) {
+            return true;
+        }
     }
 
     public <T> T extractUserFromJwt(String jwt, Class<T> type) {
@@ -77,7 +81,7 @@ public class JWTService {
             Object userProfile = payloadMap.get(USER_PROFILE);
             String userProfileJson = objectMapper.writeValueAsString(userProfile);
 
-            return objectMapper.readValue(decodedPayload, type);
+            return objectMapper.readValue(userProfileJson, type);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("사용자 정보를 가져올 수 없습니다.");
         }
