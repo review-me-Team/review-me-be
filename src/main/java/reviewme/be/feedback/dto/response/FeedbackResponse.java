@@ -1,4 +1,4 @@
-package reviewme.be.feedback.response;
+package reviewme.be.feedback.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,13 +22,13 @@ public class FeedbackResponse {
     private String content;
 
     @Schema(description = "피드백을 남긴 사용자 ID", example = "1")
-    private Long writerId;
+    private long commenterId;
 
     @Schema(description = "피드백을 남긴 사용자 이름", example = "aken-you")
-    private String writerName;
+    private String commenterName;
 
     @Schema(description = "피드백을 남긴 사용자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
-    private String writerProfileUrl;
+    private String commenterProfileUrl;
 
     @Schema(description = "피드백 라벨", example = "프로젝트")
     private String labelContent ;
@@ -54,9 +54,9 @@ public class FeedbackResponse {
         return FeedbackResponse.builder()
                 .id(feedback.getId())
                 .content(feedback.getContent())
-                .writerId(feedback.getWriter().getId())
-                .writerName(feedback.getWriter().getName())
-                .writerProfileUrl(feedback.getWriter().getProfileUrl())
+                .commenterId(feedback.getWriter().getId())
+                .commenterName(feedback.getWriter().getName())
+                .commenterProfileUrl(feedback.getWriter().getProfileUrl())
                 .labelContent(feedback.getLabel().getContent())
                 .createdAt(feedback.getCreatedAt())
                 .countOfReplies(feedback.getChildCnt())

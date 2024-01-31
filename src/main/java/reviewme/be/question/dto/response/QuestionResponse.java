@@ -1,4 +1,4 @@
-package reviewme.be.question.response;
+package reviewme.be.question.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,13 +22,13 @@ public class QuestionResponse {
     private String content;
 
     @Schema(description = "질문자 ID", example = "1")
-    private Long writerId;
+    private long commenterId;
 
     @Schema(description = "질문자 이름", example = "aken-you")
-    private String writerName;
+    private String commenterName;
 
     @Schema(description = "질문자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
-    private String writerProfileUrl;
+    private String commenterProfileUrl;
 
     @Schema(description = "예상 질문 라벨", example = "react-query")
     private String labelContent;
@@ -44,22 +44,22 @@ public class QuestionResponse {
     private Boolean bookmarked;
 
     @Schema(description = "체크 여부", example = "true")
-    private Boolean checked;
+    private boolean checked;
 
     @Schema(description = "이모지 정보")
     private List<EmojiCount> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
-    private Integer myEmojiId;
+    private int myEmojiId;
 
     public static QuestionResponse fromQuestionOfOwnResume(Question question, List<EmojiCount> emojis, Integer myEmojiId) {
 
         return QuestionResponse.builder()
                 .id(question.getId())
                 .content(question.getContent())
-                .writerId(question.getWriter().getId())
-                .writerName(question.getWriter().getName())
-                .writerProfileUrl(question.getWriter().getProfileUrl())
+                .commenterId(question.getWriter().getId())
+                .commenterName(question.getWriter().getName())
+                .commenterProfileUrl(question.getWriter().getProfileUrl())
                 .labelContent(question.getLabel().getContent())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())
@@ -75,9 +75,9 @@ public class QuestionResponse {
         return QuestionResponse.builder()
                 .id(question.getId())
                 .content(question.getContent())
-                .writerId(question.getWriter().getId())
-                .writerName(question.getWriter().getName())
-                .writerProfileUrl(question.getWriter().getProfileUrl())
+                .commenterId(question.getWriter().getId())
+                .commenterName(question.getWriter().getName())
+                .commenterProfileUrl(question.getWriter().getProfileUrl())
                 .labelContent(question.getLabel().getContent())
                 .createdAt(question.getCreatedAt())
                 .countOfReplies(question.getChildCnt())

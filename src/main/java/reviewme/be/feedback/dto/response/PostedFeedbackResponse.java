@@ -1,4 +1,4 @@
-package reviewme.be.feedback.response;
+package reviewme.be.feedback.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,16 +17,16 @@ public class PostedFeedbackResponse {
     private Long id;
 
     @Schema(description = "이력서 ID", example = "1")
-    private Long resumeId;
+    private long resumeId;
 
     @Schema(description = "피드백 작성자 ID", example = "1")
-    private Long writerId;
+    private long commenterId;
 
     @Schema(description = "피드백 작성자 이름", example = "aken-you")
-    private String writerName;
+    private String commenterName;
 
     @Schema(description = "피드백 작성자 프로필 url", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
-    private String writerProfileUrl;
+    private String commenterProfileUrl;
 
     @Schema(description = "피드백 내용", example = "뭔가 이력서에 문제 해결과 관련된 내용이 부족해보이는 것같아요.")
     private String content;
@@ -49,9 +49,9 @@ public class PostedFeedbackResponse {
         return PostedFeedbackResponse.builder()
                 .id(feedback.getId())
                 .resumeId(feedback.getResume().getId())
-                .writerId(feedback.getWriter().getId())
-                .writerName(feedback.getWriter().getName())
-                .writerProfileUrl(feedback.getWriter().getProfileUrl())
+                .commenterId(feedback.getWriter().getId())
+                .commenterName(feedback.getWriter().getName())
+                .commenterProfileUrl(feedback.getWriter().getProfileUrl())
                 .content(feedback.getContent())
                 .labelContent(feedback.getLabel().getContent() == null ? null : feedback.getLabel().getContent())
                 .resumePage(feedback.getResumePage())

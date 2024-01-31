@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
-public class DefaultInterceptor implements HandlerInterceptor {
+public class AuthInterceptor implements HandlerInterceptor {
 
     private final JWTService jwtService;
     private final UserService userService;
@@ -34,7 +34,12 @@ public class DefaultInterceptor implements HandlerInterceptor {
         String header = request.getHeader("Authorization");
 
         Pattern pattern = Pattern.compile("^Bearer\\s(.+)$");
-        Matcher matcher = pattern.matcher(header);
+        Matcher matcher;
+        try {
+            matcher = pattern.matcher(header);
+        } catch (NullPointerException e) {
+            throw new NoValidBearerFormatException("Authorization header가 존재하지 않습니다.");
+        }
         if (!matcher.matches()) {
             throw new NoValidBearerFormatException("Authorization header가 잘못된 형식입니다.");
         }
