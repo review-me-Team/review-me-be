@@ -10,17 +10,20 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.question.dto.request.*;
+import reviewme.be.question.dto.response.CommentOfQuestionPageResponse;
+import reviewme.be.question.dto.response.PostedQuestionResponse;
+import reviewme.be.question.dto.response.QuestionPageResponse;
 import reviewme.be.question.repository.QuestionEmojiRepository;
 import reviewme.be.question.repository.QuestionRepository;
-import reviewme.be.question.request.*;
-import reviewme.be.question.response.*;
+import reviewme.be.question.dto.request.*;
+import reviewme.be.question.dto.response.*;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.response.LabelPageResponse;
 import reviewme.be.util.dto.response.LabelResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "question", description = "예상 질문(question) API")
 @RequestMapping("/resume/{resumeId}/question")
@@ -41,9 +44,9 @@ public class QuestionController {
 
         PostedQuestionResponse sampleResponse = PostedQuestionResponse.builder()
                 .resumeId(1L)
-                .writerId(1L)
-                .writerName("aken-you")
-                .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .commenterId(1L)
+                .commenterName("aken-you")
+                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                 .content(postQuestionRequest.getContent())
                 .labelContent("react-query")
                 .resumePage(1)

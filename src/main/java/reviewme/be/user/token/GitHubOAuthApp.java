@@ -12,11 +12,14 @@ import org.springframework.stereotype.Component;
 public class GitHubOAuthApp {
 
 
-    @Value("${GITHUB_CLIENT_ID_SERVER}")
+    @Value("${GITHUB_APP_CLIENT_ID}")
     private String clientId;
 
-    @Value("${GITHUB_CLIENT_SECRET_SERVER}")
+    @Value("${GITHUB_APP_SECRET}")
     private String clientSecret;
+
+    @Value("${GITHUB_GRANT_TYPE}")
+    private String grantType;
 
     @Value("${GITHUB_ACCESSTOKEN_ENDPOINT}")
     private String accessTokenEndpoint;

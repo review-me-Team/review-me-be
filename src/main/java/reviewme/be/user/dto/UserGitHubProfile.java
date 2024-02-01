@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class UserGitHubProfile {
 
     private String login;
-    private String id;
+    private long id;
 
     @JsonProperty("avatar_url")
     private String avatarUrl;

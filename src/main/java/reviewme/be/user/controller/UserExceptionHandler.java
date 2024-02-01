@@ -3,10 +3,9 @@ package reviewme.be.user.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import reviewme.be.custom.CustomErrorResponse;
-import reviewme.be.user.exception.InvalidCodeException;
-import reviewme.be.user.exception.NoSearchConditionException;
-import reviewme.be.user.exception.NonExistUserException;
+import reviewme.be.user.exception.*;
 
 @RestControllerAdvice
 public class UserExceptionHandler {
@@ -35,6 +34,72 @@ public class UserExceptionHandler {
 
     @ExceptionHandler(NoSearchConditionException.class)
     public ResponseEntity<CustomErrorResponse> noSearchCondition(NoSearchConditionException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NoRefreshTokenException.class)
+    public ResponseEntity<CustomErrorResponse> noRefreshToken(NoRefreshTokenException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NoValidBearerFormatException.class)
+    public ResponseEntity<CustomErrorResponse> noValidBearerFormat(NoValidBearerFormatException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<CustomErrorResponse> invalidToken(InvalidTokenException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(ManipulatedTokenException.class)
+    public ResponseEntity<CustomErrorResponse> manipulatedToken(ManipulatedTokenException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<CustomErrorResponse> httpClientErrorException(HttpClientErrorException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        "유효하지 않은 refresh token입니다. 다시 로그인해주세요."));
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<CustomErrorResponse> expiredTokenException(ExpiredTokenException ex) {
 
         return ResponseEntity
                 .badRequest()

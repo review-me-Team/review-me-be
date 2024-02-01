@@ -1,6 +1,7 @@
 package reviewme.be.user.entity;
 
 import lombok.*;
+import reviewme.be.user.dto.UserGitHubProfile;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +19,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long githubId;
+    private long githubId;
     private String name;
     private String profileUrl;
+
+    public User(UserGitHubProfile userGitHubProfile) {
+
+        this.githubId = userGitHubProfile.getId();
+        this.name = userGitHubProfile.getLogin();
+        this.profileUrl = userGitHubProfile.getAvatarUrl();
+    }
 }

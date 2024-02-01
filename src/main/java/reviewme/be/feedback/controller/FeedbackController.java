@@ -10,13 +10,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.feedback.dto.response.*;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
-import reviewme.be.feedback.request.PostFeedbackRequest;
-import reviewme.be.feedback.request.UpdateFeedbackCheckRequest;
-import reviewme.be.feedback.request.UpdateFeedbackContentRequest;
-import reviewme.be.feedback.request.UpdateFeedbackEmojiRequest;
-import reviewme.be.feedback.response.*;
+import reviewme.be.feedback.dto.request.PostFeedbackRequest;
+import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
+import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
+import reviewme.be.feedback.dto.request.UpdateFeedbackEmojiRequest;
+import reviewme.be.feedback.dto.response.*;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.util.dto.EmojiCount;
 
@@ -44,9 +45,9 @@ public class FeedbackController {
         PostedFeedbackResponse sampleResponse = PostedFeedbackResponse.builder()
                 .id(2L)
                 .resumeId(resumeId)
-                .writerId(1L)
-                .writerName("aken-you")
-                .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                .commenterId(1L)
+                .commenterName("aken-you")
+                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                 .content(postFeedbackRequest.getContent())
                 .labelContent("프로젝트")
                 .resumePage(postFeedbackRequest.getResumePage())
@@ -126,8 +127,8 @@ public class FeedbackController {
                         .id(1L)
                         .feedbackId(1L)
                         .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
-                        .writerName("aken-you")
-                        .writerProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
+                        .commenterName("aken-you")
+                        .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
                         .createdAt(LocalDateTime.now())
                         .emojis(sampleEmojis)
                         .myEmojiId(1L)

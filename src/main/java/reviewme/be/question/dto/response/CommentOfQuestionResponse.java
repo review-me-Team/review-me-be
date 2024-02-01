@@ -1,4 +1,4 @@
-package reviewme.be.question.response;
+package reviewme.be.question.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,19 +18,19 @@ public class CommentOfQuestionResponse {
     private Long id;
 
     @Schema(description = "예상 질문 ID", example = "1")
-    private Long questionId;
+    private long questionId;
 
     @Schema(description = "댓글 내용", example = "흠.. 그러게요... 조금 더 공부해보겠습니다!")
     private String content;
 
     @Schema(description = "댓글 작성자 ID", example = "1")
-    private Long writerId;
+    private long commenterId;
 
     @Schema(description = "댓글 작성자 이름", example = "aken-you")
-    private String writerName;
+    private String commenterName;
 
     @Schema(description = "댓글 작성자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
-    private String writerProfileUrl;
+    private String commenterProfileUrl;
 
     @Schema(description = "댓글 작성 시간", example = "2024-01-02 01:33:30")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
