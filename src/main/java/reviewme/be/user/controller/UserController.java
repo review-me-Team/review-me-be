@@ -42,16 +42,16 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "GitHub으로 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
-    @PostMapping("/login/oauth")
+    @GetMapping("/login/oauth")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "로그인 실패")
     })
     public ResponseEntity<CustomResponse<LoginUserResponse>> loginWithGitHub(
-            @RequestBody OAuthCodeRequest request,
+            @RequestParam String code,
             HttpServletResponse response) {
 
-        UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(request.getCode());
+        UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(code);
 
         String jwt = createJwtByAccessToken(userGitHubToken.getAccessToken());
 
