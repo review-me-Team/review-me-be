@@ -79,7 +79,7 @@ public class ResumeService {
         Resume resume = findById(resumeId);
 
         String scope = resume.getScope().getScope();
-        long resumeOwnerId = resume.getUser().getId();
+        long resumeOwnerId = resume.getWriter().getId();
 
         if (scope.equals("private") && resumeOwnerId != userId) {
             throw new NonExistResumeException("해당 이력서가 존재하지 않습니다.");
@@ -97,7 +97,7 @@ public class ResumeService {
 
         Resume resume = findById(resumeId);
 
-        User owner = resume.getUser();
+        User owner = resume.getWriter();
 
         if (owner.getId() != userId) {
             throw new NotYourResumeException("이력서를 삭제할 권한이 없습니다.");
@@ -107,15 +107,10 @@ public class ResumeService {
     }
 
     @Transactional
-    public void updateResume(UpdateResumeRequest request, long resumeId, long userId) {
+    public void updateResume(UpdateResumeRequest request, long resumeId, User user) {
 
         Resume resume = findById(resumeId);
-
-        User owner = resume.getUser();
-
-        if (owner.getId() != userId) {
-            throw new NotYourResumeException("이력서를 수정할 권한이 없습니다.");
-        }
+        resume.validateUser(user);
 
         Scope modifiedScope = utilService.getScopeById(request.getScopeId());
         Occupation modifiedOccupation = utilService.getOccupationById(request.getOccupationId());

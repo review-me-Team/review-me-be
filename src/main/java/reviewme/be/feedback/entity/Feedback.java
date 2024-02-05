@@ -21,7 +21,7 @@ public class Feedback {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User writer;
+    private User commenter;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -44,7 +44,7 @@ public class Feedback {
 
     public void validateUser(User user) {
 
-        this.writer.validateSameUser(user);
+        this.commenter.validateSameUser(user);
     }
 
     public void updateContent(String content) {

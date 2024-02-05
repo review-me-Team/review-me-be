@@ -32,8 +32,8 @@ public class ResumeDetailResponse {
         return ResumeDetailResponse.builder()
                 .resumeUrl(resume.getUrl())
                 .title(resume.getTitle())
-                .writerName(resume.getUser().getName())
-                .writerProfileUrl(resume.getUser().getProfileUrl())
+                .writerName(resume.getWriter().getName())
+                .writerProfileUrl(resume.getWriter().getProfileUrl())
                 .occupation(resume.getOccupation().getOccupation())
                 .year(resume.getYear())
                 .build();
