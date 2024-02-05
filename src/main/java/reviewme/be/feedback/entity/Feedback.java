@@ -47,8 +47,18 @@ public class Feedback {
         this.commenter.validateSameUser(user);
     }
 
+    public void softDelete() {
+
+        this.deletedAt = LocalDateTime.now();
+    }
+
     public void updateContent(String content) {
 
         this.content = content;
+    }
+
+    public void updateChecked(boolean checked) {
+
+        this.checked = checked;
     }
 }
