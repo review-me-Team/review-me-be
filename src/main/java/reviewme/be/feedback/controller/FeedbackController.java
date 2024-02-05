@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.dto.response.*;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
-import reviewme.be.feedback.dto.request.PostFeedbackRequest;
+import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackEmojiRequest;
-import reviewme.be.feedback.dto.response.*;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.feedback.service.FeedbackService;
 import reviewme.be.user.entity.User;
@@ -43,7 +42,10 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 추가 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostedFeedbackResponse>> postFeedback(@Validated @RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<PostedFeedbackResponse>> postFeedback(
+            @Validated @RequestBody CreateFeedbackRequest postFeedbackRequest,
+            @PathVariable long resumeId,
+            @RequestAttribute("user") User user) {
 
         PostedFeedbackResponse sampleResponse = PostedFeedbackResponse.builder()
                 .id(2L)

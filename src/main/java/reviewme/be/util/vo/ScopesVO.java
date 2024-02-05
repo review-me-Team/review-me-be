@@ -20,7 +20,7 @@ public class ScopesVO {
 
     private final ScopeRepository scopeRepository;
 
-    private Map<Integer, String> scopes;
+    private Map<Integer, Scope> scopes;
     private List<Scope> scopeList;
 
     @PostConstruct
@@ -31,7 +31,7 @@ public class ScopesVO {
         scopes = scopeList.stream()
                 .collect(
                         HashMap::new,
-                        (map, scope) -> map.put(scope.getId(), scope.getScope()),
+                        (map, scope) -> map.put(scope.getId(), scope),
                         HashMap::putAll
                 );
     }

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Schema(description = "피드백 추가 요청")
-public class PostFeedbackRequest {
+public class CreateFeedbackRequest {
 
     @Schema(description = "피드백 내용", example = "뭔가 이력서에 문제 해결과 관련된 내용이 부족해보이는 것같아요.")
     @NotBlank(message = "피드백 내용은 필수 입력 값입니다.")
@@ -25,5 +25,5 @@ public class PostFeedbackRequest {
 
     @Schema(description = "이력서 페이지", example = "1")
     @NotNull(message = "이력서의 몇 페이지에 질문을 하는 지는 필수 입력 값입니다.")
-    private Integer resumePage;
+    private int resumePage;
 }

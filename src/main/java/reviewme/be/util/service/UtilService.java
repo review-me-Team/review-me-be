@@ -8,24 +8,32 @@ import reviewme.be.util.exception.NonExistOccupationException;
 import reviewme.be.util.exception.NonExistScopeException;
 import reviewme.be.util.repository.OccupationRepository;
 import reviewme.be.util.repository.ScopeRepository;
+import reviewme.be.util.vo.OccupationsVO;
+import reviewme.be.util.vo.ScopesVO;
 
 @Service
 @RequiredArgsConstructor
 public class UtilService {
 
-    private final OccupationRepository occupationRepository;
-    private final ScopeRepository scopeRepository;
+    private final OccupationsVO occupationsVO;
+    private final ScopesVO scopesVO;
 
-    public Occupation getOccupationById(long id) {
+    public Occupation getOccupationById(int id) {
 
-        return occupationRepository.findById(id)
-                .orElseThrow(() -> new NonExistOccupationException("[ERROR] 존재하지 않는 직군입니다."));
+        if (!occupationsVO.getOccupations().containsKey(id)) {
+            throw new NonExistOccupationException("[ERROR] 존재하지 않는 직군입니다.");
+        }
+
+        return occupationsVO.getOccupations().get(id);
     }
 
-    public Scope getScopeById(long id) {
+    public Scope getScopeById(int id) {
 
-        return scopeRepository.findById(id)
-            .orElseThrow(() -> new NonExistScopeException("[ERROR] 존재하지 않는 공개범위입니다."));
+        if (!scopesVO.getScopes().containsKey(id)) {
+            throw new NonExistScopeException("[ERROR] 존재하지 않는 공개범위입니다.");
+        }
+
+        return scopesVO.getScopes().get(id);
     }
 
 }
