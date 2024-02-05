@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Builder
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User {
@@ -28,5 +29,12 @@ public class User {
         this.githubId = userGitHubProfile.getId();
         this.name = userGitHubProfile.getLogin();
         this.profileUrl = userGitHubProfile.getAvatarUrl();
+    }
+
+    public void validateSameUser(User user) {
+
+        if (!this.equals(user)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
     }
 }

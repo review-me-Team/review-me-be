@@ -36,9 +36,19 @@ public class Feedback {
     private Resume resume;
 
     private String content;
-    private Integer resumePage;
-    private Boolean checked;
-    private Long childCnt;
+    private int resumePage;
+    private boolean checked;
+    private long childCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public void validateUser(User user) {
+
+        this.writer.validateSameUser(user);
+    }
+
+    public void updateContent(String content) {
+
+        this.content = content;
+    }
 }

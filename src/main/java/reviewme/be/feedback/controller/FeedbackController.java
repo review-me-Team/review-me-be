@@ -19,6 +19,8 @@ import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.feedback.dto.response.*;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.feedback.service.FeedbackService;
+import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FeedbackController {
 
+    private final FeedbackService feedbackService;
     private final FeedbackRepository feedbackRepository;
     private final FeedbackEmojiRepository feedbackEmojiRepository;
 
@@ -171,7 +174,13 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackContent(@Validated @RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackContent(
+            @Validated @RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest,
+            @RequestAttribute("user") User user,
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId) {
+
+        feedbackService.updateFeedbackContent(updateFeedbackContentRequest, user, resumeId, feedbackId);
 
         return ResponseEntity
                 .ok()

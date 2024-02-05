@@ -76,8 +76,7 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
 
-        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+        Resume resume = findById(resumeId);
 
         String scope = resume.getScope().getScope();
         long resumeOwnerId = resume.getUser().getId();
@@ -96,8 +95,7 @@ public class ResumeService {
     @Transactional
     public void deleteResume(long resumeId, long userId) {
 
-        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+        Resume resume = findById(resumeId);
 
         User owner = resume.getUser();
 
@@ -111,8 +109,7 @@ public class ResumeService {
     @Transactional
     public void updateResume(UpdateResumeRequest request, long resumeId, long userId) {
 
-        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+        Resume resume = findById(resumeId);
 
         User owner = resume.getUser();
 
@@ -132,6 +129,15 @@ public class ResumeService {
         return resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
                 .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
     }
+
+
+
+    public Resume findById(long resumeId) {
+
+        return resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
+                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+    }
+
 
     /**
      * Take MultiFile data, create a url, and upload to S3

@@ -12,6 +12,7 @@ import reviewme.be.config.interceptor.LogInterceptor;
 public class WebConfig implements WebMvcConfigurer {
 
     private final LogInterceptor logInterceptor;
+    private final AuthInterceptor authInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -19,5 +20,17 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(logInterceptor)
                 .order(1)
                 .addPathPatterns("/**");
+
+        registry.addInterceptor(authInterceptor)
+                .order(2)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/login/oauth",
+                        "/swagger-ui/**",
+                        "/api-docs/**",
+                        "//user/refresh");
+////
+//        registry.addInterceptor(loginOrNotInterceptor)
+//                .order(3)
+//                .addPathPatterns("/resume");
     }
 }

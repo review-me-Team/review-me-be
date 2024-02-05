@@ -60,7 +60,7 @@ public class FeedbackResponse {
                 .labelContent(feedback.getLabel().getContent())
                 .createdAt(feedback.getCreatedAt())
                 .countOfReplies(feedback.getChildCnt())
-                .checked(feedback.getChecked())
+                .checked(feedback.isChecked())
                 .emojis(emojis)
                 .myEmojiId(myEmojiId)
                 .build();

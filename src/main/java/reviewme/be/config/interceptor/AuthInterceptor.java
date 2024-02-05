@@ -27,37 +27,35 @@ public class AuthInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) {
 
-        if (request.getMethod().equals("OPTIONS")) {
+        if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET")) {
             return true;
         }
 
         String header = request.getHeader("Authorization");
 
-        Pattern pattern = Pattern.compile("^Bearer\\s(.+)$");
-        Matcher matcher;
-        try {
-            matcher = pattern.matcher(header);
-        } catch (NullPointerException e) {
+        if (header == null) {
             throw new NoValidBearerFormatException("Authorization header가 존재하지 않습니다.");
         }
-        if (!matcher.matches()) {
-            throw new NoValidBearerFormatException("Authorization header가 잘못된 형식입니다.");
+
+        if (request.getHeader("Authorization").split(" ").length != 2) {
+            throw new NoValidBearerFormatException("Bearer 토큰이 존재하지 않습니다.");
         }
 
-        String token = matcher.group(1);
+        String jwt = request.getHeader("Authorization").split(" ")[1];
+        System.out.println(jwt);
 
-        if (jwtService.validateJwtIsExpired(token)) {
-            throw new NoValidBearerFormatException("유효 기간이 만료된 토큰입니다.");
-        }
+//        if (jwtService.validateJwtIsExpired(jwt)) {
+//            throw new NoValidBearerFormatException("유효 기간이 만료된 토큰입니다.");
+//        }
+//
+//        if (jwtService.validateJwtIsManipulated(jwt)) {
+//            throw new ManipulatedTokenException("조작된 토큰입니다.");
+//        }
 
-        if (jwtService.validateJwtIsManipulated(token)) {
-            throw new ManipulatedTokenException("조작된 토큰입니다.");
-        }
-
-        UserProfileResponse loggedInUser = jwtService.extractUserFromJwt(token, UserProfileResponse.class);
+        UserProfileResponse loggedInUser = jwtService.extractUserFromJwt(jwt, UserProfileResponse.class);
         User user = userService.getUserById(loggedInUser.getId());
         request.setAttribute("user", user);
 
-        return false;
+        return true;
     }
 }
