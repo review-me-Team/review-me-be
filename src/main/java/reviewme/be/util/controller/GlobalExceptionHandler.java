@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
+import reviewme.be.util.exception.NonExistFeedbackLabelException;
 import reviewme.be.util.exception.NonExistOccupationException;
 import reviewme.be.util.exception.NonExistScopeException;
 import reviewme.be.util.exception.NotYoursException;
@@ -65,8 +66,12 @@ public class GlobalExceptionHandler {
                         "잘못된 형식입니다."));
     }
 
-    @ExceptionHandler(NonExistScopeException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistScope(NonExistScopeException ex) {
+
+    /**
+     * util exception handler
+     */
+    @ExceptionHandler(NonExistFeedbackLabelException.class)
+    public ResponseEntity<CustomErrorResponse> nonExistFeedbackLabel(NonExistFeedbackLabelException ex) {
 
         return ResponseEntity
                 .badRequest()
@@ -78,6 +83,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NonExistOccupationException.class)
     public ResponseEntity<CustomErrorResponse> nonExistOccupation(NonExistOccupationException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+    @ExceptionHandler(NonExistScopeException.class)
+    public ResponseEntity<CustomErrorResponse> nonExistScope(NonExistScopeException ex) {
 
         return ResponseEntity
                 .badRequest()

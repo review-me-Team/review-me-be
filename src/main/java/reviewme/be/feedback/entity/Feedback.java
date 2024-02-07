@@ -42,9 +42,29 @@ public class Feedback {
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
+    public static Feedback ofCreated(User commenter, Resume resume, Feedback parent, Label label, String content, int resumePage) {
+
+        return Feedback.builder()
+            .commenter(commenter)
+            .resume(resume)
+            .parentFeedback(parent)
+            .label(label)
+            .content(content)
+            .resumePage(resumePage)
+            .checked(false)
+            .childCnt(0)
+            .createdAt(LocalDateTime.now())
+            .build();
+    }
+
     public void validateUser(User user) {
 
         this.commenter.validateSameUser(user);
+    }
+
+    public void plusChildCnt() {
+
+        this.childCnt++;
     }
 
     public void softDelete() {

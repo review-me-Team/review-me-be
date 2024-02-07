@@ -3,6 +3,7 @@ package reviewme.be.feedback.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.entity.Feedback;
@@ -11,13 +12,44 @@ import reviewme.be.feedback.repository.FeedbackRepository;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
+import reviewme.be.util.entity.Label;
+import reviewme.be.util.service.UtilService;
 
 @Service
 @RequiredArgsConstructor
 public class FeedbackService {
 
+    private final UtilService utilService;
     private final FeedbackRepository feedbackRepository;
     private final ResumeService resumeService;
+
+    @Transactional
+    public void saveFeedback(CreateFeedbackRequest request, User commenter, long resumeId) {
+
+        // 이력서, 피드백, 라벨 존재 여부 확인
+        Resume resume = resumeService.findById(resumeId);
+        Feedback feedback = null;
+        Label label = null;
+
+        if (request.getLabelId() != null) {
+            label = utilService.findFeedbackLabelById(request.getLabelId());
+        }
+
+        // 대댓글이라면 부모 피드백 존재 여부 확인 및 부모 피드백의 댓글 수 증가
+        if (request.getFeedbackId() != null) {
+            feedback = findById(request.getFeedbackId());
+            feedback.plusChildCnt();
+            // TODO: 부모 피드백의 parentFeedback이 null이 아닌 경우 예외 처리
+        }
+
+        feedbackRepository.save(Feedback.ofCreated(
+                commenter,
+                resume,
+                feedback,
+                label,
+                request.getContent(),
+                request.getResumePage()));
+    }
 
     @Transactional
     public void deleteFeedback(User user, long resumeId, long feedbackId) {

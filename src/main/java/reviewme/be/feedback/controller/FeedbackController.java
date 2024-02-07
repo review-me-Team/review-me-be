@@ -42,31 +42,19 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 추가 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostedFeedbackResponse>> postFeedback(
+    public ResponseEntity<CustomResponse<Void>> postFeedback(
             @Validated @RequestBody CreateFeedbackRequest postFeedbackRequest,
             @PathVariable long resumeId,
             @RequestAttribute("user") User user) {
 
-        PostedFeedbackResponse sampleResponse = PostedFeedbackResponse.builder()
-                .id(2L)
-                .resumeId(resumeId)
-                .commenterId(1L)
-                .commenterName("aken-you")
-                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .content(postFeedbackRequest.getContent())
-                .labelContent("프로젝트")
-                .resumePage(postFeedbackRequest.getResumePage())
-                .parentFeedbackId(postFeedbackRequest.getFeedbackId())
-                .createdAt(LocalDateTime.now())
-                .build();
+        feedbackService.saveFeedback(postFeedbackRequest, user, resumeId);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "피드백 추가에 성공했습니다.",
-                        sampleResponse
+                        "피드백 추가에 성공했습니다."
                 ));
     }
 

@@ -81,12 +81,6 @@ public class JWTService {
             LinkedHashMap payloadMap = objectMapper.readValue(decodedPayload, LinkedHashMap.class);
             Object userProfile = payloadMap.get(USER_PROFILE);
             String userProfileJson = objectMapper.writeValueAsString(userProfile);
-            System.out.println(userProfileJson);
-
-            UserProfileResponse userProfileResponse = objectMapper.readValue(userProfileJson, UserProfileResponse.class);
-            System.out.println("id: " + userProfileResponse.getId());
-            System.out.println("name: " + userProfileResponse.getName());
-            System.out.println("url: " + userProfileResponse.getAvatarUrl());
 
             return objectMapper.readValue(userProfileJson, clazz);
         } catch (JsonProcessingException e) {

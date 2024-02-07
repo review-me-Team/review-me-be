@@ -55,8 +55,8 @@ public class ResumeService {
 
         // TODO: 로그인 기능 구현 전까지 userId가 1인 user로 사용
         User user = userService.getUserById(userId);
-        Scope scope = utilService.getScopeById(resumeRequest.getScopeId());
-        Occupation occupation = utilService.getOccupationById(resumeRequest.getOccupationId());
+        Scope scope = utilService.findScopeById(resumeRequest.getScopeId());
+        Occupation occupation = utilService.findOccupationById(resumeRequest.getOccupationId());
 
         Resume createdResume = resumeRepository.save(
                 Resume.ofCreated(resumeRequest, user, scope, occupation, resumeFileName)
@@ -112,8 +112,8 @@ public class ResumeService {
         Resume resume = findById(resumeId);
         resume.validateUser(user);
 
-        Scope modifiedScope = utilService.getScopeById(request.getScopeId());
-        Occupation modifiedOccupation = utilService.getOccupationById(request.getOccupationId());
+        Scope modifiedScope = utilService.findScopeById(request.getScopeId());
+        Occupation modifiedOccupation = utilService.findOccupationById(request.getOccupationId());
 
         resume.update(request, modifiedScope, modifiedOccupation);
     }
