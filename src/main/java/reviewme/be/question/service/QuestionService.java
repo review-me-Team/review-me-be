@@ -58,8 +58,8 @@ public class QuestionService {
         Resume resume = resumeService.findById(resumeId);
         resume.validateUser(user);
 
-        // 예상 질문 존재 여부 확인
-        Question question = findById(questionId);
+        // 해당 이력서에 예상 질문 존재 여부 확인
+        Question question = validateQuestionByResumeId(questionId, resumeId);
 
         question.updateChecked(request.isChecked());
     }
@@ -76,6 +76,12 @@ public class QuestionService {
     private Question findById(long questionId) {
 
         return questionRepository.findByIdAndDeletedAtIsNull(questionId)
+                .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 질문입니다."));
+    }
+
+    private Question validateQuestionByResumeId(long questionId, long resumeId) {
+
+        return questionRepository.findByIdAndResumeIdAndDeletedAtIsNull(questionId, resumeId)
                 .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 질문입니다."));
     }
 }
