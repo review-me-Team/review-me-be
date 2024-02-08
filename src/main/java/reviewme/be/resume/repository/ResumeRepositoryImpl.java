@@ -27,16 +27,16 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
                 .select(new QResumeResponse(
                         resume.id,
                         resume.title,
-                        resume.user.id,
-                        resume.user.name,
-                        resume.user.profileUrl,
+                        resume.writer.id,
+                        resume.writer.name,
+                        resume.writer.profileUrl,
                         resume.createdAt,
                         resume.scope.scope,
                         resume.occupation.occupation,
                         resume.year
                 ))
                 .from(resume)
-                .leftJoin(resume.user)
+                .leftJoin(resume.writer)
                 .leftJoin(resume.scope)
                 .leftJoin(resume.occupation)
                 .where(
