@@ -42,4 +42,14 @@ public class Question {
     private Long childCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public void validateUser(User user) {
+
+        this.commenter.validateSameUser(user);
+    }
+
+    public void softDelete() {
+
+        this.deletedAt = LocalDateTime.now();
+    }
 }
