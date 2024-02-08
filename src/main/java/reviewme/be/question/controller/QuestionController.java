@@ -112,7 +112,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteQuestions(
+    public ResponseEntity<CustomResponse<Void>> deleteQuestions(
             @PathVariable long resumeId,
             @PathVariable long questionId,
             @RequestAttribute("user") User user) {
@@ -134,7 +134,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionContent(
+    public ResponseEntity<CustomResponse<Void>> updateQuestionContent(
             @Validated @RequestBody UpdateQuestionContentRequest updateQuestionContentRequest,
             @PathVariable long resumeId,
             @PathVariable long questionId,
@@ -157,10 +157,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 체크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionCheck(@Validated @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionCheck(
+            @Validated @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest,
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
 
-        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
-        // TODO: question이 댓글이 아닌 question인 경우에만 체크 상태 수정 가능
+        questionService.updateQuestionCheck(updateQuestionCheckRequest, resumeId, questionId, user);
 
         return ResponseEntity
                 .ok()
@@ -177,7 +180,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 북마크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 북마크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionBookmark(@Validated @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionBookmark(@Validated @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
 
@@ -222,7 +225,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 이모지 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 이모지 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionEmoji(@Validated @RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionEmoji(@Validated @RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         return ResponseEntity
                 .ok()

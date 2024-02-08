@@ -53,6 +53,11 @@ public class Question {
         this.content = content;
     }
 
+    public void updateChecked(boolean checked) {
+
+        this.checked = checked;
+    }
+
     public void softDelete() {
 
         this.deletedAt = LocalDateTime.now();
