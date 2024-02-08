@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.dto.response.*;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
-import reviewme.be.feedback.dto.request.PostFeedbackRequest;
+import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackEmojiRequest;
-import reviewme.be.feedback.dto.response.*;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.feedback.service.FeedbackService;
+import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FeedbackController {
 
+    private final FeedbackService feedbackService;
     private final FeedbackRepository feedbackRepository;
     private final FeedbackEmojiRepository feedbackEmojiRepository;
 
@@ -40,28 +42,19 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 추가 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostedFeedbackResponse>> postFeedback(@Validated @RequestBody PostFeedbackRequest postFeedbackRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<Void>> postFeedback(
+            @Validated @RequestBody CreateFeedbackRequest postFeedbackRequest,
+            @PathVariable long resumeId,
+            @RequestAttribute("user") User user) {
 
-        PostedFeedbackResponse sampleResponse = PostedFeedbackResponse.builder()
-                .id(2L)
-                .resumeId(resumeId)
-                .commenterId(1L)
-                .commenterName("aken-you")
-                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .content(postFeedbackRequest.getContent())
-                .labelContent("프로젝트")
-                .resumePage(postFeedbackRequest.getResumePage())
-                .parentFeedbackId(postFeedbackRequest.getFeedbackId())
-                .createdAt(LocalDateTime.now())
-                .build();
+        feedbackService.saveFeedback(postFeedbackRequest, user, resumeId);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "피드백 추가에 성공했습니다.",
-                        sampleResponse
+                        "피드백 추가에 성공했습니다."
                 ));
     }
 
@@ -152,9 +145,12 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteFeedback(@PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> deleteFeedback(
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId,
+            @RequestAttribute("user") User user) {
 
-        // TODO: 본인이 작성한 feedback만 삭제 가능
+        feedbackService.deleteFeedback(user, resumeId, feedbackId);
 
         return ResponseEntity
                 .ok()
@@ -171,7 +167,13 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackContent(@Validated @RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackContent(
+            @Validated @RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest,
+            @RequestAttribute("user") User user,
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId) {
+
+        feedbackService.updateFeedbackContent(updateFeedbackContentRequest, user, resumeId, feedbackId);
 
         return ResponseEntity
                 .ok()
@@ -188,10 +190,13 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 체크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackCheck(@Validated @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackCheck(
+            @Validated @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest,
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId,
+            @RequestAttribute("user") User user) {
 
-        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
-        // TODO: feedback이 댓글이 아닌 feedback인 경우에만 체크 상태 수정 가능
+        feedbackService.updateFeedbackCheck(updateFeedbackCheckRequest, user, resumeId, feedbackId);
 
         return ResponseEntity
                 .ok()

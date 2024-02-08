@@ -21,7 +21,7 @@ public class Feedback {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User writer;
+    private User commenter;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -36,9 +36,49 @@ public class Feedback {
     private Resume resume;
 
     private String content;
-    private Integer resumePage;
-    private Boolean checked;
-    private Long childCnt;
+    private int resumePage;
+    private boolean checked;
+    private long childCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public static Feedback ofCreated(User commenter, Resume resume, Feedback parent, Label label, String content, int resumePage) {
+
+        return Feedback.builder()
+            .commenter(commenter)
+            .resume(resume)
+            .parentFeedback(parent)
+            .label(label)
+            .content(content)
+            .resumePage(resumePage)
+            .checked(false)
+            .childCnt(0)
+            .createdAt(LocalDateTime.now())
+            .build();
+    }
+
+    public void validateUser(User user) {
+
+        this.commenter.validateSameUser(user);
+    }
+
+    public void plusChildCnt() {
+
+        this.childCnt++;
+    }
+
+    public void softDelete() {
+
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void updateContent(String content) {
+
+        this.content = content;
+    }
+
+    public void updateChecked(boolean checked) {
+
+        this.checked = checked;
+    }
 }

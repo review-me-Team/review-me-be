@@ -21,7 +21,7 @@ public class Question {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User writer;
+    private User commenter;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")

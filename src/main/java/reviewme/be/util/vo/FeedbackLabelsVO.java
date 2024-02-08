@@ -18,7 +18,7 @@ public class FeedbackLabelsVO {
 
     private final LabelRepository labelRepository;
 
-    private Map<Long, String> feedbackLabels;
+    private Map<Long, Label> feedbackLabels;
     private List<Label> feedbackLabelList;
 
     @PostConstruct
@@ -29,7 +29,7 @@ public class FeedbackLabelsVO {
         feedbackLabels = feedbackLabelList.stream()
                 .collect(
                         HashMap::new,
-                        (map, label) -> map.put(label.getId(), label.getContent()),
+                        (map, label) -> map.put(label.getId(), label),
                         HashMap::putAll
                 );
     }

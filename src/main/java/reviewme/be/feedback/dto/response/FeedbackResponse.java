@@ -38,10 +38,10 @@ public class FeedbackResponse {
     private LocalDateTime createdAt;
 
     @Schema(description = "댓글 개수", example = "10")
-    private Long countOfReplies;
+    private long countOfReplies;
 
     @Schema(description = "체크 여부", example = "true")
-    private Boolean checked;
+    private boolean checked;
 
     @Schema(description = "이모지 정보")
     private List<EmojiCount> emojis;
@@ -54,13 +54,13 @@ public class FeedbackResponse {
         return FeedbackResponse.builder()
                 .id(feedback.getId())
                 .content(feedback.getContent())
-                .commenterId(feedback.getWriter().getId())
-                .commenterName(feedback.getWriter().getName())
-                .commenterProfileUrl(feedback.getWriter().getProfileUrl())
+                .commenterId(feedback.getCommenter().getId())
+                .commenterName(feedback.getCommenter().getName())
+                .commenterProfileUrl(feedback.getCommenter().getProfileUrl())
                 .labelContent(feedback.getLabel().getContent())
                 .createdAt(feedback.getCreatedAt())
                 .countOfReplies(feedback.getChildCnt())
-                .checked(feedback.getChecked())
+                .checked(feedback.isChecked())
                 .emojis(emojis)
                 .myEmojiId(myEmojiId)
                 .build();

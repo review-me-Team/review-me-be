@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import reviewme.be.user.dto.UserGitHubProfile;
 import reviewme.be.user.dto.response.UserProfileResponse;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -36,19 +36,20 @@ public class JWTService {
 
         try {
             Jws<Claims> claimsJws = Jwts.parser()
-                    .setSigningKey(secret)
+                    .setSigningKey(secret.getBytes())
                     .parseClaimsJws(jwt);
 
             return claimsJws.getBody().getExpiration().before(new Date());
         } catch (JwtException e) {
-            return false;
+            System.out.println(e.getMessage());
+            return true;
         }
     }
 
     public boolean validateJwtIsManipulated(String jwt) {
 
         try {
-            byte[] decodedSecret = java.util.Base64.getUrlDecoder().decode(jwt);
+            byte[] decodedSecret = Base64.getUrlDecoder().decode(secret);
             Key key = new SecretKeySpec(decodedSecret, 0, decodedSecret.length, "HmacSHA256");
 
             Jwts.parser()
@@ -61,27 +62,27 @@ public class JWTService {
         }
     }
 
-    public <T> T extractUserFromJwt(String jwt, Class<T> type) {
+    public <T> T extractUserFromJwt(String jwt, Class<T> clazz) {
 
         String[] jwtParts = jwt.split("\\.");
         String encodedPayload = jwtParts[1];
 
-        byte[] decodedBytes = java.util.Base64.getUrlDecoder().decode(encodedPayload);
+        byte[] decodedBytes = Base64.getUrlDecoder().decode(encodedPayload);
         String decodedPayload = new String(decodedBytes);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return parseUserFromJwt(decodedPayload, objectMapper, type);
+        return parseUserFromJwt(decodedPayload, clazz);
     }
 
-    private <T> T parseUserFromJwt(String decodedPayload, ObjectMapper objectMapper, Class<T> type) {
+    private <T> T parseUserFromJwt(String decodedPayload, Class<T> clazz) {
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
             LinkedHashMap payloadMap = objectMapper.readValue(decodedPayload, LinkedHashMap.class);
             Object userProfile = payloadMap.get(USER_PROFILE);
             String userProfileJson = objectMapper.writeValueAsString(userProfile);
 
-            return objectMapper.readValue(userProfileJson, type);
+            return objectMapper.readValue(userProfileJson, clazz);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("사용자 정보를 가져올 수 없습니다.");
         }

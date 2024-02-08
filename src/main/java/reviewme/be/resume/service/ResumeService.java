@@ -55,8 +55,8 @@ public class ResumeService {
 
         // TODO: 로그인 기능 구현 전까지 userId가 1인 user로 사용
         User user = userService.getUserById(userId);
-        Scope scope = utilService.getScopeById(resumeRequest.getScopeId());
-        Occupation occupation = utilService.getOccupationById(resumeRequest.getOccupationId());
+        Scope scope = utilService.findScopeById(resumeRequest.getScopeId());
+        Occupation occupation = utilService.findOccupationById(resumeRequest.getOccupationId());
 
         Resume createdResume = resumeRepository.save(
                 Resume.ofCreated(resumeRequest, user, scope, occupation, resumeFileName)
@@ -76,11 +76,10 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
 
-        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+        Resume resume = findById(resumeId);
 
         String scope = resume.getScope().getScope();
-        long resumeOwnerId = resume.getUser().getId();
+        long resumeOwnerId = resume.getWriter().getId();
 
         if (scope.equals("private") && resumeOwnerId != userId) {
             throw new NonExistResumeException("해당 이력서가 존재하지 않습니다.");
@@ -96,10 +95,9 @@ public class ResumeService {
     @Transactional
     public void deleteResume(long resumeId, long userId) {
 
-        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+        Resume resume = findById(resumeId);
 
-        User owner = resume.getUser();
+        User owner = resume.getWriter();
 
         if (owner.getId() != userId) {
             throw new NotYourResumeException("이력서를 삭제할 권한이 없습니다.");
@@ -109,19 +107,13 @@ public class ResumeService {
     }
 
     @Transactional
-    public void updateResume(UpdateResumeRequest request, long resumeId, long userId) {
+    public void updateResume(UpdateResumeRequest request, long resumeId, User user) {
 
-        Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+        Resume resume = findById(resumeId);
+        resume.validateUser(user);
 
-        User owner = resume.getUser();
-
-        if (owner.getId() != userId) {
-            throw new NotYourResumeException("이력서를 수정할 권한이 없습니다.");
-        }
-
-        Scope modifiedScope = utilService.getScopeById(request.getScopeId());
-        Occupation modifiedOccupation = utilService.getOccupationById(request.getOccupationId());
+        Scope modifiedScope = utilService.findScopeById(request.getScopeId());
+        Occupation modifiedOccupation = utilService.findOccupationById(request.getOccupationId());
 
         resume.update(request, modifiedScope, modifiedOccupation);
     }
@@ -132,6 +124,15 @@ public class ResumeService {
         return resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
                 .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
     }
+
+
+
+    public Resume findById(long resumeId) {
+
+        return resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
+                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
+    }
+
 
     /**
      * Take MultiFile data, create a url, and upload to S3

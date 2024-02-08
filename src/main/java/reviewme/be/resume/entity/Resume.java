@@ -23,7 +23,7 @@ public class Resume {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User writer;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scope_id")
@@ -42,7 +42,7 @@ public class Resume {
 
     public static Resume ofCreated(UploadResumeRequest uploadResumeRequest, User user, Scope scope, Occupation occupation, String fileName) {
         return Resume.builder()
-                .user(user)
+                .writer(user)
                 .scope(scope)
                 .occupation(occupation)
                 .title(uploadResumeRequest.getTitle())
@@ -64,5 +64,10 @@ public class Resume {
         this.scope = scope;
         this.occupation = occupation;
         this.year = updateResumeRequest.getYear();
+    }
+
+    public void validateUser(User user) {
+
+        this.writer.validateSameUser(user);
     }
 }

@@ -18,7 +18,7 @@ public class OccupationsVO {
 
     private final OccupationRepository occupationRepository;
 
-    private Map<Integer, String> occupations;
+    private Map<Integer, Occupation> occupations;
     private List<Occupation> occupationList;
 
     @PostConstruct
@@ -29,7 +29,7 @@ public class OccupationsVO {
         occupations = occupationList.stream()
                 .collect(
                         HashMap::new,
-                        (map, occupation) -> map.put(occupation.getId(), occupation.getOccupation()),
+                        (map, occupation) -> map.put(occupation.getId(), occupation),
                         HashMap::putAll
                 );
     }

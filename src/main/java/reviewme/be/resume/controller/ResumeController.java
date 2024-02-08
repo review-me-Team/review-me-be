@@ -24,6 +24,7 @@ import reviewme.be.resume.dto.response.ResumeResponse;
 import reviewme.be.resume.dto.response.UploadResumeResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.resume.service.ResumeService;
+import reviewme.be.user.entity.User;
 
 @Tag(name = "resume", description = "이력서(resume) API")
 @Slf4j
@@ -130,9 +131,12 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateResume(@Validated @RequestBody UpdateResumeRequest updateResumeRequest, @PathVariable Long resumeId) {
+    public ResponseEntity<CustomResponse> updateResume(
+            @Validated @RequestBody UpdateResumeRequest updateResumeRequest,
+            @PathVariable Long resumeId,
+            @RequestAttribute("user") User user) {
 
-        resumeService.updateResume(updateResumeRequest, resumeId, userId);
+        resumeService.updateResume(updateResumeRequest, resumeId, user);
 
         return ResponseEntity
                 .ok()

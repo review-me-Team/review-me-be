@@ -2,13 +2,17 @@ package reviewme.be.user.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import reviewme.be.user.entity.User;
 
 @Getter
 @Builder
 @Schema(description = "로그인 유저 정보 응답")
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserProfileResponse {
 
     @Schema(description = "유저 ID", example = "1")
