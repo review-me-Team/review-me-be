@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewme.be.feedback.entity.Feedback;
+import reviewme.be.question.dto.request.UpdateQuestionBookmarkRequest;
 import reviewme.be.question.dto.request.UpdateQuestionCheckRequest;
 import reviewme.be.question.dto.request.UpdateQuestionContentRequest;
 import reviewme.be.question.entity.Question;
@@ -62,6 +63,19 @@ public class QuestionService {
         Question question = validateQuestionByResumeId(questionId, resumeId);
 
         question.updateChecked(request.isChecked());
+    }
+
+    @Transactional
+    public void updateQuestionBookmark(UpdateQuestionBookmarkRequest request, long resumeId, long questionId, User user) {
+
+        // 이력서 존재 여부 및 체크 수정 권한 확인
+        Resume resume = resumeService.findById(resumeId);
+        resume.validateUser(user);
+
+        // 해당 이력서에 예상 질문 존재 여부 확인
+        Question question = validateQuestionByResumeId(questionId, resumeId);
+
+        question.updateBookmarked(request.isBookmarked());
     }
 
     @Transactional

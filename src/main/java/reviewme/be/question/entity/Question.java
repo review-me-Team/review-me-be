@@ -58,6 +58,11 @@ public class Question {
         this.checked = checked;
     }
 
+    public void updateBookmarked(boolean bookmarked) {
+
+        this.bookmarked = bookmarked;
+    }
+
     public void softDelete() {
 
         this.deletedAt = LocalDateTime.now();

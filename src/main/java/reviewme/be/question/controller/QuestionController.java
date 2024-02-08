@@ -180,9 +180,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 북마크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 북마크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse<Void>> updateQuestionBookmark(@Validated @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionBookmark(
+            @Validated @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest,
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
 
-        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
+        questionService.updateQuestionBookmark(updateQuestionBookmarkRequest, resumeId, questionId, user);
 
         return ResponseEntity
                 .ok()
