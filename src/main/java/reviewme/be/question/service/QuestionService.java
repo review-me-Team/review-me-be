@@ -3,6 +3,7 @@ package reviewme.be.question.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.question.dto.request.UpdateQuestionContentRequest;
 import reviewme.be.question.entity.Question;
 import reviewme.be.question.exception.NonExistQuestionException;
 import reviewme.be.question.repository.QuestionRepository;
@@ -32,6 +33,19 @@ public class QuestionService {
         question.validateUser(user);
 
         question.softDelete();
+    }
+
+    @Transactional
+    public void updateQuestionContent(UpdateQuestionContentRequest request, long resumeId, long questionId, User user) {
+
+        // 이력서 존재 여부 확인
+        resumeService.findById(resumeId);
+
+        // 질문 존재 여부 및 수정 권한 확인
+        Question question = findById(questionId);
+        question.validateUser(user);
+
+        question.updateContent(request.getContent());
     }
 
     @Transactional

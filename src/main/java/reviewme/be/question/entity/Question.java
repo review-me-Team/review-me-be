@@ -48,6 +48,11 @@ public class Question {
         this.commenter.validateSameUser(user);
     }
 
+    public void updateContent(String content) {
+
+        this.content = content;
+    }
+
     public void softDelete() {
 
         this.deletedAt = LocalDateTime.now();

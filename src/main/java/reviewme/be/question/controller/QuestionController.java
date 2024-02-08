@@ -134,7 +134,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionContent(@Validated @RequestBody UpdateQuestionContentRequest updateQuestionContentRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse> updateQuestionContent(
+            @Validated @RequestBody UpdateQuestionContentRequest updateQuestionContentRequest,
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
+
+        questionService.updateQuestionContent(updateQuestionContentRequest, resumeId, questionId, user);
 
         return ResponseEntity
                 .ok()
