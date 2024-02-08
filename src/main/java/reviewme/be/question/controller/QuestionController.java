@@ -19,11 +19,14 @@ import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.question.dto.request.*;
 import reviewme.be.question.dto.response.*;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.question.service.QuestionService;
+import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.response.LabelPageResponse;
 import reviewme.be.util.dto.response.LabelResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "question", description = "예상 질문(question) API")
 @RequestMapping("/resume/{resumeId}/question")
@@ -31,6 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionController {
 
+    private final QuestionService questionService;
     private final QuestionRepository questionRepository;
     private final QuestionEmojiRepository questionEmojiRepository;
 
@@ -183,17 +187,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 라벨 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 라벨 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<LabelPageResponse>> showLabelsOfQuestions(@PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<LabelPageResponse>> showQuestionLabels(
+            @PathVariable long resumeId) {
 
-        List<LabelResponse> sampleLabels = List.of(
-                LabelResponse.builder()
-                        .id(1L)
-                        .label("react-query")
-                        .build(),
-                LabelResponse.builder()
-                        .id(2L)
-                        .label("typescript")
-                        .build());
+        List<LabelResponse> questionLabelsResponse = questionService.findQuestionLabels(resumeId)
+                .stream()
+                .map(LabelResponse::fromLabel)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -202,7 +202,7 @@ public class QuestionController {
                         200,
                         "예상 질문 라벨 목록 조회에 성공했습니다.",
                         LabelPageResponse.builder()
-                                .labels(sampleLabels)
+                                .labels(questionLabelsResponse)
                                 .build()
                 ));
     }
