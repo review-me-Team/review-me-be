@@ -83,13 +83,19 @@ public class FeedbackService {
         resume.validateUser(user);
 
         // 피드백 존재 여부 확인
-        Feedback feedback = findById(feedbackId);
+        Feedback feedback = validateFeedbackByResumeId(feedbackId, resumeId);
         feedback.updateChecked(request.isChecked());
     }
 
     private Feedback findById(long feedbackId) {
 
-        return feedbackRepository.findById(feedbackId)
+        return feedbackRepository.findByIdAndDeletedAtIsNull(feedbackId)
+            .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
+    }
+
+    private Feedback validateFeedbackByResumeId(long feedbackId, long resumeId) {
+
+        return feedbackRepository.findByIdAndResumeIdAndDeletedAtIsNull(feedbackId, resumeId)
             .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
     }
 }
