@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
-import reviewme.be.util.exception.NonExistFeedbackLabelException;
+import reviewme.be.util.exception.NonExistLabelException;
 import reviewme.be.util.exception.NonExistOccupationException;
 import reviewme.be.util.exception.NonExistScopeException;
 import reviewme.be.util.exception.NotYoursException;
@@ -70,8 +70,8 @@ public class GlobalExceptionHandler {
     /**
      * util exception handler
      */
-    @ExceptionHandler(NonExistFeedbackLabelException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistFeedbackLabel(NonExistFeedbackLabelException ex) {
+    @ExceptionHandler(NonExistLabelException.class)
+    public ResponseEntity<CustomErrorResponse> nonExistFeedbackLabel(NonExistLabelException ex) {
 
         return ResponseEntity
                 .badRequest()

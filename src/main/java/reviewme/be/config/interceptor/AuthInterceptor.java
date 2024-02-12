@@ -43,12 +43,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         String jwt = request.getHeader("Authorization").split(" ")[1];
 
-        if (jwtService.validateJwtIsExpired(jwt)) {
-            throw new NoValidBearerFormatException("유효 기간이 만료된 토큰입니다.");
-        }
-
         if (jwtService.validateJwtIsManipulated(jwt)) {
             throw new ManipulatedTokenException("조작된 토큰입니다.");
+        }
+
+        if (jwtService.validateJwtIsExpired(jwt)) {
+            throw new NoValidBearerFormatException("유효 기간이 만료된 토큰입니다.");
         }
 
         UserProfileResponse loggedInUser = jwtService.extractUserFromJwt(jwt, UserProfileResponse.class);

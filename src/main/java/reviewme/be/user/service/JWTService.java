@@ -3,6 +3,7 @@ package reviewme.be.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reviewme.be.user.dto.response.UserProfileResponse;
@@ -13,6 +14,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
+@Slf4j
 @Service
 public class JWTService {
 
@@ -36,12 +38,12 @@ public class JWTService {
 
         try {
             Jws<Claims> claimsJws = Jwts.parser()
-                    .setSigningKey(secret.getBytes())
+                    .setSigningKey(secret)
                     .parseClaimsJws(jwt);
 
             return claimsJws.getBody().getExpiration().before(new Date());
         } catch (JwtException e) {
-            System.out.println(e.getMessage());
+            log.info("JWT exception: {}", e);
             return true;
         }
     }

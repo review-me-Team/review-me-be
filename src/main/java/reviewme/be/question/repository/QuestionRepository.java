@@ -13,4 +13,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndDeletedAtIsNull(long questionId);
 
     Optional<Question> findByIdAndResumeIdAndDeletedAtIsNull(long questionId, long resumeId);
+
+    Optional<Question> findByIdAndResumeIdAndResumePageAndDeletedAtIsNull(long questionId, long resumeId, int resumePage);
 }

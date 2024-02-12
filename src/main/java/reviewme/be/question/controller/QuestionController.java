@@ -35,8 +35,6 @@ import java.util.stream.Collectors;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final QuestionRepository questionRepository;
-    private final QuestionEmojiRepository questionEmojiRepository;
 
     @Operation(summary = "예상 질문 추가", description = "예상 질문을 추가합니다.")
     @PostMapping
@@ -44,27 +42,19 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 추가 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostedQuestionResponse>> postQuestions(@Validated @RequestBody PostQuestionRequest postQuestionRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<Void>> postQuestions(
+            @Validated @RequestBody PostQuestionRequest postQuestionRequest,
+            @PathVariable long resumeId,
+            @RequestAttribute("user") User user) {
 
-        PostedQuestionResponse sampleResponse = PostedQuestionResponse.builder()
-                .resumeId(1L)
-                .commenterId(1L)
-                .commenterName("aken-you")
-                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .content(postQuestionRequest.getContent())
-                .labelContent("react-query")
-                .resumePage(1)
-                .questionId(1L)
-                .createdAt(LocalDateTime.now())
-                .build();
+        questionService.saveQuestion(postQuestionRequest, resumeId, user);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "예상 질문 추가에 성공했습니다.",
-                        sampleResponse
+                        "예상 질문 추가에 성공했습니다."
                 ));
     }
 

@@ -21,4 +21,12 @@ public class Label {
     private Resume resume;
 
     private String content;
+
+    public static Label ofCreated(Resume resume, String content) {
+
+        return Label.builder()
+            .resume(resume)
+            .content(content)
+            .build();
+    }
 }

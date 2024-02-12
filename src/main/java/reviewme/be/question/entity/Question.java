@@ -43,9 +43,41 @@ public class Question {
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
+    public static Question createQuestion(User commenter, Resume resume, Label label, String content, Integer resumePage) {
+
+        return Question.builder()
+            .commenter(commenter)
+            .resume(resume)
+            .label(label)
+            .content(content)
+            .resumePage(resumePage)
+            .bookmarked(false)
+            .checked(false)
+            .childCnt(0L)
+            .createdAt(LocalDateTime.now())
+            .build();
+    }
+
+    public static Question createChildQuestion(User commenter, Resume resume, Question parentQuestion, String content, Integer resumePage) {
+
+        return Question.builder()
+            .commenter(commenter)
+            .resume(resume)
+            .parentQuestion(parentQuestion)
+            .content(content)
+            .resumePage(resumePage)
+            .createdAt(LocalDateTime.now())
+            .build();
+    }
+
     public void validateUser(User user) {
 
         this.commenter.validateSameUser(user);
+    }
+
+    public void plusChildCnt() {
+
+        this.childCnt++;
     }
 
     public void updateContent(String content) {
