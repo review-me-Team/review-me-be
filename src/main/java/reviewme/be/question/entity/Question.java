@@ -42,4 +42,61 @@ public class Question {
     private Long childCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public static Question createQuestion(User commenter, Resume resume, Label label, String content, Integer resumePage) {
+
+        return Question.builder()
+            .commenter(commenter)
+            .resume(resume)
+            .label(label)
+            .content(content)
+            .resumePage(resumePage)
+            .bookmarked(false)
+            .checked(false)
+            .childCnt(0L)
+            .createdAt(LocalDateTime.now())
+            .build();
+    }
+
+    public static Question createChildQuestion(User commenter, Resume resume, Question parentQuestion, String content, Integer resumePage) {
+
+        return Question.builder()
+            .commenter(commenter)
+            .resume(resume)
+            .parentQuestion(parentQuestion)
+            .content(content)
+            .resumePage(resumePage)
+            .createdAt(LocalDateTime.now())
+            .build();
+    }
+
+    public void validateUser(User user) {
+
+        this.commenter.validateSameUser(user);
+    }
+
+    public void plusChildCnt() {
+
+        this.childCnt++;
+    }
+
+    public void updateContent(String content) {
+
+        this.content = content;
+    }
+
+    public void updateChecked(boolean checked) {
+
+        this.checked = checked;
+    }
+
+    public void updateBookmarked(boolean bookmarked) {
+
+        this.bookmarked = bookmarked;
+    }
+
+    public void softDelete() {
+
+        this.deletedAt = LocalDateTime.now();
+    }
 }

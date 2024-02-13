@@ -19,11 +19,14 @@ import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.question.dto.request.*;
 import reviewme.be.question.dto.response.*;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.question.service.QuestionService;
+import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.response.LabelPageResponse;
 import reviewme.be.util.dto.response.LabelResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "question", description = "예상 질문(question) API")
 @RequestMapping("/resume/{resumeId}/question")
@@ -31,8 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionController {
 
-    private final QuestionRepository questionRepository;
-    private final QuestionEmojiRepository questionEmojiRepository;
+    private final QuestionService questionService;
 
     @Operation(summary = "예상 질문 추가", description = "예상 질문을 추가합니다.")
     @PostMapping
@@ -40,27 +42,19 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 추가 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 추가 실패")
     })
-    public ResponseEntity<CustomResponse<PostedQuestionResponse>> postQuestions(@Validated @RequestBody PostQuestionRequest postQuestionRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<Void>> postQuestions(
+            @Validated @RequestBody PostQuestionRequest postQuestionRequest,
+            @PathVariable long resumeId,
+            @RequestAttribute("user") User user) {
 
-        PostedQuestionResponse sampleResponse = PostedQuestionResponse.builder()
-                .resumeId(1L)
-                .commenterId(1L)
-                .commenterName("aken-you")
-                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .content(postQuestionRequest.getContent())
-                .labelContent("react-query")
-                .resumePage(1)
-                .questionId(1L)
-                .createdAt(LocalDateTime.now())
-                .build();
+        questionService.saveQuestion(postQuestionRequest, resumeId, user);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "예상 질문 추가에 성공했습니다.",
-                        sampleResponse
+                        "예상 질문 추가에 성공했습니다."
                 ));
     }
 
@@ -108,9 +102,12 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteQuestions(@PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> deleteQuestions(
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
 
-        // TODO: 본인이 작성한 question만 삭제 가능
+        questionService.deleteQuestion(resumeId, questionId, user);
 
         return ResponseEntity
                 .ok()
@@ -127,7 +124,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionContent(@Validated @RequestBody UpdateQuestionContentRequest updateQuestionContentRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionContent(
+            @Validated @RequestBody UpdateQuestionContentRequest updateQuestionContentRequest,
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
+
+        questionService.updateQuestionContent(updateQuestionContentRequest, resumeId, questionId, user);
 
         return ResponseEntity
                 .ok()
@@ -144,10 +147,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 체크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionCheck(@Validated @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionCheck(
+            @Validated @RequestBody UpdateQuestionCheckRequest updateQuestionCheckRequest,
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
 
-        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
-        // TODO: question이 댓글이 아닌 question인 경우에만 체크 상태 수정 가능
+        questionService.updateQuestionCheck(updateQuestionCheckRequest, resumeId, questionId, user);
 
         return ResponseEntity
                 .ok()
@@ -164,9 +170,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 북마크 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 북마크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionBookmark(@Validated @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionBookmark(
+            @Validated @RequestBody UpdateQuestionBookmarkRequest updateQuestionBookmarkRequest,
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
 
-        // TODO: 본인의 resume인지 검증, 맞다면 request 상태로 수정
+        questionService.updateQuestionBookmark(updateQuestionBookmarkRequest, resumeId, questionId, user);
 
         return ResponseEntity
                 .ok()
@@ -183,17 +193,13 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 라벨 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 라벨 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<LabelPageResponse>> showLabelsOfQuestions(@PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<LabelPageResponse>> showQuestionLabels(
+            @PathVariable long resumeId) {
 
-        List<LabelResponse> sampleLabels = List.of(
-                LabelResponse.builder()
-                        .id(1L)
-                        .label("react-query")
-                        .build(),
-                LabelResponse.builder()
-                        .id(2L)
-                        .label("typescript")
-                        .build());
+        List<LabelResponse> questionLabelsResponse = questionService.findQuestionLabels(resumeId)
+                .stream()
+                .map(LabelResponse::fromLabel)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .ok()
@@ -202,7 +208,7 @@ public class QuestionController {
                         200,
                         "예상 질문 라벨 목록 조회에 성공했습니다.",
                         LabelPageResponse.builder()
-                                .labels(sampleLabels)
+                                .labels(questionLabelsResponse)
                                 .build()
                 ));
     }
@@ -213,7 +219,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "예상 질문 이모지 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "예상 질문 이모지 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateQuestionEmoji(@Validated @RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest, @PathVariable long resumeId, @PathVariable long questionId) {
+    public ResponseEntity<CustomResponse<Void>> updateQuestionEmoji(@Validated @RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest, @PathVariable long resumeId, @PathVariable long questionId) {
 
         return ResponseEntity
                 .ok()
