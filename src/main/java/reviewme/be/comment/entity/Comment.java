@@ -41,6 +41,11 @@ public class Comment {
                 .build();
     }
 
+    public void validateUser(User user) {
+
+        this.commenter.validateSameUser(user);
+    }
+
     public void softDelete(LocalDateTime deletedAt) {
 
         this.deletedAt = deletedAt;

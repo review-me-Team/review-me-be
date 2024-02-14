@@ -43,9 +43,8 @@ public class CommentService {
     private final EmojisVO emojisVO;
 
     @Transactional
-    public void saveComment(long commenterId, long resumeId, PostCommentRequest postComment) {
+    public void saveComment(User commenter, long resumeId, PostCommentRequest postComment) {
 
-        User commenter = userService.getUserById(commenterId);
         Resume resume = resumeService.getResumeById(resumeId);
 
         commentRepository.save(
@@ -90,18 +89,27 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(long userId, long commentId) {
+    public void deleteComment(User user, long resumeId, long commentId) {
 
-        Comment comment = validateCommentModifyAuthority(userId, commentId);
+        // 이력서 존재 여부 확인
+        resumeService.findById(resumeId);
 
+        // 댓글 존재 여부 및 삭제 권한 확인
+        Comment comment = findById(commentId);
+        comment.validateUser(user);
+
+        // 댓글 삭제, 댓글에 달린 이모지 삭제
         comment.softDelete(LocalDateTime.now());
         commentEmojiRepository.deleteAllByCommentId(commentId);
     }
 
     @Transactional
-    public void updateComment(long userId, long commentId, UpdateCommentContentRequest updateComment) {
+    public void updateComment(UpdateCommentContentRequest updateComment, User user, long resumeId, long commentId) {
 
-        Comment comment = validateCommentModifyAuthority(userId, commentId);
+        resumeService.findById(resumeId);
+
+        Comment comment = findById(commentId);
+        comment.validateUser(user);
 
         comment.updateContent(updateComment.getContent(), LocalDateTime.now());
     }
@@ -133,16 +141,10 @@ public class CommentService {
         myCommentEmoji.get().updateEmoji(emoji);
     }
 
-    private Comment validateCommentModifyAuthority(long userId, long commentId) {
+    private Comment findById(long commentId) {
 
-        Comment comment = commentRepository.findById(commentId)
+        return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NonExistCommentException("[ERROR] 존재하지 않는 댓글입니다."));
-
-        if (comment.getCommenter().getId() != userId) {
-            throw new NotYoursException("본인이 작성한 댓글이 아닙니다.");
-        }
-
-        return comment;
     }
 
     private static EmojiCount tutpleToEmoji(Tuple tuple) {
