@@ -19,4 +19,6 @@ public interface FeedbackEmojiRepository extends JpaRepository<FeedbackEmoji, Lo
     List<Tuple> countByFeedbackIdGroupByEmojiId(long feedbackId);
 
     FeedbackEmoji findByFeedbackIdAndUserId(long feedbackId, long userId);
+
+    void deleteAllByFeedbackId(long feedbackId);
 }

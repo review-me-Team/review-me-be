@@ -9,6 +9,7 @@ import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
 import reviewme.be.feedback.entity.Feedback;
 import reviewme.be.feedback.exception.NonExistFeedbackException;
+import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.service.ResumeService;
@@ -22,6 +23,7 @@ public class FeedbackService {
 
     private final UtilService utilService;
     private final FeedbackRepository feedbackRepository;
+    private final FeedbackEmojiRepository feedbackEmojiRepository;
     private final ResumeService resumeService;
 
     @Transactional
@@ -69,6 +71,7 @@ public class FeedbackService {
         Feedback feedback = findById(feedbackId);
         feedback.validateUser(user);
         feedback.softDelete();
+        feedbackEmojiRepository.deleteAllByFeedbackId(feedbackId);
 
         if (feedback.getParentFeedback() != null) {
             feedback.getParentFeedback().minusChildCnt();
