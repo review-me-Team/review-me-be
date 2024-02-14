@@ -27,11 +27,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/login/oauth",
                         "/swagger-ui/**",
                         "/api-docs/**",
-                        "/login/oauth",
                         "/user/refresh");
-////
-//        registry.addInterceptor(loginOrNotInterceptor)
-//                .order(3)
-//                .addPathPatterns("/resume");
     }
 }
