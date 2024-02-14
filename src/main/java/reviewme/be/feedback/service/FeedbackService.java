@@ -69,6 +69,10 @@ public class FeedbackService {
         Feedback feedback = findById(feedbackId);
         feedback.validateUser(user);
         feedback.softDelete();
+
+        if (feedback.getParentFeedback() != null) {
+            feedback.getParentFeedback().minusChildCnt();
+        }
     }
 
     @Transactional

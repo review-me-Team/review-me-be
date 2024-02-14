@@ -77,6 +77,11 @@ public class Feedback {
         this.childCnt++;
     }
 
+    public void minusChildCnt() {
+
+        this.childCnt--;
+    }
+
     public void softDelete() {
 
         this.deletedAt = LocalDateTime.now();
