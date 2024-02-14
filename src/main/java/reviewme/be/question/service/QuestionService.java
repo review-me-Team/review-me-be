@@ -107,7 +107,7 @@ public class QuestionService {
         // 이력서 존재 여부 확인
         resumeService.findById(resumeId);
 
-        return labelRepository.findByResumeId(resumeId);
+        return labelRepository.findByResumeIdOrderByContentAsc(resumeId);
     }
 
     /**

@@ -10,7 +10,7 @@ public interface LabelRepository extends JpaRepository<Label, Integer> {
 
     List<Label> findByResumeIsNull();
 
-    List<Label> findByResumeId(long resumeId);
+    List<Label> findByResumeIdOrderByContentAsc(long resumeId);
 
     Optional<Label> findById(long id);
 }
