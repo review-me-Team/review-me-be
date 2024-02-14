@@ -84,9 +84,13 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<FeedbackPageResponse>> showFeedbacks(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable, @RequestParam long resumePage) {
+    public ResponseEntity<CustomResponse<FeedbackPageResponse>> showFeedbacks(
+            @PathVariable long resumeId,
+            @PageableDefault(size=20) Pageable pageable,
+            @RequestParam long resumePage) {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
+        // TODO: deletedAt is not null && childCount == 0 인 피드백은 보여주지 않는다.
 
         List<EmojiCount> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L).stream()
                 .map(tuple
@@ -121,7 +125,10 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 댓글 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 댓글 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<CommentOfFeedbackPageResponse>> showCommentsOfFeedback(@PathVariable long resumeId, @PathVariable long feedbackId, @PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<CommentOfFeedbackPageResponse>> showCommentsOfFeedback(
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId,
+            @PageableDefault(size=20) Pageable pageable) {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
@@ -233,7 +240,10 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackEmoji(@Validated @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackEmoji(
+            @Validated @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest,
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId) {
 
         return ResponseEntity
                 .ok()
