@@ -79,6 +79,11 @@ public class Question {
         this.childCnt++;
     }
 
+    public void minusChildCnt() {
+
+        this.childCnt--;
+    }
+
     public void updateContent(String content) {
 
         this.content = content;

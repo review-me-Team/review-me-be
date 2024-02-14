@@ -15,7 +15,6 @@ import reviewme.be.util.repository.LabelRepository;
 import reviewme.be.util.service.UtilService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +64,10 @@ public class QuestionService {
         question.validateUser(user);
 
         question.softDelete();
+
+        if (question.getParentQuestion() != null) {
+            question.getParentQuestion().minusChildCnt();
+        }
     }
 
     @Transactional
@@ -118,7 +121,7 @@ public class QuestionService {
     /**
      * labelId가 있다면 해당 labelId로 label을 찾고,
      * 이미 존재하는 labelContent라면 해당 label을 반환하고, 없다면 새로 생성
-     * @param request
+     * @param request (Optional labelId, Optional labelContent)
      * @param resume
      * @return
      */
@@ -136,18 +139,6 @@ public class QuestionService {
         }
 
         return null;
-    }
-
-    private Question findParentQuestion(long questionId, long resumeId, int resumePage) {
-
-        Optional<Question> parentQuestion = questionRepository.findByIdAndResumeIdAndResumePageAndDeletedAtIsNull(questionId, resumeId, resumePage);
-
-        if (parentQuestion.isEmpty()) throw new NonExistQuestionException("존재하지 않는 질문입니다.");
-
-        // 예상 질문의 부모 질문이 존재하는 경우 예외
-        if (parentQuestion.get().getParentQuestion() != null) throw new NonExistQuestionException("해당 예상 질문에는 댓글을 달 수 없습니다.");
-
-        return parentQuestion.get();
     }
 
     private Question findById(long questionId) {
