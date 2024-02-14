@@ -3,10 +3,7 @@ package reviewme.be.question.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reviewme.be.question.dto.request.PostQuestionRequest;
-import reviewme.be.question.dto.request.UpdateQuestionBookmarkRequest;
-import reviewme.be.question.dto.request.UpdateQuestionCheckRequest;
-import reviewme.be.question.dto.request.UpdateQuestionContentRequest;
+import reviewme.be.question.dto.request.*;
 import reviewme.be.question.entity.Question;
 import reviewme.be.question.exception.NonExistQuestionException;
 import reviewme.be.question.repository.QuestionRepository;
@@ -30,23 +27,31 @@ public class QuestionService {
     private final UtilService utilService;
 
     @Transactional
-    public void saveQuestion(PostQuestionRequest request, long resumeId, User user) {
+    public void saveQuestion(CreateQuestionRequest request, long resumeId, User user) {
 
         // 이력서 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
 
-        // 예상 질문 라벨 조회
+        // 예상 질문 라벨 조회 (없다면 생성)
         Label label = verifyQuestionLabel(request, resume);
 
-        if (request.getQuestionId() != null) {
-
-            Question parentQuestion = findParentQuestion(request.getQuestionId(), resumeId, request.getResumePage());
-            questionRepository.save(Question.createChildQuestion(user, resume, parentQuestion, request.getContent(), request.getResumePage()));
-            parentQuestion.plusChildCnt();
-            return;
-        }
-
         questionRepository.save(Question.createQuestion(user, resume, label, request.getContent(), request.getResumePage()));
+    }
+
+    @Transactional
+    public void saveQuestionComment(CreateQuestionCommentRequest request, User commenter, long resumeId, long parentId) {
+
+        // 이력서, 예상 질문 존재 여부 확인
+        Resume resume = resumeService.findById(resumeId);
+        Question parentQuestion = findById(parentId);
+
+        questionRepository.save(Question.createQuestionComment(
+                commenter,
+                resume,
+                parentQuestion,
+                request.getContent()));
+
+        parentQuestion.plusChildCnt();
     }
 
     @Transactional
@@ -111,15 +116,24 @@ public class QuestionService {
     }
 
     /**
-     * labelId가 있다면 해당 labelId로 label을 찾고, 없다면 labelContent로 label을 생성
+     * labelId가 있다면 해당 labelId로 label을 찾고,
+     * 이미 존재하는 labelContent라면 해당 label을 반환하고, 없다면 새로 생성
      * @param request
      * @param resume
      * @return
      */
-    private Label verifyQuestionLabel(PostQuestionRequest request, Resume resume) {
+    private Label verifyQuestionLabel(CreateQuestionRequest request, Resume resume) {
 
-        if (request.getLabelId() != null) return utilService.findById(request.getLabelId());
-        if (request.getLabelContent() != null) return labelRepository.save(Label.ofCreated(resume, request.getLabelContent()));
+        if (request.getLabelId() != null) {
+
+            return utilService.findById(request.getLabelId());
+        }
+
+        if (request.getLabelContent() != null && !request.getLabelContent().isEmpty()) {
+
+            return labelRepository.findByResumeIdAndContent(resume.getId(), request.getLabelContent())
+                    .orElseGet(() -> labelRepository.save(Label.ofCreated(resume, request.getLabelContent())));
+        }
 
         return null;
     }

@@ -11,14 +11,11 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Schema(description = "예상 질문 추가 요청")
-public class PostQuestionRequest {
+public class CreateQuestionRequest {
 
     @Schema(description = "예상 질문", example = "프로젝트에서 react-query를 사용하셨는데 왜 사용하셨나요?")
     @NotBlank(message = "예상 질문 내용은 필수 입력 값입니다.")
     private String content;
-
-    @Schema(description = "댓글을 추가할 예상 질문 ID", example = "1", required = false)
-    private Long questionId;
 
     @Schema(description = "라벨 ID", example = "1", required = false)
     private Long labelId;

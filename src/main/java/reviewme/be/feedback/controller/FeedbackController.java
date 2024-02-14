@@ -40,11 +40,11 @@ public class FeedbackController {
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
     public ResponseEntity<CustomResponse<Void>> postFeedback(
-            @Validated @RequestBody CreateFeedbackRequest postFeedbackRequest,
+            @Validated @RequestBody CreateFeedbackRequest createFeedbackRequest,
             @PathVariable long resumeId,
             @RequestAttribute("user") User user) {
 
-        feedbackService.saveFeedback(postFeedbackRequest, user, resumeId);
+        feedbackService.saveFeedback(createFeedbackRequest, user, resumeId);
 
         return ResponseEntity
                 .ok()
@@ -62,12 +62,12 @@ public class FeedbackController {
             @ApiResponse(responseCode = "400", description = "피드백에 대댓글 추가 실패")
     })
     public ResponseEntity<CustomResponse<Void>> postFeedbackComment(
-            @Validated @RequestBody CreateFeedbackCommentRequest postFeedbackCommentRequest,
+            @Validated @RequestBody CreateFeedbackCommentRequest createFeedbackCommentRequest,
             @PathVariable long resumeId,
             @PathVariable long feedbackId,
             @RequestAttribute("user") User user) {
 
-        feedbackService.saveFeedbackComment(postFeedbackCommentRequest, user, resumeId, feedbackId);
+        feedbackService.saveFeedbackComment(createFeedbackCommentRequest, user, resumeId, feedbackId);
 
         return ResponseEntity
                 .ok()

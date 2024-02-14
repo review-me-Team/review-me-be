@@ -12,19 +12,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.dto.request.*;
 import reviewme.be.question.dto.response.CommentOfQuestionPageResponse;
-import reviewme.be.question.dto.response.PostedQuestionResponse;
 import reviewme.be.question.dto.response.QuestionPageResponse;
-import reviewme.be.question.repository.QuestionEmojiRepository;
-import reviewme.be.question.repository.QuestionRepository;
-import reviewme.be.question.dto.request.*;
-import reviewme.be.question.dto.response.*;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.question.service.QuestionService;
 import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.response.LabelPageResponse;
 import reviewme.be.util.dto.response.LabelResponse;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,11 +37,11 @@ public class QuestionController {
             @ApiResponse(responseCode = "400", description = "예상 질문 추가 실패")
     })
     public ResponseEntity<CustomResponse<Void>> postQuestions(
-            @Validated @RequestBody PostQuestionRequest postQuestionRequest,
+            @Validated @RequestBody CreateQuestionRequest createQuestionRequest,
             @PathVariable long resumeId,
             @RequestAttribute("user") User user) {
 
-        questionService.saveQuestion(postQuestionRequest, resumeId, user);
+        questionService.saveQuestion(createQuestionRequest, resumeId, user);
 
         return ResponseEntity
                 .ok()
@@ -55,6 +49,29 @@ public class QuestionController {
                         "success",
                         200,
                         "예상 질문 추가에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "예상 질문에 대댓글 추가", description = "예상 질문에 대댓글을 추가합니다.")
+    @PostMapping("/{questionId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "예상 질문에 대댓글 추가 성공"),
+            @ApiResponse(responseCode = "400", description = "예상 질문에 대댓글 추가 실패")
+    })
+    public ResponseEntity<CustomResponse<Void>> postQuestionComment(
+            @Validated @RequestBody CreateQuestionCommentRequest createQuestionCommentRequest,
+            @PathVariable long resumeId,
+            @PathVariable long questionId,
+            @RequestAttribute("user") User user) {
+
+        questionService.saveQuestionComment(createQuestionCommentRequest, user, resumeId, questionId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "예상 질문 대댓글 추가에 성공했습니다."
                 ));
     }
 

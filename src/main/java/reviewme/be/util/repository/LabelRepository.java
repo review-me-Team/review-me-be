@@ -13,4 +13,6 @@ public interface LabelRepository extends JpaRepository<Label, Integer> {
     List<Label> findByResumeIdOrderByContentAsc(long resumeId);
 
     Optional<Label> findById(long id);
+
+    Optional<Label> findByResumeIdAndContent(long resumeId, String content);
 }
