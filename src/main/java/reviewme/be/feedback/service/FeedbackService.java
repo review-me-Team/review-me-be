@@ -3,6 +3,7 @@ package reviewme.be.feedback.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.feedback.dto.request.CreateFeedbackCommentRequest;
 import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
@@ -28,27 +29,34 @@ public class FeedbackService {
 
         // 이력서, 피드백, 라벨 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
-        Feedback feedback = null;
         Label label = null;
 
         if (request.getLabelId() != null) {
             label = utilService.findFeedbackLabelById(request.getLabelId());
         }
 
-        // 대댓글이라면 부모 피드백 존재 여부 확인 및 부모 피드백의 댓글 수 증가
-        if (request.getFeedbackId() != null) {
-            feedback = findById(request.getFeedbackId());
-            feedback.plusChildCnt();
-            // TODO: 부모 피드백의 parentFeedback이 null이 아닌 경우 예외 처리
-        }
-
-        feedbackRepository.save(Feedback.ofCreated(
+        feedbackRepository.save(Feedback.createdFeedback(
                 commenter,
                 resume,
-                feedback,
                 label,
                 request.getContent(),
                 request.getResumePage()));
+    }
+
+    @Transactional
+    public void saveFeedbackComment(CreateFeedbackCommentRequest request, User commenter, long resumeId, long parentId) {
+
+        // 이력서, 피드백 존재 여부 확인
+        Resume resume = resumeService.findById(resumeId);
+        Feedback parentFeedback = findById(parentId);
+
+        feedbackRepository.save(Feedback.createFeedbackComment(
+                commenter,
+                resume,
+                parentFeedback,
+                request.getContent()));
+
+        parentFeedback.plusChildCnt();
     }
 
     @Transactional

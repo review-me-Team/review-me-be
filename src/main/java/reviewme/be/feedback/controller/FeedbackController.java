@@ -10,13 +10,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.feedback.dto.request.*;
 import reviewme.be.feedback.dto.response.*;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
-import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
-import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
-import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
-import reviewme.be.feedback.dto.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.feedback.service.FeedbackService;
 import reviewme.be.user.entity.User;
@@ -48,6 +45,29 @@ public class FeedbackController {
             @RequestAttribute("user") User user) {
 
         feedbackService.saveFeedback(postFeedbackRequest, user, resumeId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "피드백 추가에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "피드백에 대댓글 추가", description = "피드백에 대댓글을 추가합니다.")
+    @PostMapping("/{feedbackId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백에 대댓글 추가 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백에 대댓글 추가 실패")
+    })
+    public ResponseEntity<CustomResponse<Void>> postFeedbackComment(
+            @Validated @RequestBody CreateFeedbackCommentRequest postFeedbackCommentRequest,
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId,
+            @RequestAttribute("user") User user) {
+
+        feedbackService.saveFeedbackComment(postFeedbackCommentRequest, user, resumeId, feedbackId);
 
         return ResponseEntity
                 .ok()
