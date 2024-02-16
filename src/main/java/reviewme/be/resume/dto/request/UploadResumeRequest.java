@@ -18,7 +18,7 @@ public class UploadResumeRequest {
     @NotBlank(message = "이력서 제목은 필수 입력 값입니다.")
     private String title;
 
-    @Schema(description = "이력서 PDF 파일")
+    @Schema(description = "이력서 PDF 파일", example = "pdf 파일 객체를 주세요! (ex. resume.pdf) ")
     @NotNull(message = "PDF 파일은 필수 입력 값입니다.")
     private MultipartFile pdf;
 
