@@ -46,10 +46,10 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
             @Parameter(description = "이력서 업로드 정보(파일 포함)", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
-            @ModelAttribute UploadResumeRequest uploadResumeRequest
-    ) {
+            @ModelAttribute UploadResumeRequest uploadResumeRequest,
+            @RequestAttribute("user") User user) {
 
-        long id = resumeService.saveResume(uploadResumeRequest, userId);
+        long id = resumeService.saveResume(uploadResumeRequest, user);
 
         return ResponseEntity
                 .ok()

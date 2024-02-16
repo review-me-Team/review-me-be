@@ -45,21 +45,16 @@ public class ResumeService {
     @Value("${AWS_S3_BUCKET_NAME}")
     private String bucketName;
 
-    @Value("${BUCKET_URL}")
-    private String bucketUrl;
-
     @Transactional
-    public long saveResume(UploadResumeRequest resumeRequest, long userId) {
+    public long saveResume(UploadResumeRequest resumeRequest, User writer) {
 
         String resumeFileName = uploadResumeFile(resumeRequest.getPdf());
 
-        // TODO: 로그인 기능 구현 전까지 userId가 1인 user로 사용
-        User user = userService.getUserById(userId);
         Scope scope = utilService.findScopeById(resumeRequest.getScopeId());
         Occupation occupation = utilService.findOccupationById(resumeRequest.getOccupationId());
 
         Resume createdResume = resumeRepository.save(
-                Resume.ofCreated(resumeRequest, user, scope, occupation, resumeFileName)
+                Resume.ofCreated(resumeRequest, writer, scope, occupation, resumeFileName)
         );
 
         return createdResume.getId();
