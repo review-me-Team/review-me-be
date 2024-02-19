@@ -112,9 +112,11 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteResume(@PathVariable Long resumeId) {
+    public ResponseEntity<CustomResponse<Void>> deleteResume(
+            @PathVariable long resumeId,
+            @RequestAttribute("user") User user) {
 
-        resumeService.deleteResume(resumeId, userId);
+        resumeService.deleteResume(resumeId, user);
 
         return ResponseEntity
                 .ok()
@@ -131,7 +133,7 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateResume(
+    public ResponseEntity<CustomResponse<Void>> updateResume(
             @Validated @RequestBody UpdateResumeRequest updateResumeRequest,
             @PathVariable Long resumeId,
             @RequestAttribute("user") User user) {

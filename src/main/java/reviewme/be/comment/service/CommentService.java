@@ -45,7 +45,7 @@ public class CommentService {
     @Transactional
     public void saveComment(User commenter, long resumeId, PostCommentRequest postComment) {
 
-        Resume resume = resumeService.getResumeById(resumeId);
+        Resume resume = resumeService.findById(resumeId);
 
         commentRepository.save(
                 Comment.ofCreated(commenter, resume, postComment.getContent())
@@ -55,7 +55,7 @@ public class CommentService {
     @Transactional
     public CommentPageResponse getComments(long userId, long resumeId, Pageable pageable) {
 
-        resumeService.getResumeById(resumeId);
+        resumeService.findById(resumeId);
 
         List<CommentResponse> commentResponses = new ArrayList<CommentResponse>();
 

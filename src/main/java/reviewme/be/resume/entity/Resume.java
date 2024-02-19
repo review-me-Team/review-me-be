@@ -36,7 +36,7 @@ public class Resume {
     private String title;
     private String url;
     private int year;
-    private Integer commentCnt;
+    private int commentCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
@@ -53,9 +53,9 @@ public class Resume {
                 .build();
     }
 
-    public void softDelete() {
+    public void softDelete(LocalDateTime deletedAt) {
 
-        this.deletedAt = LocalDateTime.now();
+        this.deletedAt = deletedAt;
     }
 
     public void update(UpdateResumeRequest updateResumeRequest, Scope scope, Occupation occupation) {

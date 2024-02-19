@@ -29,6 +29,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -76,6 +77,7 @@ public class ResumeService {
         String scope = resume.getScope().getScope();
         long resumeOwnerId = resume.getWriter().getId();
 
+        // TODO: 검증 로직 개선 (scope에서 검증 역할을 하도록 변경)
         if (scope.equals("private") && resumeOwnerId != userId) {
             throw new NonExistResumeException("해당 이력서가 존재하지 않습니다.");
         }
@@ -88,17 +90,15 @@ public class ResumeService {
     }
 
     @Transactional
-    public void deleteResume(long resumeId, long userId) {
+    public void deleteResume(long resumeId, User user) {
 
+        // 이력서 존재 여부 및 삭제 권한 확인
         Resume resume = findById(resumeId);
+        resume.validateUser(user);
 
-        User owner = resume.getWriter();
-
-        if (owner.getId() != userId) {
-            throw new NotYourResumeException("이력서를 삭제할 권한이 없습니다.");
-        }
-
-        resume.softDelete();
+        LocalDateTime deletedAt = LocalDateTime.now();
+        resume.softDelete(deletedAt);
+        // TODO: 해당 이력서의 pdf, 댓글, 피드백 등 삭제 로직 필요
     }
 
     @Transactional
@@ -112,15 +112,6 @@ public class ResumeService {
 
         resume.update(request, modifiedScope, modifiedOccupation);
     }
-
-    @Transactional(readOnly = true)
-    public Resume getResumeById(long resumeId) {
-
-        return resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new NonExistResumeException("해당 이력서가 존재하지 않습니다."));
-    }
-
-
 
     public Resume findById(long resumeId) {
 
@@ -168,9 +159,8 @@ public class ResumeService {
                 .append(fileName)
                 .toString();
 
-        resumeRepository.findByUrlAndDeletedAtIsNull(newFileName).ifPresent(
-                resumeByUrl -> createFileNameWithUUID(fileName)
-        );
+        resumeRepository.findByUrlAndDeletedAtIsNull(newFileName)
+                .ifPresent(resumeByUrl -> createFileNameWithUUID(fileName));
 
         return newFileName;
     }
