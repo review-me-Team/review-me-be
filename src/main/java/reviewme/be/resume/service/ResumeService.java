@@ -17,10 +17,8 @@ import reviewme.be.resume.dto.response.ResumeResponse;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.exception.NonExistResumeException;
-import reviewme.be.resume.exception.NotYourResumeException;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
-import reviewme.be.user.service.UserService;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
 import reviewme.be.user.entity.User;
@@ -40,7 +38,6 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
 
     private final FriendService friendService;
-    private final UserService userService;
     private final UtilService utilService;
 
     @Value("${AWS_S3_BUCKET_NAME}")
@@ -72,12 +69,10 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public ResumeDetailResponse getResumeDetail(long resumeId, User user) {
 
+        // 이력서 존재 여부 확인
         Resume resume = findById(resumeId);
 
-        if (user.isAnonymous() && resume.isPublic()) {
-            return ResumeDetailResponse.fromResume(resume);
-        }
-
+        // 공개 범위에 따른 요청 사용자의 접근 권한 확인
         validateAccessRights(resume, user);
 
         return ResumeDetailResponse.fromResume(resume);
@@ -167,7 +162,18 @@ public class ResumeService {
         }
     }
 
+    /**
+     * 비회원 사용자는 전체 공개 이력서만 볼 수 있습니다.
+     * 친구만 볼 수 있는 이력서는 친구여야만 볼 수 있습니다.
+     * 비공개 이력서는 작성자 본인만 볼 수 있습니다.
+     * @param resume
+     * @param user
+     */
     private void validateAccessRights(Resume resume, User user) {
+
+        if (user.isAnonymous() && !resume.isPublic()) {
+            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
+        }
 
         if (resume.isFriendsOnly() && !friendService.isFriend(user.getId(), resume.getWriter().getId())) {
             throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
