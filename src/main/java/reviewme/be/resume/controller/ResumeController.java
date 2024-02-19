@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.resume.dto.ResumeSearchCondition;
+import reviewme.be.resume.dto.request.ResumeSearchConditionParam;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
@@ -66,10 +67,10 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes(
             @PageableDefault(size=20) Pageable pageable,
-            @ModelAttribute ResumeSearchCondition searchCondition,
+            @ModelAttribute ResumeSearchConditionParam searchCondition,
             @RequestAttribute("user") User user) {
 
-        Page<ResumeResponse> resumes = resumeService.getResumes(searchCondition, pageable);
+        Page<ResumeResponse> resumes = resumeService.getResumes(searchCondition, pageable, user);
 
         return ResponseEntity
                 .ok()
@@ -92,7 +93,6 @@ public class ResumeController {
         @RequestAttribute("user") User user) {
 
         // TODO: pdf url 암호화 필요
-
         ResumeDetailResponse resumeDetail = resumeService.getResumeDetail(resumeId, user);
 
         return ResponseEntity

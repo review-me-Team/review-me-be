@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reviewme.be.friend.service.FriendService;
 import reviewme.be.resume.dto.ResumeSearchCondition;
+import reviewme.be.resume.dto.request.ResumeSearchConditionParam;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
 import reviewme.be.resume.dto.response.ResumeResponse;
@@ -59,10 +60,16 @@ public class ResumeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ResumeResponse> getResumes(ResumeSearchCondition searchCondition, Pageable pageable) {
+    public Page<ResumeResponse> getResumes(ResumeSearchConditionParam searchConditionParam, Pageable pageable, User user) {
 
-        // TODO: 친구 여부 검증 로직 필요
+        ResumeSearchCondition searchCondition = new ResumeSearchCondition(searchConditionParam);
 
+        // 비회원 사용자는 전체 공개 이력서만 볼 수 있습니다.
+        if (user.isAnonymous()) {
+            searchCondition.onlyPublic();
+        }
+
+        // TODO: 조회 쿼리 수정 필요
         return resumeRepository.findAllByDeletedAtIsNull(searchCondition, pageable);
     }
 
@@ -169,14 +176,14 @@ public class ResumeService {
      * @param resume
      * @param user
      */
-    private void validateAccessRights(Resume resume, User user) {
+    public void validateAccessRights(Resume resume, User user) {
 
         if (user.isAnonymous() && !resume.isPublic()) {
-            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
+            throw new NonExistResumeException("접근 권한이 없습니다.");
         }
 
         if (resume.isFriendsOnly() && !friendService.isFriend(user.getId(), resume.getWriter().getId())) {
-            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
+            throw new NonExistResumeException("접근 권한이 없습니다.");
         }
 
         if (resume.isPrivate()) {

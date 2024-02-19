@@ -1,15 +1,30 @@
 package reviewme.be.resume.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import reviewme.be.resume.dto.request.ResumeSearchConditionParam;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ResumeSearchCondition {
 
     private Integer scope;
     private Integer occupation;
     private Integer year;
+
+    public ResumeSearchCondition(ResumeSearchConditionParam resumeSearchConditionParam) {
+
+        // Default scope is 2 (public, friends only)
+        this.scope = 2;
+        this.occupation = resumeSearchConditionParam.getOccupation();
+        this.year = resumeSearchConditionParam.getYear();
+    }
+
+    public void onlyPublic() {
+        this.scope = 1;
+    }
 }
