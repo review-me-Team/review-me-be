@@ -2,6 +2,7 @@ package reviewme.be.util.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reviewme.be.util.entity.Label;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
@@ -57,6 +58,7 @@ public class UtilService {
         return scopes.get(id);
     }
 
+    @Transactional(readOnly = true)
     public Label findById(long id) {
 
         return labelRepository.findById(id)

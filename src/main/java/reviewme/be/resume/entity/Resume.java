@@ -3,6 +3,7 @@ package reviewme.be.resume.entity;
 import lombok.*;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
+import reviewme.be.resume.exception.NonExistResumeException;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
 import reviewme.be.user.entity.User;
@@ -53,6 +54,11 @@ public class Resume {
                 .build();
     }
 
+    public void validateUser(User user) {
+
+        this.writer.validateSameUser(user);
+    }
+
     public void softDelete(LocalDateTime deletedAt) {
 
         this.deletedAt = deletedAt;
@@ -66,8 +72,12 @@ public class Resume {
         this.year = updateResumeRequest.getYear();
     }
 
-    public void validateUser(User user) {
+    public boolean isPublic() {
 
-        this.writer.validateSameUser(user);
+        if (this.scope.getId() != 1) {
+            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
+        }
+
+        return true;
     }
 }

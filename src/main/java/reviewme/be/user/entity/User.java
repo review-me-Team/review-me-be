@@ -37,4 +37,9 @@ public class User {
             throw new IllegalArgumentException("권한이 없습니다.");
         }
     }
+
+    public boolean isAnonymous() {
+
+        return this.id == null;
+    }
 }

@@ -70,21 +70,15 @@ public class ResumeService {
     }
 
     @Transactional(readOnly = true)
-    public ResumeDetailResponse getResumeDetail(long resumeId, long userId) {
+    public ResumeDetailResponse getResumeDetail(long resumeId, User user) {
 
         Resume resume = findById(resumeId);
 
-        String scope = resume.getScope().getScope();
-        long resumeOwnerId = resume.getWriter().getId();
-
-        // TODO: 검증 로직 개선 (scope에서 검증 역할을 하도록 변경)
-        if (scope.equals("private") && resumeOwnerId != userId) {
-            throw new NonExistResumeException("해당 이력서가 존재하지 않습니다.");
+        if (user.isAnonymous() && resume.isPublic()) {
+            return ResumeDetailResponse.fromResume(resume);
         }
 
-        if (scope.equals("friend") && !(friendService.isFriend(userId, resumeOwnerId))) {
-            throw new NonExistResumeException("해당 이력서가 존재하지 않습니다.");
-        }
+        validateAccessRights(resume, user);
 
         return ResumeDetailResponse.fromResume(resume);
     }
@@ -98,7 +92,6 @@ public class ResumeService {
 
         LocalDateTime deletedAt = LocalDateTime.now();
         resume.softDelete(deletedAt);
-        // TODO: 해당 이력서의 pdf, 댓글, 피드백 등 삭제 로직 필요
     }
 
     @Transactional
@@ -171,6 +164,17 @@ public class ResumeService {
 
         if (extension == null || !extension.equals("pdf")) {
             throw new BadFileExtensionException("pdf 파일만 업로드 가능합니다.");
+        }
+    }
+
+    private void validateAccessRights(Resume resume, User user) {
+
+        if (resume.getScope().getId() == 2 && !friendService.isFriend(user.getId(), resume.getWriter().getId())) {
+            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
+        }
+
+        if (resume.getScope().getId() == 3) {
+            resume.validateUser(user);
         }
     }
 }
