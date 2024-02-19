@@ -169,11 +169,11 @@ public class ResumeService {
 
     private void validateAccessRights(Resume resume, User user) {
 
-        if (resume.getScope().getId() == 2 && !friendService.isFriend(user.getId(), resume.getWriter().getId())) {
+        if (resume.isFriendsOnly() && !friendService.isFriend(user.getId(), resume.getWriter().getId())) {
             throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
         }
 
-        if (resume.getScope().getId() == 3) {
+        if (resume.isPrivate()) {
             resume.validateUser(user);
         }
     }

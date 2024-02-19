@@ -80,4 +80,22 @@ public class Resume {
 
         return true;
     }
+
+    public boolean isFriendsOnly() {
+
+        if (this.scope.getId() != 2) {
+            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
+        }
+
+        return true;
+    }
+
+    public boolean isPrivate() {
+
+        if (this.scope.getId() != 3) {
+            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
+        }
+
+        return true;
+    }
 }
