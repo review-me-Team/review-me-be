@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.resume.dto.ResumeSearchCondition;
+import reviewme.be.resume.dto.request.ResumeSearchConditionParam;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
@@ -35,9 +36,6 @@ public class ResumeController {
 
     private final ResumeService resumeService;
 
-    // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
-    private long userId = 1L;
-
     @Operation(summary = "이력서 업로드", description = "이력서를 업로드합니다.")
     @PostMapping
     @ApiResponses({
@@ -46,10 +44,10 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse<UploadResumeResponse>> uploadResume(
             @Parameter(description = "이력서 업로드 정보(파일 포함)", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "file", format = "binary")))
-            @ModelAttribute UploadResumeRequest uploadResumeRequest
-    ) {
+            @ModelAttribute UploadResumeRequest uploadResumeRequest,
+            @RequestAttribute("user") User user) {
 
-        long id = resumeService.saveResume(uploadResumeRequest, userId);
+        long id = resumeService.saveResume(uploadResumeRequest, user);
 
         return ResponseEntity
                 .ok()
@@ -69,10 +67,10 @@ public class ResumeController {
     })
     public ResponseEntity<CustomResponse<ResumePageResponse>> showResumes(
             @PageableDefault(size=20) Pageable pageable,
-            @ModelAttribute ResumeSearchCondition searchCondition
-    ) {
+            @ModelAttribute ResumeSearchConditionParam searchCondition,
+            @RequestAttribute("user") User user) {
 
-        Page<ResumeResponse> resumes = resumeService.getResumes(searchCondition, pageable);
+        Page<ResumeResponse> resumes = resumeService.getResumes(searchCondition, pageable, user);
 
         return ResponseEntity
                 .ok()
@@ -90,11 +88,12 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 상세 내용 조회 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 상세 내용 조회 실패")
     })
-    public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(@PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<ResumeDetailResponse>> showResumeDetail(
+        @PathVariable long resumeId,
+        @RequestAttribute("user") User user) {
 
         // TODO: pdf url 암호화 필요
-
-        ResumeDetailResponse resumeDetail = resumeService.getResumeDetail(resumeId, userId);
+        ResumeDetailResponse resumeDetail = resumeService.getResumeDetail(resumeId, user);
 
         return ResponseEntity
                 .ok()
@@ -112,9 +111,11 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteResume(@PathVariable Long resumeId) {
+    public ResponseEntity<CustomResponse<Void>> deleteResume(
+            @PathVariable long resumeId,
+            @RequestAttribute("user") User user) {
 
-        resumeService.deleteResume(resumeId, userId);
+        resumeService.deleteResume(resumeId, user);
 
         return ResponseEntity
                 .ok()
@@ -131,7 +132,7 @@ public class ResumeController {
             @ApiResponse(responseCode = "200", description = "이력서 수정 성공"),
             @ApiResponse(responseCode = "400", description = "이력서 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateResume(
+    public ResponseEntity<CustomResponse<Void>> updateResume(
             @Validated @RequestBody UpdateResumeRequest updateResumeRequest,
             @PathVariable Long resumeId,
             @RequestAttribute("user") User user) {

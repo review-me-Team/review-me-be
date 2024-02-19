@@ -26,7 +26,7 @@ public class ResumeDetailResponse {
     private String occupation;
 
     @Schema(description = "재직 기간", example = "0")
-    private Integer year;
+    private int year;
 
     public static ResumeDetailResponse fromResume(Resume resume) {
         return ResumeDetailResponse.builder()

@@ -16,6 +16,7 @@ import reviewme.be.comment.dto.request.UpdateCommentEmojiRequest;
 import reviewme.be.comment.dto.response.CommentPageResponse;
 import reviewme.be.comment.service.CommentService;
 import reviewme.be.custom.CustomResponse;
+import reviewme.be.user.entity.User;
 
 
 @Tag(name = "comment", description = "댓글(comment) API")
@@ -26,18 +27,18 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
-    private long userId = 1L;
-
     @Operation(summary = "댓글 추가", description = "이력서에 대한 댓글을 추가합니다.")
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
     })
-    public ResponseEntity<CustomResponse> postCommentOfResume(@Validated @RequestBody PostCommentRequest postCommentRequest, @PathVariable long resumeId) {
+    public ResponseEntity<CustomResponse<Void>> postCommentOfResume(
+            @Validated @RequestBody PostCommentRequest postCommentRequest,
+            @PathVariable long resumeId,
+            @RequestAttribute("user") User user) {
 
-        commentService.saveComment(userId, resumeId, postCommentRequest);
+        commentService.saveComment(user, resumeId, postCommentRequest);
 
         return ResponseEntity
                 .ok()
@@ -55,7 +56,11 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(
+            @PathVariable long resumeId,
+            @PageableDefault(size = 20) Pageable pageable) {
+
+        long userId = 1L;
 
         CommentPageResponse comments = commentService.getComments(userId, resumeId, pageable);
 
@@ -75,9 +80,12 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteCommentOfResume(@PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse<Void>> deleteCommentOfResume(
+            @PathVariable long resumeId,
+            @PathVariable long commentId,
+            @RequestAttribute("user") User user) {
 
-        commentService.deleteComment(userId, commentId);
+        commentService.deleteComment(user, resumeId, commentId);
 
         return ResponseEntity
                 .ok()
@@ -94,9 +102,13 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentContent(@Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse<Void>> updateCommentContent(
+            @Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest,
+            @PathVariable long resumeId,
+            @PathVariable long commentId,
+            @RequestAttribute("user") User user) {
 
-        commentService.updateComment(userId, commentId, updateCommentContentRequest);
+        commentService.updateComment(updateCommentContentRequest, user, resumeId, commentId);
 
         return ResponseEntity
                 .ok()
@@ -113,8 +125,9 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateCommentEmoji(@RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse<Void>> updateCommentEmoji(@RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
 
+        long userId = 1L;
         commentService.updateCommentEmoji(userId, commentId, updateCommentEmojiRequest);
 
         return ResponseEntity

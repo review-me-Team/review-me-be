@@ -17,9 +17,6 @@ public class CreateFeedbackRequest {
     @NotBlank(message = "피드백 내용은 필수 입력 값입니다.")
     private String content;
 
-    @Schema(description = "댓글을 추가할 피드백 ID", example = "1", required = false)
-    private Long feedbackId;
-
     @Schema(description = "피드백 라벨 ID", example = "1", required = false)
     private Long labelId;
 

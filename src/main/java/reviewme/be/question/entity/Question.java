@@ -58,14 +58,13 @@ public class Question {
             .build();
     }
 
-    public static Question createChildQuestion(User commenter, Resume resume, Question parentQuestion, String content, Integer resumePage) {
+    public static Question createQuestionComment(User commenter, Resume resume, Question parentQuestion, String content) {
 
         return Question.builder()
             .commenter(commenter)
             .resume(resume)
             .parentQuestion(parentQuestion)
             .content(content)
-            .resumePage(resumePage)
             .createdAt(LocalDateTime.now())
             .build();
     }
@@ -78,6 +77,11 @@ public class Question {
     public void plusChildCnt() {
 
         this.childCnt++;
+    }
+
+    public void minusChildCnt() {
+
+        this.childCnt--;
     }
 
     public void updateContent(String content) {

@@ -10,13 +10,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.feedback.dto.request.*;
 import reviewme.be.feedback.dto.response.*;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
-import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
-import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
-import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
-import reviewme.be.feedback.dto.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.feedback.service.FeedbackService;
 import reviewme.be.user.entity.User;
@@ -43,11 +40,34 @@ public class FeedbackController {
             @ApiResponse(responseCode = "400", description = "피드백 추가 실패")
     })
     public ResponseEntity<CustomResponse<Void>> postFeedback(
-            @Validated @RequestBody CreateFeedbackRequest postFeedbackRequest,
+            @Validated @RequestBody CreateFeedbackRequest createFeedbackRequest,
             @PathVariable long resumeId,
             @RequestAttribute("user") User user) {
 
-        feedbackService.saveFeedback(postFeedbackRequest, user, resumeId);
+        feedbackService.saveFeedback(createFeedbackRequest, user, resumeId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "피드백 추가에 성공했습니다."
+                ));
+    }
+
+    @Operation(summary = "피드백에 대댓글 추가", description = "피드백에 대댓글을 추가합니다.")
+    @PostMapping("/{feedbackId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "피드백에 대댓글 추가 성공"),
+            @ApiResponse(responseCode = "400", description = "피드백에 대댓글 추가 실패")
+    })
+    public ResponseEntity<CustomResponse<Void>> postFeedbackComment(
+            @Validated @RequestBody CreateFeedbackCommentRequest createFeedbackCommentRequest,
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId,
+            @RequestAttribute("user") User user) {
+
+        feedbackService.saveFeedbackComment(createFeedbackCommentRequest, user, resumeId, feedbackId);
 
         return ResponseEntity
                 .ok()
@@ -64,9 +84,13 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<FeedbackPageResponse>> showFeedbacks(@PathVariable long resumeId, @PageableDefault(size=20) Pageable pageable, @RequestParam long resumePage) {
+    public ResponseEntity<CustomResponse<FeedbackPageResponse>> showFeedbacks(
+            @PathVariable long resumeId,
+            @PageableDefault(size=20) Pageable pageable,
+            @RequestParam long resumePage) {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
+        // TODO: deletedAt is not null && childCount == 0 인 피드백은 보여주지 않는다.
 
         List<EmojiCount> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L).stream()
                 .map(tuple
@@ -101,7 +125,10 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 댓글 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 댓글 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<CommentOfFeedbackPageResponse>> showCommentsOfFeedback(@PathVariable long resumeId, @PathVariable long feedbackId, @PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<CommentOfFeedbackPageResponse>> showCommentsOfFeedback(
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId,
+            @PageableDefault(size=20) Pageable pageable) {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
@@ -213,7 +240,10 @@ public class FeedbackController {
             @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "피드백 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackEmoji(@Validated @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest, @PathVariable long resumeId, @PathVariable long feedbackId) {
+    public ResponseEntity<CustomResponse> updateFeedbackEmoji(
+            @Validated @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest,
+            @PathVariable long resumeId,
+            @PathVariable long feedbackId) {
 
         return ResponseEntity
                 .ok()
