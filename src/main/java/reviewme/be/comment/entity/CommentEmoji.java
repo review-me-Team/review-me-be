@@ -1,5 +1,7 @@
 package reviewme.be.comment.entity;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.*;
 import reviewme.be.util.entity.Emoji;
 import reviewme.be.user.entity.User;
@@ -35,6 +37,17 @@ public class CommentEmoji {
                 .comment(comment)
                 .emoji(emoji)
                 .build();
+    }
+
+    public static List<CommentEmoji> createDefaultCommentEmojis(Comment comment, List<Emoji> emojis) {
+
+        return emojis.stream()
+                .map(emoji -> CommentEmoji.builder()
+                        .comment(comment)
+                        .emoji(emoji)
+                        .build())
+                .collect(Collectors.toList());
+
     }
 
     public void updateEmoji(Emoji emoji) {

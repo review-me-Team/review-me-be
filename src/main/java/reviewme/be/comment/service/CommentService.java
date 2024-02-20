@@ -22,7 +22,6 @@ import reviewme.be.user.entity.User;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Emoji;
-import reviewme.be.util.exception.NotYoursException;
 import reviewme.be.util.vo.EmojisVO;
 
 import javax.persistence.Tuple;
@@ -47,8 +46,15 @@ public class CommentService {
 
         Resume resume = resumeService.findById(resumeId);
 
-        commentRepository.save(
-                Comment.ofCreated(commenter, resume, postComment.getContent())
+        // TODO: Default Comment Emojis 생성, 조회 기능 추가
+        Comment savedComment = commentRepository.save(
+            Comment.ofCreated(commenter, resume, postComment.getContent())
+        );
+
+        commentEmojiRepository.saveAll(
+            CommentEmoji.createDefaultCommentEmojis(
+                savedComment,
+                emojisVO.getEmojis())
         );
     }
 

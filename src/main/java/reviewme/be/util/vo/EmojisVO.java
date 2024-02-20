@@ -1,5 +1,6 @@
 package reviewme.be.util.vo;
 
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -46,5 +47,10 @@ public class EmojisVO {
         }
 
         return emojis.get(emojiId);
+    }
+
+    public List<Emoji> getEmojis() {
+
+        return new ArrayList<>(emojis.values());
     }
 }
