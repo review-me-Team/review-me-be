@@ -46,11 +46,11 @@ public class CommentService {
 
         Resume resume = resumeService.findById(resumeId);
 
-        // TODO: Default Comment Emojis 생성, 조회 기능 추가
         Comment savedComment = commentRepository.save(
             Comment.ofCreated(commenter, resume, postComment.getContent())
         );
 
+        // Default Comment Emojis 생성
         commentEmojiRepository.saveAll(
             CommentEmoji.createDefaultCommentEmojis(
                 savedComment,
