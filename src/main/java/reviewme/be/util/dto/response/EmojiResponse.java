@@ -20,7 +20,7 @@ public class EmojiResponse {
 
         return EmojiResponse.builder()
                 .id(emoji.getId())
-                .emoji(emoji.getEmoji())
+                .emoji(emoji.getContent())
                 .build();
     }
 }

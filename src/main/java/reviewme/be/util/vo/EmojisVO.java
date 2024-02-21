@@ -53,4 +53,9 @@ public class EmojisVO {
 
         return new ArrayList<>(emojis.values());
     }
+
+    public int getEmojisSize() {
+
+        return emojis.size();
+    }
 }

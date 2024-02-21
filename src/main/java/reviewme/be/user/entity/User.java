@@ -40,6 +40,6 @@ public class User {
 
     public boolean isAnonymous() {
 
-        return this.id == null;
+        return this.id == 0L;
     }
 }

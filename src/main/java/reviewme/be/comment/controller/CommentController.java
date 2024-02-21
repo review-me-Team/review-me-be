@@ -57,11 +57,10 @@ public class CommentController {
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(
             @PathVariable long resumeId,
-            @PageableDefault(size = 20) Pageable pageable) {
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestAttribute("user") User user) {
 
-        long userId = 1L;
-
-        CommentPageResponse comments = commentService.getComments(userId, resumeId, pageable);
+        CommentPageResponse comments = commentService.getComments(resumeId, pageable, user);
 
         return ResponseEntity
                 .ok()

@@ -21,10 +21,10 @@ import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.dto.EmojiCount;
+import reviewme.be.util.dto.MyEmoji;
 import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.vo.EmojisVO;
 
-import javax.persistence.Tuple;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,39 +59,31 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentPageResponse getComments(long userId, long resumeId, Pageable pageable) {
+    public CommentPageResponse getComments(long resumeId, Pageable pageable, User user) {
 
         resumeService.findById(resumeId);
 
-        List<CommentResponse> commentResponses = new ArrayList<CommentResponse>();
+        // 댓글 목록 조회 후 id 목록 추출
+        Page<CommentInfo> comments = commentRepository.findCommentsByResumeId(resumeId, pageable);
+        List<Long> commentIds = getCommentIds(comments);
 
-        Page<CommentInfo> commentInfos = commentRepository.findByResumeId(userId, resumeId, pageable);
+        // 댓글별 이모지 개수 조회
+        List<List<EmojiCount>> emojiCounts = collectEmojiCounts(
+            commentEmojiRepository.findEmojiCountByCommentIds(commentIds));
 
-        for (CommentInfo comment : commentInfos) {
-            List<EmojiCount> emojis = commentEmojiRepository.countByCommentIdGroupByEmojiId(comment.getId())
-                    .stream()
-                    .map(CommentService::tutpleToEmoji)
-                    .collect(Collectors.toList());
+        // 내가 선택한 이모지 목록 조회
+        List<Integer> myEmojiIds = getMyEmojiIds(commentEmojiRepository.findByUserIdAndCommentIdIn(
+            user.getId(), commentIds));
 
-            Optional<CommentEmoji> myCommentEmoji = commentEmojiRepository.findByUserIdAndCommentId(userId, comment.getId());
-
-            Integer myEmojiId = myCommentEmoji.map(
-                        commentEmoji -> commentEmoji.getEmoji().getId()
-                    ).orElse(null);
-
-            commentResponses.add(
-                    CommentResponse.fromComment(
-                            comment,
-                            emojis,
-                            myEmojiId));
-        }
+        List<CommentResponse> commentsResponse = collectToCommentsResponse(commentIds, comments,
+            emojiCounts, myEmojiIds);
 
         return CommentPageResponse.builder()
-                .comments(commentResponses)
-                .pageNumber(commentInfos.getNumber())
-                .lastPage(commentInfos.getTotalPages() - 1)
-                .pageSize(commentInfos.getSize())
-                .build();
+            .comments(commentsResponse)
+            .pageNumber(comments.getNumber())
+            .lastPage(comments.getTotalPages() - 1)
+            .pageSize(comments.getSize())
+            .build();
     }
 
     @Transactional
@@ -110,7 +102,8 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(UpdateCommentContentRequest updateComment, User user, long resumeId, long commentId) {
+    public void updateComment(UpdateCommentContentRequest updateComment, User user, long resumeId,
+        long commentId) {
 
         resumeService.findById(resumeId);
 
@@ -121,22 +114,23 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateCommentEmoji(long userId, long commentId, UpdateCommentEmojiRequest updateCommentEmoji) {
+    public void updateCommentEmoji(long userId, long commentId,
+        UpdateCommentEmojiRequest updateCommentEmoji) {
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NonExistCommentException("존재하지 않는 댓글입니다."));
+        Comment comment = findById(commentId);
 
         Integer emojiId = updateCommentEmoji.getId();
 
-        Optional<CommentEmoji> myCommentEmoji = commentEmojiRepository.findByUserIdAndCommentId(userId, commentId);
+        Optional<CommentEmoji> myCommentEmoji = commentEmojiRepository.findByUserIdAndCommentId(
+            userId, commentId);
 
         Emoji emoji = emojisVO.findEmojiById(emojiId);
 
         if (myCommentEmoji.isEmpty()) {
             commentEmojiRepository.save(CommentEmoji.ofCreated(
-                    userService.getUserById(userId),
-                    comment,
-                    emoji));
+                userService.getUserById(userId),
+                comment,
+                emoji));
             return;
         }
 
@@ -150,14 +144,74 @@ public class CommentService {
     private Comment findById(long commentId) {
 
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new NonExistCommentException("[ERROR] 존재하지 않는 댓글입니다."));
+            .orElseThrow(() -> new NonExistCommentException("존재하지 않는 댓글입니다."));
     }
 
-    private static EmojiCount tutpleToEmoji(Tuple tuple) {
+    /***************
+     * 아래는 댓글 목록 조회 시 사용되는 메서드입니다.
+     ***************/
+    private List<Long> getCommentIds(Page<CommentInfo> comments) {
+        return comments.stream()
+            .map(CommentInfo::getId)
+            .collect(Collectors.toList());
+    }
 
-        return EmojiCount.fromCountEmojiTuple(
-                tuple.get("id", Integer.class),
-                tuple.get("count", Long.class)
-        );
+    private List<List<EmojiCount>> collectEmojiCounts(List<EmojiCount> emojiCounts) {
+
+        List<List<EmojiCount>> groupedEmojiCounts = new ArrayList<>();
+
+        // 선택할 수 있는 이모지의 총 개수
+        int emojisSize = emojisVO.getEmojisSize();
+
+        for (int emojiCount = 0; emojiCount < emojiCounts.size(); ) {
+
+            List<EmojiCount> commentEmojiCount = new ArrayList<>();
+
+            for (int commentEmoji = 0; commentEmoji < emojisSize; commentEmoji++) {
+                commentEmojiCount.add(emojiCounts.get(emojiCount));
+                emojiCount++;
+            }
+            groupedEmojiCounts.add(commentEmojiCount);
+        }
+
+        return groupedEmojiCounts;
+    }
+
+
+    /**
+     * 사용자가 선택한 이모지 id 리스트 추출
+     */
+    private List<Integer> getMyEmojiIds(List<MyEmoji> myEmojis) {
+
+        List<Integer> myEmojiIds = myEmojis
+            .stream()
+            .map(MyEmoji::getEmojiId)
+            .collect(Collectors.toList());
+
+        return myEmojiIds;
+    }
+
+    /**
+     * 댓글 목록을 응답 형태로 변환
+     */
+    private List<CommentResponse> collectToCommentsResponse(List<Long> commentIds,
+        Page<CommentInfo> comments,
+        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds) {
+
+        List<CommentResponse> commentsResponse = new ArrayList<>();
+        for (int commentIdx = 0; commentIdx < commentIds.size(); commentIdx++) {
+
+            CommentInfo comment = comments.getContent().get(commentIdx);
+            List<EmojiCount> emojis = emojiCounts.get(commentIdx);
+            Integer myEmojiId = myEmojiIds.get(commentIdx);
+
+            commentsResponse.add(
+                CommentResponse.fromComment(
+                    comment,
+                    emojis,
+                    myEmojiId));
+        }
+
+        return commentsResponse;
     }
 }

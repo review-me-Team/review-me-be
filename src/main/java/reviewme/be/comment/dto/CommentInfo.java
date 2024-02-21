@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 public class CommentInfo {
 
     @Schema(description = "댓글 ID", example = "1")
-    private Long id;
+    private long id;
 
     @Schema(description = "댓글 내용", example = "전반적으로 이력서를 읽기가 편한 것같아요!")
     private String content;
 
     @Schema(description = "댓글 단 사용자 ID", example = "1")
-    private Long commenterId;
+    private long commenterId;
 
     @Schema(description = "댓글 단 사용자 이름", example = "aken-you")
     private String commenterName;
@@ -33,7 +33,7 @@ public class CommentInfo {
     private LocalDateTime createdAt;
 
     @QueryProjection
-    public CommentInfo(Long id, String content, Long commenterId, String commenterName, String commenterProfileUrl, LocalDateTime createdAt) {
+    public CommentInfo(long id, String content, long commenterId, String commenterName, String commenterProfileUrl, LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
         this.commenterId = commenterId;

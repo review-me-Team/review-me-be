@@ -19,7 +19,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<CommentInfo> findByResumeId(long userId, long resumeId, Pageable pageable) {
+    public Page<CommentInfo> findCommentsByResumeId(long resumeId, Pageable pageable) {
 
         QueryResults<CommentInfo> results = queryFactory
                 .select(new QCommentInfo(

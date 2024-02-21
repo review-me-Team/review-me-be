@@ -1,6 +1,7 @@
 package reviewme.be.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

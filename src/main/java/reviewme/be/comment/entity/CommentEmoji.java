@@ -19,15 +19,15 @@ public class CommentEmoji {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "emoji_id")
     private Emoji emoji;
 
