@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import reviewme.be.user.exception.NoAuthorizationException;
 
 @Entity
 @Getter
@@ -34,7 +35,7 @@ public class User {
     public void validateSameUser(User user) {
 
         if (!this.equals(user)) {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new NoAuthorizationException("권한이 없습니다.");
         }
     }
 

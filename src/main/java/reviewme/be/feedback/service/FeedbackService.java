@@ -52,6 +52,10 @@ public class FeedbackService {
         Resume resume = resumeService.findById(resumeId);
         Feedback parentFeedback = findById(parentId);
 
+        if (!parentFeedback.isParentFeedback()) {
+            throw new NonExistFeedbackException("해당 피드백에는 대댓글을 추가할 수 없습니다.");
+        }
+
         feedbackRepository.save(Feedback.createFeedbackComment(
                 commenter,
                 resume,
@@ -60,6 +64,8 @@ public class FeedbackService {
 
         parentFeedback.plusChildCnt();
     }
+
+    // TODO: 목록 조회, 삭제 여부 확인을 통해 응답값 변경 (child 존재 여부 등)
 
     @Transactional
     public void deleteFeedback(User user, long resumeId, long feedbackId) {

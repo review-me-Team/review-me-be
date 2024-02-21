@@ -146,7 +146,7 @@ public class CommentService {
 
     private Comment findById(long commentId) {
 
-        return commentRepository.findById(commentId)
+        return commentRepository.findByIdAndDeletedAtIsNull(commentId)
             .orElseThrow(() -> new NonExistCommentException("존재하지 않는 댓글입니다."));
     }
 

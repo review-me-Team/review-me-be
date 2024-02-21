@@ -108,4 +108,15 @@ public class UserExceptionHandler {
                         400,
                         ex.getMessage()));
     }
+
+    @ExceptionHandler(NoAuthorizationException.class)
+    public ResponseEntity<CustomErrorResponse> noAuthorizationException(NoAuthorizationException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Forbidden",
+                        403,
+                        ex.getMessage()));
+    }
 }

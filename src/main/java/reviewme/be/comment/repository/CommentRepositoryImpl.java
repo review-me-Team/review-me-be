@@ -22,21 +22,23 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     public Page<CommentInfo> findCommentsByResumeId(long resumeId, Pageable pageable) {
 
         QueryResults<CommentInfo> results = queryFactory
-                .select(new QCommentInfo(
-                        comment.id,
-                        comment.content,
-                        comment.commenter.id,
-                        comment.commenter.name,
-                        comment.commenter.profileUrl,
-                        comment.createdAt
-                ))
-                .from(comment)
-                .leftJoin(comment.commenter)
-                .where(comment.resume.id.eq(resumeId))
-                .orderBy(comment.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
+            .select(new QCommentInfo(
+                comment.id,
+                comment.content,
+                comment.commenter.id,
+                comment.commenter.name,
+                comment.commenter.profileUrl,
+                comment.createdAt
+            ))
+            .from(comment)
+            .leftJoin(comment.commenter)
+            .where(comment.resume.id.eq(resumeId)
+                .and(comment.deletedAt.isNull())
+            )
+            .orderBy(comment.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
 
         List<CommentInfo> content = results.getResults();
         long total = results.getTotal();

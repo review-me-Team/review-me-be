@@ -178,6 +178,10 @@ public class ResumeService {
      */
     public void validateAccessRights(Resume resume, User user) {
 
+        if (resume.isWriter(user)) {
+            return;
+        }
+
         if (user.isAnonymous() && !resume.isPublic()) {
             throw new NonExistResumeException("접근 권한이 없습니다.");
         }

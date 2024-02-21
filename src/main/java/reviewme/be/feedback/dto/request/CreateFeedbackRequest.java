@@ -1,10 +1,10 @@
 package reviewme.be.feedback.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.Min;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
@@ -21,6 +21,6 @@ public class CreateFeedbackRequest {
     private Long labelId;
 
     @Schema(description = "이력서 페이지", example = "1")
-    @NotNull(message = "이력서의 몇 페이지에 질문을 하는 지는 필수 입력 값입니다.")
+    @Min(value = 1, message = "이력서의 페이지는 1페이지부터 시작합니다.")
     private int resumePage;
 }

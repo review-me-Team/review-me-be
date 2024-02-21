@@ -74,7 +74,7 @@ public class FeedbackController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "피드백 추가에 성공했습니다."
+                        "피드백 대댓글 추가에 성공했습니다."
                 ));
     }
 

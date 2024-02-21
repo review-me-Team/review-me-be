@@ -103,4 +103,9 @@ public class Question {
 
         this.deletedAt = LocalDateTime.now();
     }
+
+    public boolean isParentQuestion() {
+
+        return this.parentQuestion == null;
+    }
 }
