@@ -1,5 +1,7 @@
 package reviewme.be.comment.service;
 
+import java.time.ZoneId;
+import java.util.TimeZone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,9 +47,10 @@ public class CommentService {
     public void saveComment(User commenter, long resumeId, PostCommentRequest postComment) {
 
         Resume resume = resumeService.findById(resumeId);
+        LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         Comment savedComment = commentRepository.save(
-            Comment.ofCreated(commenter, resume, postComment.getContent())
+            new Comment(commenter, resume, postComment.getContent(), createdAt)
         );
 
         // Default Comment Emojis 생성
