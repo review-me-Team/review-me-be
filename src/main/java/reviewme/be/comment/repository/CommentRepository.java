@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
 
-    List<Comment> findByResumeIdOrderByCreatedAtDesc(long resumeId);
 }
