@@ -123,10 +123,13 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse<Void>> updateCommentEmoji(@RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest, @PathVariable long resumeId, @PathVariable long commentId) {
+    public ResponseEntity<CustomResponse<Void>> updateCommentEmoji(
+        @RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest,
+        @PathVariable long resumeId,
+        @PathVariable long commentId,
+        @RequestAttribute("user") User user) {
 
-        long userId = 1L;
-        commentService.updateCommentEmoji(userId, commentId, updateCommentEmojiRequest);
+        commentService.updateCommentEmoji(updateCommentEmojiRequest, commentId, user);
 
         return ResponseEntity
                 .ok()

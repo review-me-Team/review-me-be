@@ -117,21 +117,21 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateCommentEmoji(long userId, long commentId,
-        UpdateCommentEmojiRequest updateCommentEmoji) {
+    public void updateCommentEmoji(UpdateCommentEmojiRequest updateCommentEmoji,
+        long commentId, User user) {
 
         Comment comment = findById(commentId);
 
         Integer emojiId = updateCommentEmoji.getId();
 
         Optional<CommentEmoji> myCommentEmoji = commentEmojiRepository.findByUserIdAndCommentId(
-            userId, commentId);
+            user.getId(), commentId);
 
         Emoji emoji = emojisVO.findEmojiById(emojiId);
 
         if (myCommentEmoji.isEmpty()) {
             commentEmojiRepository.save(CommentEmoji.ofCreated(
-                userService.getUserById(userId),
+                userService.getUserById(user.getId()),
                 comment,
                 emoji));
             return;
