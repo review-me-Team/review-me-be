@@ -44,12 +44,12 @@ public class UserController {
     @Operation(summary = "GitHub으로 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
     @PostMapping("/login/oauth")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "로그인 성공"),
-            @ApiResponse(responseCode = "400", description = "로그인 실패")
+        @ApiResponse(responseCode = "200", description = "로그인 성공"),
+        @ApiResponse(responseCode = "400", description = "로그인 실패")
     })
     public ResponseEntity<CustomResponse<LoginUserResponse>> loginWithGitHub(
-            @RequestBody OAuthCodeRequest request,
-            HttpServletResponse response) {
+        @RequestBody OAuthCodeRequest request,
+        HttpServletResponse response) {
 
         UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(request.getCode());
 
@@ -58,55 +58,56 @@ public class UserController {
         setRefreshToken(response, userGitHubToken.getRefreshToken());
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "로그인에 성공했습니다.",
-                        LoginUserResponse.builder()
-                                .jwt(jwt)
-                                .build()
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "로그인에 성공했습니다.",
+                LoginUserResponse.builder()
+                    .jwt(jwt)
+                    .build()
+            ));
     }
 
     @Operation(summary = "사용자 토큰 새로고침", description = "기한이 만료된 토큰을 새로 만듭니다.")
     @PostMapping("/user/refresh")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "토큰 새로 받기 성공"),
-            @ApiResponse(responseCode = "400", description = "토큰 새로 받기 실패")
+        @ApiResponse(responseCode = "200", description = "토큰 새로 받기 성공"),
+        @ApiResponse(responseCode = "400", description = "토큰 새로 받기 실패")
     })
     public ResponseEntity<CustomResponse<LoginUserResponse>> refreshJwt(
-            HttpServletRequest request,
-            HttpServletResponse response) {
+        HttpServletRequest request,
+        HttpServletResponse response) {
 
         String refreshToken = findRefreshTokenFromRequest(request);
 
-        UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(refreshToken);
+        UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(
+            refreshToken);
         String jwt = createJwtByAccessToken(userRefreshedToken.getAccessToken());
 
         setRefreshToken(response, userRefreshedToken.getRefreshToken());
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "로그인에 성공했습니다.",
-                        LoginUserResponse.builder()
-                                .jwt(jwt)
-                                .build()
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "로그인에 성공했습니다.",
+                LoginUserResponse.builder()
+                    .jwt(jwt)
+                    .build()
+            ));
     }
 
     @Operation(summary = "사용자 검색 목록 조회", description = "검색한 이름으로 시작하는 사용자 목록을 조회합니다.")
     @GetMapping("/user")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "사용자 검색 목록 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "사용자 검색 목록 조회 실패")
+        @ApiResponse(responseCode = "200", description = "사용자 검색 목록 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "사용자 검색 목록 조회 실패")
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showUsersStartsWith(
-            @PageableDefault(size=20) Pageable pageable,
-            @RequestParam String start) {
+        @PageableDefault(size = 20) Pageable pageable,
+        @RequestParam String start) {
 
         if (start == null || start.isEmpty()) {
             throw new NoSearchConditionException("검색할 이름을 입력해주세요.");
@@ -115,19 +116,20 @@ public class UserController {
         Page<UserResponse> searchedUsers = userService.getUsersByStartName(start, pageable);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다.",
-                        UserPageResponse.fromUserPageable(searchedUsers)
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "검색한 이름으로 시작하는 사용자 목록을 조회에 성공했습니다.",
+                UserPageResponse.fromUserPageable(searchedUsers)
+            ));
     }
 
     private String createJwtByAccessToken(String accessToken) {
 
         UserGitHubProfile userGitHubProfile = oauthLoginService.getUserGitHubProfile(accessToken);
-        UserProfileResponse userProfileResponse = userService.getUserByGithubProfile(userGitHubProfile);
+        UserProfileResponse userProfileResponse = userService.getUserByGithubProfile(
+            userGitHubProfile);
 
         return jwtService.createJwt(userProfileResponse, getJwtExpiredAt());
     }
@@ -144,6 +146,7 @@ public class UserController {
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
+//        cookie.setDomain("localhost");
         cookie.setSecure(true);
         cookie.setMaxAge(60 * 60 * 24 * 14);
         cookie.setPath("/");
@@ -159,9 +162,9 @@ public class UserController {
         }
 
         return Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals("refreshToken"))
-                .findFirst()
-                .orElseThrow(() -> new NoRefreshTokenException("로그인이 필요합니다."))
-                .getValue();
+            .filter(cookie -> cookie.getName().equals("refreshToken"))
+            .findFirst()
+            .orElseThrow(() -> new NoRefreshTokenException("로그인이 필요합니다."))
+            .getValue();
     }
 }
