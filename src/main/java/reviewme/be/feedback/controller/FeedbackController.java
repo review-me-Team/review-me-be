@@ -74,7 +74,7 @@ public class FeedbackController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "피드백 추가에 성공했습니다."
+                        "피드백 대댓글 추가에 성공했습니다."
                 ));
     }
 
@@ -94,7 +94,7 @@ public class FeedbackController {
 
         List<EmojiCount> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L).stream()
                 .map(tuple
-                        -> EmojiCount.fromCountEmojiTuple(
+                        -> new EmojiCount(
                         tuple.get("id", Integer.class),
                         tuple.get("count", Long.class))
                 ).collect(Collectors.toList());
@@ -133,14 +133,8 @@ public class FeedbackController {
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
 
         List<EmojiCount> sampleEmojis = List.of(
-                EmojiCount.builder()
-                        .id(1)
-                        .count(10L)
-                        .build(),
-                EmojiCount.builder()
-                        .id(2)
-                        .count(3L)
-                        .build());
+            new EmojiCount(1, 10),
+            new EmojiCount(2, 3));
 
         List<CommentOfFeedbackResponse> sampleResponse = List.of(
                 CommentOfFeedbackResponse.builder()

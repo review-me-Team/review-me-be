@@ -74,28 +74,21 @@ public class Resume {
 
     public boolean isPublic() {
 
-        if (this.scope.getId() != 1) {
-            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
-        }
-
-        return true;
+        return this.scope.getId() == 1;
     }
 
     public boolean isFriendsOnly() {
 
-        if (this.scope.getId() != 2) {
-            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
-        }
-
-        return true;
+        return this.scope.getId() == 2;
     }
 
     public boolean isPrivate() {
 
-        if (this.scope.getId() != 3) {
-            throw new NonExistResumeException("해당 이력서에 접근할 수 없습니다.");
-        }
+        return this.scope.getId() == 3;
+    }
 
-        return true;
+    public boolean isWriter(User user) {
+
+        return this.writer.equals(user);
     }
 }

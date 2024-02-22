@@ -96,4 +96,9 @@ public class Feedback {
 
         this.checked = checked;
     }
+
+    public boolean isParentFeedback() {
+
+        return this.parentFeedback == null;
+    }
 }

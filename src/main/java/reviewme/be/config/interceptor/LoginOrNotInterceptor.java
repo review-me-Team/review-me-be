@@ -20,7 +20,7 @@ public class LoginOrNotInterceptor implements HandlerInterceptor {
         String header = request.getHeader("Authorization");
 
         if (header == null) {
-            User anonymous = User.builder().build();
+            User anonymous = User.builder().id(0L).build();
             request.setAttribute("user", anonymous);
             return true;
         }

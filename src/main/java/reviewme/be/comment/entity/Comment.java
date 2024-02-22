@@ -9,9 +9,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class Comment {
 
     @Id
@@ -31,14 +30,12 @@ public class Comment {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
-    public static Comment ofCreated(User commenter, Resume resume, String content) {
+    public Comment(User commenter, Resume resume, String content, LocalDateTime createdAt) {
 
-        return Comment.builder()
-                .commenter(commenter)
-                .resume(resume)
-                .content(content)
-                .createdAt(LocalDateTime.now())
-                .build();
+        this.commenter = commenter;
+        this.resume = resume;
+        this.content = content;
+        this.createdAt = createdAt;
     }
 
     public void validateUser(User user) {

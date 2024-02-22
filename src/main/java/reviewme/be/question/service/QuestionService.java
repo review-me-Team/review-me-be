@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reviewme.be.question.dto.request.*;
 import reviewme.be.question.entity.Question;
 import reviewme.be.question.exception.NonExistQuestionException;
+import reviewme.be.question.exception.NotParentQuestionException;
 import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.service.ResumeService;
@@ -43,6 +44,10 @@ public class QuestionService {
         // 이력서, 예상 질문 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
         Question parentQuestion = findById(parentId);
+
+        if (!parentQuestion.isParentQuestion()) {
+            throw new NotParentQuestionException("해당 예상 질문에는 대댓글을 추가할 수 없습니다.");
+        }
 
         questionRepository.save(Question.createQuestionComment(
                 commenter,

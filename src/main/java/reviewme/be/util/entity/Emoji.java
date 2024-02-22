@@ -16,5 +16,5 @@ public class Emoji {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String emoji;
+    private String content;
 }
