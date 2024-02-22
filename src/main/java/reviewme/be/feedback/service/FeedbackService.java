@@ -38,15 +38,16 @@ public class FeedbackService {
         }
 
         feedbackRepository.save(Feedback.createdFeedback(
-                commenter,
-                resume,
-                label,
-                request.getContent(),
-                request.getResumePage()));
+            commenter,
+            resume,
+            label,
+            request.getContent(),
+            request.getResumePage()));
     }
 
     @Transactional
-    public void saveFeedbackComment(CreateFeedbackCommentRequest request, User commenter, long resumeId, long parentId) {
+    public void saveFeedbackComment(CreateFeedbackCommentRequest request, User commenter,
+        long resumeId, long parentId) {
 
         // 이력서, 피드백 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
@@ -57,10 +58,10 @@ public class FeedbackService {
         }
 
         feedbackRepository.save(Feedback.createFeedbackComment(
-                commenter,
-                resume,
-                parentFeedback,
-                request.getContent()));
+            commenter,
+            resume,
+            parentFeedback,
+            request.getContent()));
 
         parentFeedback.plusChildCnt();
     }
@@ -85,7 +86,8 @@ public class FeedbackService {
     }
 
     @Transactional
-    public void updateFeedbackContent(UpdateFeedbackContentRequest request, User user, long resumeId, long feedbackId) {
+    public void updateFeedbackContent(UpdateFeedbackContentRequest request, User user,
+        long resumeId, long feedbackId) {
 
         // 이력서 존재 여부 확인
         resumeService.findById(resumeId);
@@ -97,7 +99,8 @@ public class FeedbackService {
     }
 
     @Transactional
-    public void updateFeedbackCheck(UpdateFeedbackCheckRequest request, User user, long resumeId, long feedbackId) {
+    public void updateFeedbackCheck(UpdateFeedbackCheckRequest request, User user, long resumeId,
+        long feedbackId) {
 
         // 이력서 존재 여부 확인 및 유저 검증
         Resume resume = resumeService.findById(resumeId);

@@ -14,21 +14,21 @@ public class FeedbackExceptionHandler {
     public ResponseEntity<CustomErrorResponse> nonExistFeedback(NonExistFeedbackException ex) {
 
         return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
-                        ex.getMessage()));
+            .badRequest()
+            .body(new CustomErrorResponse(
+                "Bad Request",
+                400,
+                ex.getMessage()));
     }
 
     @ExceptionHandler(NotParentFeedbackException.class)
     public ResponseEntity<CustomErrorResponse> notParentFeedbac(NotParentFeedbackException ex) {
 
         return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
-                        ex.getMessage()));
+            .badRequest()
+            .body(new CustomErrorResponse(
+                "Bad Request",
+                400,
+                ex.getMessage()));
     }
 }

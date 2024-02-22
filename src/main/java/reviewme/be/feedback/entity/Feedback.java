@@ -42,7 +42,8 @@ public class Feedback {
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
-    public static Feedback createdFeedback(User commenter, Resume resume, Label label, String content, int resumePage) {
+    public static Feedback createdFeedback(User commenter, Resume resume, Label label,
+        String content, int resumePage) {
 
         return Feedback.builder()
             .commenter(commenter)
@@ -56,7 +57,8 @@ public class Feedback {
             .build();
     }
 
-    public static Feedback createFeedbackComment(User commenter, Resume resume, Feedback parentFeedback, String content) {
+    public static Feedback createFeedbackComment(User commenter, Resume resume,
+        Feedback parentFeedback, String content) {
 
         return Feedback.builder()
             .commenter(commenter)
