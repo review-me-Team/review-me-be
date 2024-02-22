@@ -30,98 +30,98 @@ public class CommentController {
     @Operation(summary = "댓글 추가", description = "이력서에 대한 댓글을 추가합니다.")
     @PostMapping
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
-            @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
+        @ApiResponse(responseCode = "200", description = "댓글 추가 성공"),
+        @ApiResponse(responseCode = "400", description = "댓글 추가 실패")
     })
     public ResponseEntity<CustomResponse<Void>> postCommentOfResume(
-            @Validated @RequestBody PostCommentRequest postCommentRequest,
-            @PathVariable long resumeId,
-            @RequestAttribute("user") User user) {
+        @Validated @RequestBody PostCommentRequest postCommentRequest,
+        @PathVariable long resumeId,
+        @RequestAttribute("user") User user) {
 
         commentService.saveComment(user, resumeId, postCommentRequest);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "댓글 추가에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "댓글 추가에 성공했습니다."
+            ));
     }
 
     @Operation(summary = "댓글 목록 조회", description = "이력서에 달린 댓글 목록을 조회합니다.")
     @GetMapping
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "댓글 목록 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "댓글 목록 조회 실패")
+        @ApiResponse(responseCode = "200", description = "댓글 목록 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "댓글 목록 조회 실패")
     })
     public ResponseEntity<CustomResponse<CommentPageResponse>> showCommentsOfResume(
-            @PathVariable long resumeId,
-            @PageableDefault(size = 20) Pageable pageable,
-            @RequestAttribute("user") User user) {
+        @PathVariable long resumeId,
+        @PageableDefault(size = 20) Pageable pageable,
+        @RequestAttribute("user") User user) {
 
         CommentPageResponse comments = commentService.getComments(resumeId, pageable, user);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "이력서에 달린 댓글 목록 조회에 성공했습니다.",
-                        comments
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "이력서에 달린 댓글 목록 조회에 성공했습니다.",
+                comments
+            ));
     }
 
     @Operation(summary = "댓글 삭제", description = "이력서에 단 댓글을 삭제합니다.")
     @DeleteMapping("/{commentId}")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "댓글 삭제 성공"),
-            @ApiResponse(responseCode = "400", description = "댓글 삭제 실패")
+        @ApiResponse(responseCode = "200", description = "댓글 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "댓글 삭제 실패")
     })
     public ResponseEntity<CustomResponse<Void>> deleteCommentOfResume(
-            @PathVariable long resumeId,
-            @PathVariable long commentId,
-            @RequestAttribute("user") User user) {
+        @PathVariable long resumeId,
+        @PathVariable long commentId,
+        @RequestAttribute("user") User user) {
 
         commentService.deleteComment(user, resumeId, commentId);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "댓글 삭제에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "댓글 삭제에 성공했습니다."
+            ));
     }
 
     @Operation(summary = "댓글 수정", description = "이력서에 단 댓글 내용을 수정합니다.")
     @PatchMapping("/{commentId}")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
-            @ApiResponse(responseCode = "400", description = "댓글 수정 실패")
+        @ApiResponse(responseCode = "200", description = "댓글 수정 성공"),
+        @ApiResponse(responseCode = "400", description = "댓글 수정 실패")
     })
     public ResponseEntity<CustomResponse<Void>> updateCommentContent(
-            @Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest,
-            @PathVariable long resumeId,
-            @PathVariable long commentId,
-            @RequestAttribute("user") User user) {
+        @Validated @RequestBody UpdateCommentContentRequest updateCommentContentRequest,
+        @PathVariable long resumeId,
+        @PathVariable long commentId,
+        @RequestAttribute("user") User user) {
 
         commentService.updateComment(updateCommentContentRequest, user, resumeId, commentId);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "댓글 수정에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "댓글 수정에 성공했습니다."
+            ));
     }
 
     @Operation(summary = "댓글 이모지 수정", description = "댓글에 표시할 이모지를 수정합니다.")
     @PatchMapping("/{commentId}/emoji")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
-            @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
+        @ApiResponse(responseCode = "200", description = "댓글 이모지 수정 성공"),
+        @ApiResponse(responseCode = "400", description = "댓글 이모지 수정 실패")
     })
     public ResponseEntity<CustomResponse<Void>> updateCommentEmoji(
         @RequestBody UpdateCommentEmojiRequest updateCommentEmojiRequest,
@@ -132,11 +132,11 @@ public class CommentController {
         commentService.updateCommentEmoji(updateCommentEmojiRequest, commentId, user);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "댓글 이모지 수정에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "댓글 이모지 수정에 성공했습니다."
+            ));
     }
 }

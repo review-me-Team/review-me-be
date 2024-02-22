@@ -1,7 +1,6 @@
 package reviewme.be.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,17 +40,18 @@ public class CommentResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static CommentResponse fromComment(CommentInfo comment, List<EmojiCount> emojis, Integer myEmojiId) {
+    public static CommentResponse fromComment(CommentInfo comment, List<EmojiCount> emojis,
+        Integer myEmojiId) {
 
         return CommentResponse.builder()
-                .id(comment.getId())
-                .content(comment.getContent())
-                .commenterId(comment.getCommenterId())
-                .commenterName(comment.getCommenterName())
-                .commenterProfileUrl(comment.getCommenterProfileUrl())
-                .createdAt(comment.getCreatedAt())
-                .emojis(emojis)
-                .myEmojiId(myEmojiId)
-                .build();
+            .id(comment.getId())
+            .content(comment.getContent())
+            .commenterId(comment.getCommenterId())
+            .commenterName(comment.getCommenterName())
+            .commenterProfileUrl(comment.getCommenterProfileUrl())
+            .createdAt(comment.getCreatedAt())
+            .emojis(emojis)
+            .myEmojiId(myEmojiId)
+            .build();
     }
 }

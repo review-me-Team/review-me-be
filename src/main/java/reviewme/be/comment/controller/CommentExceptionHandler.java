@@ -13,10 +13,10 @@ public class CommentExceptionHandler {
     public ResponseEntity<CustomErrorResponse> nonExistComment(NonExistCommentException ex) {
 
         return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
-                        ex.getMessage()));
+            .badRequest()
+            .body(new CustomErrorResponse(
+                "Bad Request",
+                400,
+                ex.getMessage()));
     }
 }
