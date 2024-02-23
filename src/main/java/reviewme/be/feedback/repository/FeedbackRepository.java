@@ -6,7 +6,7 @@ import reviewme.be.feedback.entity.Feedback;
 import java.util.List;
 import java.util.Optional;
 
-public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
+public interface FeedbackRepository extends JpaRepository<Feedback, Long>, FeedbackRepositoryCustom {
 
     List<Feedback> findByResumeIdAndResumePage(long resumeId, int resumePage);
 

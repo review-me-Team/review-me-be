@@ -88,27 +88,13 @@ public class FeedbackController {
     public ResponseEntity<CustomResponse<FeedbackPageResponse>> showFeedbacks(
         @PathVariable long resumeId,
         @PageableDefault(size = 20) Pageable pageable,
-        @RequestParam long resumePage) {
+        @RequestParam int resumePage,
+        @RequestAttribute("user") User user) {
 
         // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
-        // TODO: deletedAt is not null && childCount == 0 인 피드백은 보여주지 않는다.
 
-        List<EmojiCount> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L)
-            .stream()
-            .map(tuple
-                -> new EmojiCount(
-                tuple.get("id", Integer.class),
-                tuple.get("count", Long.class))
-            ).collect(Collectors.toList());
-
-        int myEmojiId = feedbackEmojiRepository.findByFeedbackIdAndUserId(1L, 1L)
-            .getEmoji().getId();
-
-        List<FeedbackResponse> feedbacksResponse = feedbackRepository.findByResumeIdAndResumePage(1,
-                1)
-            .stream()
-            .map(feedback -> FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId))
-            .collect(Collectors.toList());
+        FeedbackPageResponse feedbacks = feedbackService.getFeedbacks(resumeId, resumePage, user,
+            pageable);
 
         return ResponseEntity
             .ok()
@@ -116,9 +102,7 @@ public class FeedbackController {
                 "success",
                 200,
                 "피드백 목록 조회에 성공했습니다.",
-                FeedbackPageResponse.builder()
-                    .feedbacks(feedbacksResponse)
-                    .build()
+                feedbacks
             ));
     }
 
