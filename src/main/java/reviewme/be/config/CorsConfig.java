@@ -16,7 +16,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/**")
-                .allowedOrigins("https://review-me.co.kr", "https://www.review-me.co.kr", "http://127.0.0.1:8080")
+                .allowedOrigins("https://review-me.co.kr", "https://www.review-me.co.kr", "https://127.0.0.1:8080", "http://127.0.0.1:8080")
                 .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name(), HttpMethod.OPTIONS.name())
                 .allowCredentials(true)
                 .allowedHeaders("*");

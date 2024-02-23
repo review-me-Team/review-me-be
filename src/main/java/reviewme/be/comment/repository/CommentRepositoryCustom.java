@@ -7,5 +7,4 @@ import reviewme.be.comment.dto.CommentInfo;
 public interface CommentRepositoryCustom {
 
     Page<CommentInfo> findCommentsByResumeId(long resumeId, Pageable pageable);
-
 }

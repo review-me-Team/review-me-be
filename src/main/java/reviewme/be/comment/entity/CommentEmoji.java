@@ -33,20 +33,21 @@ public class CommentEmoji {
 
     public static CommentEmoji ofCreated(User user, Comment comment, Emoji emoji) {
         return CommentEmoji.builder()
-                .user(user)
-                .comment(comment)
-                .emoji(emoji)
-                .build();
+            .user(user)
+            .comment(comment)
+            .emoji(emoji)
+            .build();
     }
 
-    public static List<CommentEmoji> createDefaultCommentEmojis(Comment comment, List<Emoji> emojis) {
+    public static List<CommentEmoji> createDefaultCommentEmojis(Comment comment,
+        List<Emoji> emojis) {
 
         return emojis.stream()
-                .map(emoji -> CommentEmoji.builder()
-                        .comment(comment)
-                        .emoji(emoji)
-                        .build())
-                .collect(Collectors.toList());
+            .map(emoji -> CommentEmoji.builder()
+                .comment(comment)
+                .emoji(emoji)
+                .build())
+            .collect(Collectors.toList());
 
     }
 

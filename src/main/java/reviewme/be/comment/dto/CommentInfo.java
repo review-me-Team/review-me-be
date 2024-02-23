@@ -33,7 +33,8 @@ public class CommentInfo {
     private LocalDateTime createdAt;
 
     @QueryProjection
-    public CommentInfo(long id, String content, long commenterId, String commenterName, String commenterProfileUrl, LocalDateTime createdAt) {
+    public CommentInfo(long id, String content, long commenterId, String commenterName,
+        String commenterProfileUrl, LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
         this.commenterId = commenterId;

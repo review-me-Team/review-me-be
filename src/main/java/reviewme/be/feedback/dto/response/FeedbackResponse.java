@@ -31,7 +31,7 @@ public class FeedbackResponse {
     private String commenterProfileUrl;
 
     @Schema(description = "피드백 라벨", example = "프로젝트")
-    private String labelContent ;
+    private String labelContent;
 
     @Schema(description = "피드백 작성 시간", example = "2024-01-02 01:32")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -49,20 +49,21 @@ public class FeedbackResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback, List<EmojiCount> emojis, Integer myEmojiId) {
+    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback,
+        List<EmojiCount> emojis, Integer myEmojiId) {
 
         return FeedbackResponse.builder()
-                .id(feedback.getId())
-                .content(feedback.getContent())
-                .commenterId(feedback.getCommenter().getId())
-                .commenterName(feedback.getCommenter().getName())
-                .commenterProfileUrl(feedback.getCommenter().getProfileUrl())
-                .labelContent(feedback.getLabel().getContent())
-                .createdAt(feedback.getCreatedAt())
-                .countOfReplies(feedback.getChildCnt())
-                .checked(feedback.isChecked())
-                .emojis(emojis)
-                .myEmojiId(myEmojiId)
-                .build();
+            .id(feedback.getId())
+            .content(feedback.getContent())
+            .commenterId(feedback.getCommenter().getId())
+            .commenterName(feedback.getCommenter().getName())
+            .commenterProfileUrl(feedback.getCommenter().getProfileUrl())
+            .labelContent(feedback.getLabel().getContent())
+            .createdAt(feedback.getCreatedAt())
+            .countOfReplies(feedback.getChildCnt())
+            .checked(feedback.isChecked())
+            .emojis(emojis)
+            .myEmojiId(myEmojiId)
+            .build();
     }
 }

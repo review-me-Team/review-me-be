@@ -32,7 +32,7 @@ public class PostedFeedbackResponse {
     private String content;
 
     @Schema(description = "피드백 라벨", example = "프로젝트")
-    private String labelContent ;
+    private String labelContent;
 
     @Schema(description = "피드백을 남긴 이력서의 페이지", example = "1")
     private Integer resumePage;
@@ -47,16 +47,17 @@ public class PostedFeedbackResponse {
     public static PostedFeedbackResponse fromFeedbackOfOwnResume(Feedback feedback) {
 
         return PostedFeedbackResponse.builder()
-                .id(feedback.getId())
-                .resumeId(feedback.getResume().getId())
-                .commenterId(feedback.getCommenter().getId())
-                .commenterName(feedback.getCommenter().getName())
-                .commenterProfileUrl(feedback.getCommenter().getProfileUrl())
-                .content(feedback.getContent())
-                .labelContent(feedback.getLabel().getContent() == null ? null : feedback.getLabel().getContent())
-                .resumePage(feedback.getResumePage())
-                .parentFeedbackId(feedback.getParentFeedback().getId())
-                .createdAt(feedback.getCreatedAt())
-                .build();
+            .id(feedback.getId())
+            .resumeId(feedback.getResume().getId())
+            .commenterId(feedback.getCommenter().getId())
+            .commenterName(feedback.getCommenter().getName())
+            .commenterProfileUrl(feedback.getCommenter().getProfileUrl())
+            .content(feedback.getContent())
+            .labelContent(
+                feedback.getLabel().getContent() == null ? null : feedback.getLabel().getContent())
+            .resumePage(feedback.getResumePage())
+            .parentFeedbackId(feedback.getParentFeedback().getId())
+            .createdAt(feedback.getCreatedAt())
+            .build();
     }
 }
