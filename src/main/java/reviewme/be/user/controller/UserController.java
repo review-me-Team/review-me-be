@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
@@ -125,6 +126,23 @@ public class UserController {
             ));
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<CustomResponse<String>> test(
+        HttpServletRequest request,
+        HttpServletResponse response) {
+
+        cookieTest(response);
+
+        return ResponseEntity
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "테스트 성공",
+                "테스트 성공"
+            ));
+    }
+
     private String createJwtByAccessToken(String accessToken) {
 
         UserGitHubProfile userGitHubProfile = oauthLoginService.getUserGitHubProfile(accessToken);
@@ -144,13 +162,29 @@ public class UserController {
 
     private void setRefreshToken(HttpServletResponse response, String refreshToken) {
 
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-//        cookie.setDomain("localhost");
-        cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 14);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+            .httpOnly(true)
+            .secure(true)
+            .maxAge(60 * 60 * 24 * 14)
+            .path("/")
+            .sameSite("None")
+            .domain("localhost")
+            .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    private void cookieTest(HttpServletResponse response) {
+
+        ResponseCookie cookie = ResponseCookie.from("test", "testValue")
+            .httpOnly(true)
+            .secure(true)
+            .maxAge(60 * 60 * 24 * 14)
+            .path("/")
+            .sameSite("None")
+            .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     private String findRefreshTokenFromRequest(HttpServletRequest request) {
