@@ -1,5 +1,7 @@
 package reviewme.be.feedback.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,13 +81,14 @@ public class FeedbackService {
     public FeedbackPageResponse getFeedbacks(long resumeId, int resumePage, User user,
         Pageable pageable) {
 
-        // TODO: 목록 조회, 삭제 여부 확인을 통해 응답값 변경 (child 존재 여부 등)
-        // TODO: 이력서
+        Resume resume = resumeService.findById(resumeId);
+        boolean isWriter = resume.isWriter(user);
 
         // 피드백 목록 조회 후 id 목록 추출
-        Page<FeedbackInfo> feedbacks = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
+        Page<FeedbackInfo> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
             resumeId, resumePage, pageable);
-        List<Long> feedbackIds = getFeedbackIds(feedbacks.getContent());
+        List<FeedbackInfo> feedbacks = feedbackPage.getContent();
+        List<Long> feedbackIds = getFeedbackIds(feedbacks);
 
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackIds));
@@ -95,13 +98,13 @@ public class FeedbackService {
 
         List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbackIds,
             feedbacks,
-            emojiCounts, myEmojiIds);
+            emojiCounts, myEmojiIds, isWriter);
 
         return FeedbackPageResponse.builder()
             .feedbacks(feedbacksResponse)
-            .pageNumber(feedbacks.getNumber())
-            .lastPage(feedbacks.getTotalPages() - 1)
-            .pageSize(feedbacks.getSize())
+            .pageNumber(feedbackPage.getNumber())
+            .lastPage(feedbackPage.getTotalPages() - 1)
+            .pageSize(feedbackPage.getSize())
             .build();
     }
 
@@ -114,7 +117,8 @@ public class FeedbackService {
         // 피드백 존재 여부 확인 및 유저 검증
         Feedback feedback = findById(feedbackId);
         feedback.validateUser(user);
-        feedback.softDelete();
+        LocalDateTime deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        feedback.softDelete(deletedAt);
         feedbackEmojiRepository.deleteAllByFeedbackId(feedbackId);
 
         if (feedback.getParentFeedback() != null) {
@@ -171,20 +175,23 @@ public class FeedbackService {
     }
 
     private List<FeedbackResponse> collectToFeedbacksResponse(List<Long> feedbackIds,
-        Page<FeedbackInfo> feedbacks,
-        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds) {
+        List<FeedbackInfo> feedbacks,
+        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds, boolean isWriter) {
 
         List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
 
-        for (int feedbackIdx = 0; feedbackIdx < feedbacks.getContent().size(); feedbackIdx++) {
+        for (int feedbackIdx = 0; feedbackIdx < feedbackIds.size(); feedbackIdx++) {
 
-            FeedbackInfo feedback = feedbacks.getContent().get(feedbackIdx);
+            FeedbackInfo feedback = feedbacks.get(feedbackIdx);
             List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
             Integer myEmojiId = myEmojiIds.get(feedbackIdx);
 
+            FeedbackResponse feedbackResponse = isWriter
+                ? FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId)
+                : FeedbackResponse.fromFeedbackOfOthersResume(feedback, emojis, myEmojiId);
             feedbacksResponse.add(
-//                FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId));
-                FeedbackResponse.fromFeedbackOfOthersResume(feedback, emojis, myEmojiId));
+                feedbackResponse
+            );
         }
 
         return feedbacksResponse;

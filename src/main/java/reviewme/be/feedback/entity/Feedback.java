@@ -84,9 +84,10 @@ public class Feedback {
         this.childCnt--;
     }
 
-    public void softDelete() {
+    public void softDelete(LocalDateTime deletedAt) {
 
-        this.deletedAt = LocalDateTime.now();
+        this.content = null;
+        this.deletedAt = deletedAt;
     }
 
     public void updateContent(String content) {
