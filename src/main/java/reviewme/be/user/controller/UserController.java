@@ -162,29 +162,22 @@ public class UserController {
 
     private void setRefreshToken(HttpServletResponse response, String refreshToken) {
 
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-            .httpOnly(true)
-            .secure(true)
-            .maxAge(60 * 60 * 24 * 14)
-            .path("/")
-            .sameSite("None")
-            .domain("localhost")
-            .build();
-
-        response.addHeader("Set-Cookie", cookie.toString());
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24 * 14);
+        response.addCookie(cookie);
     }
 
     private void cookieTest(HttpServletResponse response) {
 
-        ResponseCookie cookie = ResponseCookie.from("test", "testValue")
-            .httpOnly(true)
-            .secure(true)
-            .maxAge(60 * 60 * 24 * 14)
-            .path("/")
-            .sameSite("None")
-            .build();
-
-        response.addHeader("Set-Cookie", cookie.toString());
+        Cookie cookie = new Cookie("test", "testValue");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24 * 14);
+        response.addCookie(cookie);
     }
 
     private String findRefreshTokenFromRequest(HttpServletRequest request) {
