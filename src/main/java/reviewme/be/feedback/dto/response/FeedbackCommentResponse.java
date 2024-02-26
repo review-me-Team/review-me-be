@@ -12,14 +12,14 @@ import java.util.List;
 
 @Getter
 @Builder
-@Schema(description = "피드백 댓글 목록 응답")
+@Schema(description = "피드백 대댓글 목록 응답")
 public class FeedbackCommentResponse {
 
     @Schema(description = "피드백 댓글 ID", example = "1")
     private long id;
 
     @Schema(description = "피드백 ID", example = "1")
-    private long parentId;
+    private long parentFeedbackId;
 
     @Schema(description = "댓글 내용", example = "저도 그렇게 느껴지긴 했는데 조금 더 보완해야겠네요. 감사합니다!")
     private String content;
@@ -48,7 +48,7 @@ public class FeedbackCommentResponse {
 
         return FeedbackCommentResponse.builder()
             .id(feedbackComment.getId())
-            .parentId(feedbackComment.getParentId())
+            .parentFeedbackId(feedbackComment.getParentId())
             .content(feedbackComment.getContent())
             .commenterId(feedbackComment.getCommenterId())
             .commenterName(feedbackComment.getCommenterName())

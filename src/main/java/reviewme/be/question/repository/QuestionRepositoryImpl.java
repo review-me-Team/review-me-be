@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import reviewme.be.question.dto.QQuestionCommentInfo;
 import reviewme.be.question.dto.QQuestionInfo;
+import reviewme.be.question.dto.QuestionCommentInfo;
 import reviewme.be.question.dto.QuestionInfo;
 
 @RequiredArgsConstructor
@@ -47,6 +49,36 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             .fetchResults();
 
         List<QuestionInfo> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<QuestionCommentInfo> findQuestionCommentsByQuestionId(long questionId,
+        Pageable pageable) {
+
+        QueryResults<QuestionCommentInfo> results = queryFactory
+            .select(new QQuestionCommentInfo(
+                question.id,
+                question.parentQuestion.id,
+                question.content,
+                question.commenter.id,
+                question.commenter.name,
+                question.commenter.profileUrl,
+                question.createdAt
+            ))
+            .from(question)
+            .innerJoin(question.commenter)
+            .where(question.parentQuestion.id.eq(questionId)
+                .and(question.deletedAt.isNull())
+            )
+            .orderBy(question.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
+
+        List<QuestionCommentInfo> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);

@@ -7,8 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.question.dto.QuestionCommentInfo;
 import reviewme.be.question.dto.QuestionInfo;
 import reviewme.be.question.dto.request.*;
+import reviewme.be.question.dto.response.QuestionCommentPageResponse;
+import reviewme.be.question.dto.response.QuestionCommentResponse;
 import reviewme.be.question.dto.response.QuestionPageResponse;
 import reviewme.be.question.dto.response.QuestionResponse;
 import reviewme.be.question.entity.Question;
@@ -107,6 +110,39 @@ public class QuestionService {
             .pageNumber(questionPage.getNumber())
             .lastPage(questionPage.getTotalPages() - 1)
             .pageSize(questionPage.getSize())
+            .build();
+    }
+
+    @Transactional(readOnly = true)
+    public QuestionCommentPageResponse getQuestionComments(long resumeId, long parentQuestionId,
+        User user,
+        Pageable pageable) {
+
+        // 이력서, 부모 예상 질문 존재 여부 확인
+        resumeService.findById(resumeId);
+        findParentQuestionById(parentQuestionId);
+
+        // 예상 질문에 달린 대댓글 목록 조회
+        Page<QuestionCommentInfo> questionCommentPage = questionRepository.findQuestionCommentsByQuestionId(
+            parentQuestionId, pageable);
+        List<QuestionCommentInfo> questionComments = questionCommentPage.getContent();
+        List<Long> questionCommentIds = extractQuestionCommentIds(questionComments);
+
+        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
+            questionEmojiRepository.findEmojiCountByQuestionIds(questionCommentIds));
+
+        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
+            questionEmojiRepository.findMyEmojiIdsByQuestionIds(user.getId(), questionCommentIds));
+
+        List<QuestionCommentResponse> questionCommentsResponse = collectToQuestionCommentsResponse(
+            questionCommentIds, questionComments, emojiCounts,
+            myEmojiIds);
+
+        return QuestionCommentPageResponse.builder()
+            .questionComments(questionCommentsResponse)
+            .pageNumber(questionCommentPage.getNumber())
+            .lastPage(questionCommentPage.getTotalPages() - 1)
+            .pageSize(questionCommentPage.getSize())
             .build();
     }
 
@@ -215,6 +251,13 @@ public class QuestionService {
             .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 질문입니다."));
     }
 
+    // 대댓글 목록 조회 시 해당 예상 질문이 조회되는 조건을 가지는 예상 질문인지 검증
+    private Question findParentQuestionById(long questionId) {
+
+        return questionRepository.findQuestionById(questionId)
+            .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 예상 질문입니다."));
+    }
+
     private void saveDefaultEmojis(Question savedQuestion) {
 
         questionEmojiRepository.saveAll(
@@ -254,5 +297,34 @@ public class QuestionService {
         }
 
         return questionsResponse;
+    }
+
+    private List<Long> extractQuestionCommentIds(List<QuestionCommentInfo> questionComments) {
+
+        return questionComments.stream()
+            .map(QuestionCommentInfo::getId)
+            .collect(Collectors.toList());
+    }
+
+    private List<QuestionCommentResponse> collectToQuestionCommentsResponse(
+        List<Long> questionCommentIds,
+        List<QuestionCommentInfo> questionComments,
+        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds) {
+
+        List<QuestionCommentResponse> questionCommentResponses = new ArrayList<>();
+
+        for (int questionCommentIdx = 0; questionCommentIdx < questionCommentIds.size();
+            questionCommentIdx++) {
+
+            QuestionCommentInfo questionComment = questionComments.get(questionCommentIdx);
+            List<EmojiCount> emojiCount = emojiCounts.get(questionCommentIdx);
+            Integer myEmojiId = myEmojiIds.get(questionCommentIdx);
+
+            questionCommentResponses.add(
+                QuestionCommentResponse.fromQuestionComment(questionComment, emojiCount, myEmojiId)
+            );
+        }
+
+        return questionCommentResponses;
     }
 }

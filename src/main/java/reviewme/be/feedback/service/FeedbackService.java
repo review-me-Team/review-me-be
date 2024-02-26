@@ -121,19 +121,19 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public FeedbackCommentPageResponse getFeedbackComments(long resumeId, long parentId,
+    public FeedbackCommentPageResponse getFeedbackComments(long resumeId, long parentFeedbackId,
         User user,
         Pageable pageable) {
 
         // 이력서, 부모 피드백 존재 여부 확인
         resumeService.findById(resumeId);
-        findParentFeedbackById(parentId);
+        findParentFeedbackById(parentFeedbackId);
 
         // 피드백 대댓글 목록 조회 후 id 목록 추출
         Page<FeedbackCommentInfo> feedbackPage = feedbackRepository.findFeedbackCommentsByFeedbackId(
-            parentId, pageable);
+            parentFeedbackId, pageable);
         List<FeedbackCommentInfo> feedbackComments = feedbackPage.getContent();
-        List<Long> feedbackCommentIds = getFeedbackCommentIds(feedbackComments);
+        List<Long> feedbackCommentIds = extractFeedbackCommentIds(feedbackComments);
 
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackCommentIds));
@@ -256,7 +256,7 @@ public class FeedbackService {
         return feedbacksResponse;
     }
 
-    private List<Long> getFeedbackCommentIds(List<FeedbackCommentInfo> feedbackComments) {
+    private List<Long> extractFeedbackCommentIds(List<FeedbackCommentInfo> feedbackComments) {
 
         return feedbackComments.stream()
             .map(FeedbackCommentInfo::getId)

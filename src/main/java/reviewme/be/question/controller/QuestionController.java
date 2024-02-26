@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.question.dto.request.*;
-import reviewme.be.question.dto.response.CommentOfQuestionPageResponse;
+import reviewme.be.question.dto.response.QuestionCommentPageResponse;
 import reviewme.be.question.dto.response.QuestionPageResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.question.service.QuestionService;
@@ -107,19 +108,22 @@ public class QuestionController {
         @ApiResponse(responseCode = "200", description = "예상 질문 댓글 목록 조회 성공"),
         @ApiResponse(responseCode = "400", description = "예상 질문 댓글 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<CommentOfQuestionPageResponse>> showCommentsOfQuestions(
+    public ResponseEntity<CustomResponse<QuestionCommentPageResponse>> showCommentsOfQuestions(
         @PathVariable long resumeId,
         @PathVariable long questionId,
+        @RequestAttribute("user") User user,
         @PageableDefault(size = 20) Pageable pageable) {
 
-        // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
+        QuestionCommentPageResponse questionComments = questionService
+            .getQuestionComments(resumeId, questionId, user, pageable);
 
         return ResponseEntity
             .ok()
             .body(new CustomResponse<>(
                 "success",
                 200,
-                "예상 질문 댓글 조회에 성공했습니다."
+                "예상 질문 댓글 조회에 성공했습니다.",
+                questionComments
             ));
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.question.dto.QuestionCommentInfo;
 import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
@@ -11,14 +12,14 @@ import java.util.List;
 
 @Getter
 @Builder
-@Schema(description = "예상 질문 댓글 목록 응답")
-public class CommentOfQuestionResponse {
+@Schema(description = "예상 질문 대댓글 목록 응답")
+public class QuestionCommentResponse {
 
     @Schema(description = "예상 질문 댓글 ID", example = "1")
     private Long id;
 
     @Schema(description = "예상 질문 ID", example = "1")
-    private long questionId;
+    private long parentQuestionId;
 
     @Schema(description = "댓글 내용", example = "흠.. 그러게요... 조금 더 공부해보겠습니다!")
     private String content;
@@ -41,4 +42,20 @@ public class CommentOfQuestionResponse {
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
+
+    public static QuestionCommentResponse fromQuestionComment(QuestionCommentInfo questionComment,
+        List<EmojiCount> emojis, Integer myEmojiId) {
+
+        return QuestionCommentResponse.builder()
+            .id(questionComment.getId())
+            .parentQuestionId(questionComment.getParentQuestionId())
+            .content(questionComment.getContent())
+            .commenterId(questionComment.getCommenterId())
+            .commenterName(questionComment.getCommenterName())
+            .commenterProfileUrl(questionComment.getCommenterProfileUrl())
+            .createdAt(questionComment.getCreatedAt())
+            .emojis(emojis)
+            .myEmojiId(myEmojiId)
+            .build();
+    }
 }
