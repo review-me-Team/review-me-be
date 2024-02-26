@@ -153,16 +153,6 @@ public class UserController {
         response.addCookie(cookie);
     }
 
-    private void cookieTest(HttpServletResponse response) {
-
-        Cookie cookie = new Cookie("test", "testValue");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60 * 24 * 14);
-        response.addCookie(cookie);
-    }
-
     private String findRefreshTokenFromRequest(HttpServletRequest request) {
 
         Cookie[] cookies = request.getCookies();
