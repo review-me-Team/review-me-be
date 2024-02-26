@@ -1,9 +1,16 @@
 package reviewme.be.question.service;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.question.dto.QuestionInfo;
 import reviewme.be.question.dto.request.*;
+import reviewme.be.question.dto.response.QuestionPageResponse;
+import reviewme.be.question.dto.response.QuestionResponse;
 import reviewme.be.question.entity.Question;
 import reviewme.be.question.entity.QuestionEmoji;
 import reviewme.be.question.exception.NonExistQuestionException;
@@ -13,6 +20,7 @@ import reviewme.be.question.repository.QuestionRepository;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
+import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Label;
 import reviewme.be.util.repository.LabelRepository;
 import reviewme.be.util.service.UtilService;
@@ -68,6 +76,38 @@ public class QuestionService {
         parentQuestion.plusChildCnt();
 
         saveDefaultEmojis(savedQuestion);
+    }
+
+    @Transactional(readOnly = true)
+    public QuestionPageResponse getQuestions(long resumeId, int resumePage,
+        User user,
+        Pageable pageable) {
+
+        // 이력서 존재 여부 확인
+        Resume resume = resumeService.findById(resumeId);
+        boolean isWriter = resume.isWriter(user);
+
+        // 예상 질문 목록 조회 후 id 목록 추출
+        Page<QuestionInfo> questionPage = questionRepository.findQuestionsByResumeIdAndResumePage(
+            resumeId, resumePage, pageable);
+        List<QuestionInfo> questions = questionPage.getContent();
+        List<Long> questionIds = extractQuestionIds(questions);
+
+        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
+            questionEmojiRepository.findEmojiCountByQuestionIds(questionIds));
+
+        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
+            questionEmojiRepository.findMyEmojiIdsByQuestionIds(user.getId(), questionIds));
+
+        List<QuestionResponse> questionsResponse = collectToQuestionsResponse(questionIds,
+            questions, emojiCounts, myEmojiIds, isWriter);
+
+        return QuestionPageResponse.builder()
+            .questions(questionsResponse)
+            .pageNumber(questionPage.getNumber())
+            .lastPage(questionPage.getTotalPages() - 1)
+            .pageSize(questionPage.getSize())
+            .build();
     }
 
     @Transactional
@@ -182,5 +222,37 @@ public class QuestionService {
                 savedQuestion,
                 emojisVO.getEmojis())
         );
+    }
+
+    /***************
+     * 아래는 예상 질문(또는 대댓글) 목록 조회 시 사용되는 메서드입니다.
+     ***************/
+    private List<Long> extractQuestionIds(List<QuestionInfo> questions) {
+
+        return questions.stream()
+            .map(QuestionInfo::getId)
+            .collect(Collectors.toList());
+    }
+
+    private List<QuestionResponse> collectToQuestionsResponse(List<Long> questionIds,
+        List<QuestionInfo> questions,
+        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds, boolean isWriter) {
+
+        List<QuestionResponse> questionsResponse = new ArrayList<>();
+
+        for (int questionIdx = 0; questionIdx < questionIds.size(); questionIdx++) {
+
+            QuestionInfo question = questions.get(questionIdx);
+            List<EmojiCount> emojiCount = emojiCounts.get(questionIdx);
+            Integer myEmojiId = myEmojiIds.get(questionIdx);
+
+            QuestionResponse questionResponse = isWriter
+                ? QuestionResponse.fromQuestionOfOwnResume(question, emojiCount, myEmojiId)
+                : QuestionResponse.fromQuestionOfOtherResume(question, emojiCount, myEmojiId);
+
+            questionsResponse.add(questionResponse);
+        }
+
+        return questionsResponse;
     }
 }

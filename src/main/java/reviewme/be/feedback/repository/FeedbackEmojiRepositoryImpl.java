@@ -38,7 +38,7 @@ public class FeedbackEmojiRepositoryImpl implements FeedbackEmojiRepositoryCusto
     }
 
     @Override
-    public List<MyEmoji> findByUserIdAndFeedbackIdIn(long userId, List<Long> feedbackIds) {
+    public List<MyEmoji> findMyEmojiIdsByFeedbackIdIn(long userId, List<Long> feedbackIds) {
 
         return queryFactory
             .select(new QMyEmoji(

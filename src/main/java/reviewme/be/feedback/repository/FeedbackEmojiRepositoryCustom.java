@@ -8,5 +8,5 @@ public interface FeedbackEmojiRepositoryCustom {
 
     List<EmojiCount> findEmojiCountByFeedbackIds(List<Long> feedbackIds);
 
-    List<MyEmoji> findByUserIdAndFeedbackIdIn(long userId, List<Long> feedbackIds);
+    List<MyEmoji> findMyEmojiIdsByFeedbackIdIn(long userId, List<Long> feedbackIds);
 }

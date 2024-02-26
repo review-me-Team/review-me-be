@@ -101,17 +101,16 @@ public class FeedbackService {
         Page<FeedbackInfo> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
             resumeId, resumePage, pageable);
         List<FeedbackInfo> feedbacks = feedbackPage.getContent();
-        List<Long> feedbackIds = getFeedbackIds(feedbacks);
+        List<Long> feedbackIds = extractFeedbackIds(feedbacks);
 
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackIds));
 
         List<Integer> myEmojiIds = utilService.getMyEmojiIds(
-            feedbackEmojiRepository.findByUserIdAndFeedbackIdIn(user.getId(), feedbackIds));
+            feedbackEmojiRepository.findMyEmojiIdsByFeedbackIdIn(user.getId(), feedbackIds));
 
         List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbackIds,
-            feedbacks,
-            emojiCounts, myEmojiIds, isWriter);
+            feedbacks, emojiCounts, myEmojiIds, isWriter);
 
         return FeedbackPageResponse.builder()
             .feedbacks(feedbacksResponse)
@@ -140,7 +139,7 @@ public class FeedbackService {
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackCommentIds));
 
         List<Integer> myEmojiIds = utilService.getMyEmojiIds(
-            feedbackEmojiRepository.findByUserIdAndFeedbackIdIn(user.getId(), feedbackCommentIds));
+            feedbackEmojiRepository.findMyEmojiIdsByFeedbackIdIn(user.getId(), feedbackCommentIds));
 
         List<FeedbackCommentResponse> feedbackCommentsResponse = collectToFeedbackCommentsResponse(
             feedbackCommentIds,
@@ -228,7 +227,7 @@ public class FeedbackService {
     /***************
      * 아래는 피드백 목록 조회 시 사용되는 메서드입니다.
      ***************/
-    private List<Long> getFeedbackIds(List<FeedbackInfo> feedbacks) {
+    private List<Long> extractFeedbackIds(List<FeedbackInfo> feedbacks) {
 
         return feedbacks.stream()
             .map(FeedbackInfo::getId)
@@ -250,9 +249,8 @@ public class FeedbackService {
             FeedbackResponse feedbackResponse = isWriter
                 ? FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId)
                 : FeedbackResponse.fromFeedbackOfOthersResume(feedback, emojis, myEmojiId);
-            feedbacksResponse.add(
-                feedbackResponse
-            );
+
+            feedbacksResponse.add(feedbackResponse);
         }
 
         return feedbacksResponse;

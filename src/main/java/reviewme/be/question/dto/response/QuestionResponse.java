@@ -1,9 +1,11 @@
 package reviewme.be.question.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import reviewme.be.question.dto.QuestionInfo;
 import reviewme.be.question.entity.Question;
 import reviewme.be.util.dto.EmojiCount;
 
@@ -38,50 +40,55 @@ public class QuestionResponse {
     private LocalDateTime createdAt;
 
     @Schema(description = "대댓글 개수", example = "10")
-    private Long countOfReplies;
-
-    @Schema(description = "북마크 여부", example = "true")
-    private Boolean bookmarked;
+    private long countOfReplies;
 
     @Schema(description = "체크 여부", example = "true")
-    private boolean checked;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean checked;
+
+    @Schema(description = "북마크 여부", example = "true")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean bookmarked;
 
     @Schema(description = "이모지 정보")
     private List<EmojiCount> emojis;
 
     @Schema(description = "내가 선택한 이모지", example = "1")
-    private int myEmojiId;
+    private Integer myEmojiId;
 
-    public static QuestionResponse fromQuestionOfOwnResume(Question question, List<EmojiCount> emojis, Integer myEmojiId) {
+    public static QuestionResponse fromQuestionOfOwnResume(QuestionInfo question,
+        List<EmojiCount> emojis, Integer myEmojiId) {
 
         return QuestionResponse.builder()
-                .id(question.getId())
-                .content(question.getContent())
-                .commenterId(question.getCommenter().getId())
-                .commenterName(question.getCommenter().getName())
-                .commenterProfileUrl(question.getCommenter().getProfileUrl())
-                .labelContent(question.getLabel().getContent())
-                .createdAt(question.getCreatedAt())
-                .countOfReplies(question.getChildCnt())
-                .bookmarked(question.getBookmarked())
-                .checked(question.getChecked())
-                .emojis(emojis)
-                .myEmojiId(myEmojiId)
-                .build();
+            .id(question.getId())
+            .content(question.getContent())
+            .commenterId(question.getCommenterId())
+            .commenterName(question.getCommenterName())
+            .commenterProfileUrl(question.getCommenterProfileUrl())
+            .labelContent(question.getLabelContent())
+            .createdAt(question.getCreatedAt())
+            .countOfReplies(question.getCountOfReplies())
+            .checked(question.isChecked())
+            .bookmarked(question.isBookmarked())
+            .emojis(emojis)
+            .myEmojiId(myEmojiId)
+            .build();
     }
 
-    public static QuestionResponse fromQuestionOfOtherResume(Question question, List<EmojiCount> emojis) {
+    public static QuestionResponse fromQuestionOfOtherResume(QuestionInfo question,
+        List<EmojiCount> emojis, Integer myEmojiId) {
 
         return QuestionResponse.builder()
-                .id(question.getId())
-                .content(question.getContent())
-                .commenterId(question.getCommenter().getId())
-                .commenterName(question.getCommenter().getName())
-                .commenterProfileUrl(question.getCommenter().getProfileUrl())
-                .labelContent(question.getLabel().getContent())
-                .createdAt(question.getCreatedAt())
-                .countOfReplies(question.getChildCnt())
-                .emojis(emojis)
-                .build();
+            .id(question.getId())
+            .content(question.getContent())
+            .commenterId(question.getCommenterId())
+            .commenterName(question.getCommenterName())
+            .commenterProfileUrl(question.getCommenterProfileUrl())
+            .labelContent(question.getLabelContent())
+            .createdAt(question.getCreatedAt())
+            .countOfReplies(question.getCountOfReplies())
+            .emojis(emojis)
+            .myEmojiId(myEmojiId)
+            .build();
     }
 }

@@ -109,7 +109,7 @@ public class FeedbackController {
         @PathVariable long resumeId,
         @PathVariable long feedbackId,
         @RequestAttribute("user") User user,
-        @PageableDefault(page = 0, size = 20) Pageable pageable) {
+        @PageableDefault(size = 20) Pageable pageable) {
 
         FeedbackCommentPageResponse feedbackComments = feedbackService
             .getFeedbackComments(resumeId, feedbackId, user, pageable);

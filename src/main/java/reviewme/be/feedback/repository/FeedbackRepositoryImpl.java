@@ -40,7 +40,8 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
             .where(feedback.resume.id.eq(resumeId)
                 .and(feedback.resumePage.eq(resumePage))
                 .and(feedback.parentFeedback.isNull())
-                .and(feedback.deletedAt.isNull().or(feedback.deletedAt.isNotNull().and(feedback.childCnt.gt(0))))
+                .and(feedback.deletedAt.isNull()
+                    .or(feedback.deletedAt.isNotNull().and(feedback.childCnt.gt(0))))
             )
             .orderBy(feedback.createdAt.desc())
             .offset(pageable.getOffset())
@@ -54,7 +55,8 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
     }
 
     @Override
-    public Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId, Pageable pageable) {
+    public Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId,
+        Pageable pageable) {
 
         QueryResults<FeedbackCommentInfo> results = queryFactory
             .select(new QFeedbackCommentInfo(
