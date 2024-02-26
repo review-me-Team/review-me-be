@@ -62,7 +62,7 @@ public class FeedbackController {
         @PathVariable long feedbackId,
         @RequestAttribute("user") User user) {
 
-        feedbackService.saveFeedbackComment(createFeedbackCommentRequest, user, resumeId,
+        feedbackService.saveFeedbackComment(createFeedbackCommentRequest, resumeId, user,
             feedbackId);
 
         return ResponseEntity

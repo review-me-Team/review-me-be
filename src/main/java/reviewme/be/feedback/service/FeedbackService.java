@@ -66,8 +66,8 @@ public class FeedbackService {
     }
 
     @Transactional
-    public void saveFeedbackComment(CreateFeedbackCommentRequest request, User commenter,
-        long resumeId, long parentId) {
+    public void saveFeedbackComment(CreateFeedbackCommentRequest request, long resumeId,
+        User commenter, long parentId) {
 
         // 이력서, 피드백 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
@@ -122,17 +122,17 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public FeedbackCommentPageResponse getFeedbackComments(long resumeId, long feedbackId,
+    public FeedbackCommentPageResponse getFeedbackComments(long resumeId, long parentId,
         User user,
         Pageable pageable) {
 
         // 이력서, 부모 피드백 존재 여부 확인
         resumeService.findById(resumeId);
-        Feedback parentFeedbackById = findParentFeedbackById(feedbackId);
+        findParentFeedbackById(parentId);
 
         // 피드백 대댓글 목록 조회 후 id 목록 추출
         Page<FeedbackCommentInfo> feedbackPage = feedbackRepository.findFeedbackCommentsByFeedbackId(
-            feedbackId, pageable);
+            parentId, pageable);
         List<FeedbackCommentInfo> feedbackComments = feedbackPage.getContent();
         List<Long> feedbackCommentIds = getFeedbackCommentIds(feedbackComments);
 

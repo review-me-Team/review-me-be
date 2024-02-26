@@ -64,7 +64,7 @@ public class QuestionController {
             @PathVariable long questionId,
             @RequestAttribute("user") User user) {
 
-        questionService.saveQuestionComment(createQuestionCommentRequest, user, resumeId, questionId);
+        questionService.saveQuestionComment(createQuestionCommentRequest, resumeId, user, questionId);
 
         return ResponseEntity
                 .ok()
