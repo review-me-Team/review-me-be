@@ -48,7 +48,6 @@ public class CommentEmoji {
                 .emoji(emoji)
                 .build())
             .collect(Collectors.toList());
-
     }
 
     public void updateEmoji(Emoji emoji) {

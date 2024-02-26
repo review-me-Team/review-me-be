@@ -36,6 +36,8 @@ public class QuestionService {
         Label label = verifyQuestionLabel(request, resume);
 
         questionRepository.save(Question.createQuestion(user, resume, label, request.getContent(), request.getResumePage()));
+
+        // TODO: 예상 질문, 대댓글 추가 시 디폴트 이모지 추가
     }
 
     @Transactional

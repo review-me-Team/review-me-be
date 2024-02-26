@@ -15,9 +15,11 @@ import reviewme.be.feedback.dto.request.CreateFeedbackCommentRequest;
 import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
+import reviewme.be.feedback.dto.response.CommentOfFeedbackPageResponse;
 import reviewme.be.feedback.dto.response.FeedbackPageResponse;
 import reviewme.be.feedback.dto.response.FeedbackResponse;
 import reviewme.be.feedback.entity.Feedback;
+import reviewme.be.feedback.entity.FeedbackEmoji;
 import reviewme.be.feedback.exception.NonExistFeedbackException;
 import reviewme.be.feedback.repository.FeedbackEmojiRepository;
 import reviewme.be.feedback.repository.FeedbackRepository;
@@ -27,6 +29,7 @@ import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Label;
 import reviewme.be.util.service.UtilService;
+import reviewme.be.util.vo.EmojisVO;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,7 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final FeedbackEmojiRepository feedbackEmojiRepository;
     private final ResumeService resumeService;
+    private final EmojisVO emojisVO;
 
     @Transactional
     public void saveFeedback(CreateFeedbackRequest request, User commenter, long resumeId) {
@@ -48,12 +52,19 @@ public class FeedbackService {
             label = utilService.findFeedbackLabelById(request.getLabelId());
         }
 
-        feedbackRepository.save(Feedback.createdFeedback(
+        Feedback savedFeedback = feedbackRepository.save(Feedback.createdFeedback(
             commenter,
             resume,
             label,
             request.getContent(),
             request.getResumePage()));
+
+        // Default Comment Emojis 생성
+        feedbackEmojiRepository.saveAll(
+            FeedbackEmoji.createDefaultFeedbackEmojis(
+                savedFeedback,
+                emojisVO.getEmojis())
+        );
     }
 
     @Transactional
@@ -68,13 +79,20 @@ public class FeedbackService {
             throw new NonExistFeedbackException("해당 피드백에는 대댓글을 추가할 수 없습니다.");
         }
 
-        feedbackRepository.save(Feedback.createFeedbackComment(
+        Feedback savedFeedback = feedbackRepository.save(Feedback.createFeedbackComment(
             commenter,
             resume,
             parentFeedback,
             request.getContent()));
 
         parentFeedback.plusChildCnt();
+
+        // Default Comment Emojis 생성
+        feedbackEmojiRepository.saveAll(
+            FeedbackEmoji.createDefaultFeedbackEmojis(
+                savedFeedback,
+                emojisVO.getEmojis())
+        );
     }
 
     @Transactional(readOnly = true)
@@ -106,6 +124,14 @@ public class FeedbackService {
             .lastPage(feedbackPage.getTotalPages() - 1)
             .pageSize(feedbackPage.getSize())
             .build();
+    }
+
+    @Transactional(readOnly = true)
+    public CommentOfFeedbackPageResponse getCommentsOfFeedback(long resumeId, long feedbackId, User user,
+        Pageable pageable) {
+
+
+        return null;
     }
 
     @Transactional
