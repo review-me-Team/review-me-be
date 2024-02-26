@@ -90,7 +90,8 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public FeedbackPageResponse getFeedbacks(long resumeId, int resumePage, User user,
+    public FeedbackPageResponse getFeedbacks(long resumeId, int resumePage,
+        User user,
         Pageable pageable) {
 
         Resume resume = resumeService.findById(resumeId);
@@ -128,9 +129,6 @@ public class FeedbackService {
         // 이력서, 부모 피드백 존재 여부 확인
         resumeService.findById(resumeId);
         Feedback parentFeedbackById = findParentFeedbackById(feedbackId);
-        System.out.println(parentFeedbackById.getCommenter());
-        System.out.println(parentFeedbackById.getId());
-
 
         // 피드백 대댓글 목록 조회 후 id 목록 추출
         Page<FeedbackCommentInfo> feedbackPage = feedbackRepository.findFeedbackCommentsByFeedbackId(
@@ -144,7 +142,8 @@ public class FeedbackService {
         List<Integer> myEmojiIds = utilService.getMyEmojiIds(
             feedbackEmojiRepository.findByUserIdAndFeedbackIdIn(user.getId(), feedbackCommentIds));
 
-        List<FeedbackCommentResponse> feedbackCommentsResponse = collectToFeedbackCommentsResponse(feedbackCommentIds,
+        List<FeedbackCommentResponse> feedbackCommentsResponse = collectToFeedbackCommentsResponse(
+            feedbackCommentIds,
             feedbackComments,
             emojiCounts, myEmojiIds);
 
@@ -272,7 +271,8 @@ public class FeedbackService {
 
         List<FeedbackCommentResponse> feedbackCommentsResponse = new ArrayList<>();
 
-        for (int feedbackCommentIdx = 0; feedbackCommentIdx < feedbackIds.size(); feedbackCommentIdx++) {
+        for (int feedbackCommentIdx = 0; feedbackCommentIdx < feedbackIds.size();
+            feedbackCommentIdx++) {
 
             FeedbackCommentInfo feedbackComment = feedbackComments.get(feedbackCommentIdx);
             List<EmojiCount> emojis = emojiCounts.get(feedbackCommentIdx);
