@@ -126,23 +126,6 @@ public class UserController {
             ));
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<CustomResponse<String>> test(
-        HttpServletRequest request,
-        HttpServletResponse response) {
-
-        cookieTest(response);
-
-        return ResponseEntity
-            .ok()
-            .body(new CustomResponse<>(
-                "success",
-                200,
-                "테스트 성공",
-                "테스트 성공"
-            ));
-    }
-
     private String createJwtByAccessToken(String accessToken) {
 
         UserGitHubProfile userGitHubProfile = oauthLoginService.getUserGitHubProfile(accessToken);
