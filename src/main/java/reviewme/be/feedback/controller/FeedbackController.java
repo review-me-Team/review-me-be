@@ -17,11 +17,6 @@ import reviewme.be.feedback.repository.FeedbackRepository;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.feedback.service.FeedbackService;
 import reviewme.be.user.entity.User;
-import reviewme.be.util.dto.EmojiCount;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "feedback", description = "피드백(feedback) API")
 @RequestMapping("/resume/{resumeId}/feedback")
@@ -67,7 +62,7 @@ public class FeedbackController {
         @PathVariable long feedbackId,
         @RequestAttribute("user") User user) {
 
-        feedbackService.saveFeedbackComment(createFeedbackCommentRequest, user, resumeId,
+        feedbackService.saveFeedbackComment(createFeedbackCommentRequest, resumeId, user,
             feedbackId);
 
         return ResponseEntity
@@ -87,28 +82,12 @@ public class FeedbackController {
     })
     public ResponseEntity<CustomResponse<FeedbackPageResponse>> showFeedbacks(
         @PathVariable long resumeId,
-        @PageableDefault(size = 20) Pageable pageable,
-        @RequestParam long resumePage) {
+        @RequestParam int resumePage,
+        @RequestAttribute("user") User user,
+        @PageableDefault(size = 20) Pageable pageable) {
 
-        // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
-        // TODO: deletedAt is not null && childCount == 0 인 피드백은 보여주지 않는다.
-
-        List<EmojiCount> emojis = feedbackEmojiRepository.countByFeedbackIdGroupByEmojiId(1L)
-            .stream()
-            .map(tuple
-                -> new EmojiCount(
-                tuple.get("id", Integer.class),
-                tuple.get("count", Long.class))
-            ).collect(Collectors.toList());
-
-        int myEmojiId = feedbackEmojiRepository.findByFeedbackIdAndUserId(1L, 1L)
-            .getEmoji().getId();
-
-        List<FeedbackResponse> feedbacksResponse = feedbackRepository.findByResumeIdAndResumePage(1,
-                1)
-            .stream()
-            .map(feedback -> FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId))
-            .collect(Collectors.toList());
+        FeedbackPageResponse feedbacks = feedbackService.getFeedbacks(resumeId, resumePage, user,
+            pageable);
 
         return ResponseEntity
             .ok()
@@ -116,9 +95,7 @@ public class FeedbackController {
                 "success",
                 200,
                 "피드백 목록 조회에 성공했습니다.",
-                FeedbackPageResponse.builder()
-                    .feedbacks(feedbacksResponse)
-                    .build()
+                feedbacks
             ));
     }
 
@@ -128,38 +105,22 @@ public class FeedbackController {
         @ApiResponse(responseCode = "200", description = "피드백 댓글 목록 조회 성공"),
         @ApiResponse(responseCode = "400", description = "피드백 댓글 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<CommentOfFeedbackPageResponse>> showCommentsOfFeedback(
+    public ResponseEntity<CustomResponse<FeedbackCommentPageResponse>> showCommentsOfFeedback(
         @PathVariable long resumeId,
         @PathVariable long feedbackId,
+        @RequestAttribute("user") User user,
         @PageableDefault(size = 20) Pageable pageable) {
 
-        // TODO: 본인의 resume인지 다른 사람의 resume인지에 따라 다른 데이터 응답 처리
-
-        List<EmojiCount> sampleEmojis = List.of(
-            new EmojiCount(1, 10),
-            new EmojiCount(2, 3));
-
-        List<CommentOfFeedbackResponse> sampleResponse = List.of(
-            CommentOfFeedbackResponse.builder()
-                .id(1L)
-                .feedbackId(1L)
-                .content("프로젝트에서 react-query를 사용하셨는데 사용한 이유가 궁금합니다.")
-                .commenterName("aken-you")
-                .commenterProfileUrl("https://avatars.githubusercontent.com/u/96980857?v=4")
-                .createdAt(LocalDateTime.now())
-                .emojis(sampleEmojis)
-                .myEmojiId(1L)
-                .build());
+        FeedbackCommentPageResponse feedbackComments = feedbackService
+            .getFeedbackComments(resumeId, feedbackId, user, pageable);
 
         return ResponseEntity
             .ok()
             .body(new CustomResponse<>(
                 "success",
                 200,
-                "피드백에 달린 댓글 조회에 성공했습니다.",
-                CommentOfFeedbackPageResponse.builder()
-                    .comments(sampleResponse)
-                    .build()
+                "피드백에 달린 대댓글 조회에 성공했습니다.",
+                feedbackComments
             ));
     }
 

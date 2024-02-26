@@ -1,4 +1,4 @@
-package reviewme.be.question.dto.response;
+package reviewme.be.feedback.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -8,11 +8,11 @@ import java.util.List;
 
 @Getter
 @Builder
-@Schema(description = "예상 질문 목록 응답")
-public class QuestionPageResponse {
+@Schema(description = "피드백 댓글 목록 응답")
+public class FeedbackCommentPageResponse {
 
-    @Schema(description = "예상 질문 목록")
-    private List<QuestionResponse> questions;
+    @Schema(description = "피드백 댓글 목록")
+    private List<FeedbackCommentResponse> feedbackComments;
 
     @Schema(description = "현재 페이지", example = "1")
     private int pageNumber;

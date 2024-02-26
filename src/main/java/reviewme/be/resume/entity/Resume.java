@@ -41,17 +41,18 @@ public class Resume {
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
-    public static Resume ofCreated(UploadResumeRequest uploadResumeRequest, User user, Scope scope, Occupation occupation, String fileName) {
+    public static Resume ofCreated(UploadResumeRequest uploadResumeRequest, User user, Scope scope,
+        Occupation occupation, String fileName) {
         return Resume.builder()
-                .writer(user)
-                .scope(scope)
-                .occupation(occupation)
-                .title(uploadResumeRequest.getTitle())
-                .url(fileName)
-                .year(uploadResumeRequest.getYear())
-                .commentCnt(0)
-                .createdAt(LocalDateTime.now())
-                .build();
+            .writer(user)
+            .scope(scope)
+            .occupation(occupation)
+            .title(uploadResumeRequest.getTitle())
+            .url(fileName)
+            .year(uploadResumeRequest.getYear())
+            .commentCnt(0)
+            .createdAt(LocalDateTime.now())
+            .build();
     }
 
     public void validateUser(User user) {
@@ -64,7 +65,8 @@ public class Resume {
         this.deletedAt = deletedAt;
     }
 
-    public void update(UpdateResumeRequest updateResumeRequest, Scope scope, Occupation occupation) {
+    public void update(UpdateResumeRequest updateResumeRequest, Scope scope,
+        Occupation occupation) {
 
         this.title = updateResumeRequest.getTitle();
         this.scope = scope;

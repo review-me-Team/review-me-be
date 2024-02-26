@@ -1,6 +1,5 @@
 package reviewme.be.user.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +21,6 @@ public class UserProfileResponse {
     private String name;
 
     @Schema(description = "유저 GitHub 이미지 url", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
-    @JsonProperty("avatar_url")
     private String avatarUrl;
 
     public static UserProfileResponse fromUser(User user) {

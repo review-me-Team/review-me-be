@@ -22,8 +22,8 @@ import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.dto.EmojiCount;
-import reviewme.be.util.dto.MyEmoji;
 import reviewme.be.util.entity.Emoji;
+import reviewme.be.util.service.UtilService;
 import reviewme.be.util.vo.EmojisVO;
 
 import java.time.LocalDateTime;
@@ -40,6 +40,7 @@ public class CommentService {
     private final CommentEmojiRepository commentEmojiRepository;
     private final UserService userService;
     private final ResumeService resumeService;
+    private final UtilService utilService;
     private final EmojisVO emojisVO;
 
     @Transactional
@@ -70,11 +71,11 @@ public class CommentService {
         List<Long> commentIds = getCommentIds(comments);
 
         // 댓글별 이모지 개수 조회
-        List<List<EmojiCount>> emojiCounts = collectEmojiCounts(
+        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             commentEmojiRepository.findEmojiCountByCommentIds(commentIds));
 
         // 내가 선택한 이모지 목록 조회
-        List<Integer> myEmojiIds = getMyEmojiIds(commentEmojiRepository.findByUserIdAndCommentIdIn(
+        List<Integer> myEmojiIds = utilService.getMyEmojiIds(commentEmojiRepository.findByUserIdAndCommentIdIn(
             user.getId(), commentIds));
 
         List<CommentResponse> commentsResponse = collectToCommentsResponse(commentIds, comments,
@@ -156,41 +157,6 @@ public class CommentService {
         return comments.stream()
             .map(CommentInfo::getId)
             .collect(Collectors.toList());
-    }
-
-    private List<List<EmojiCount>> collectEmojiCounts(List<EmojiCount> emojiCounts) {
-
-        List<List<EmojiCount>> groupedEmojiCounts = new ArrayList<>();
-
-        // 선택할 수 있는 이모지의 총 개수
-        int emojisSize = emojisVO.getEmojisSize();
-
-        for (int emojiCount = 0; emojiCount < emojiCounts.size(); ) {
-
-            List<EmojiCount> commentEmojiCount = new ArrayList<>();
-
-            for (int commentEmoji = 0; commentEmoji < emojisSize; commentEmoji++) {
-                commentEmojiCount.add(emojiCounts.get(emojiCount));
-                emojiCount++;
-            }
-            groupedEmojiCounts.add(commentEmojiCount);
-        }
-
-        return groupedEmojiCounts;
-    }
-
-
-    /**
-     * 사용자가 선택한 이모지 id 리스트 추출
-     */
-    private List<Integer> getMyEmojiIds(List<MyEmoji> myEmojis) {
-
-        List<Integer> myEmojiIds = myEmojis
-            .stream()
-            .map(MyEmoji::getEmojiId)
-            .collect(Collectors.toList());
-
-        return myEmojiIds;
     }
 
     /**

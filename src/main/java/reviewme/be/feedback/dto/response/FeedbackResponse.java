@@ -1,10 +1,11 @@
 package reviewme.be.feedback.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import reviewme.be.feedback.entity.Feedback;
+import reviewme.be.feedback.dto.FeedbackInfo;
 import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
@@ -41,7 +42,8 @@ public class FeedbackResponse {
     private long countOfReplies;
 
     @Schema(description = "체크 여부", example = "true")
-    private boolean checked;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean checked;
 
     @Schema(description = "이모지 정보")
     private List<EmojiCount> emojis;
@@ -49,19 +51,36 @@ public class FeedbackResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static FeedbackResponse fromFeedbackOfOwnResume(Feedback feedback,
+    public static FeedbackResponse fromFeedbackOfOwnResume(FeedbackInfo feedback,
         List<EmojiCount> emojis, Integer myEmojiId) {
 
         return FeedbackResponse.builder()
             .id(feedback.getId())
             .content(feedback.getContent())
-            .commenterId(feedback.getCommenter().getId())
-            .commenterName(feedback.getCommenter().getName())
-            .commenterProfileUrl(feedback.getCommenter().getProfileUrl())
-            .labelContent(feedback.getLabel().getContent())
+            .commenterId(feedback.getCommenterId())
+            .commenterName(feedback.getCommenterName())
+            .commenterProfileUrl(feedback.getCommenterProfileUrl())
+            .labelContent(feedback.getLabelContent())
             .createdAt(feedback.getCreatedAt())
-            .countOfReplies(feedback.getChildCnt())
+            .countOfReplies(feedback.getCountOfReplies())
             .checked(feedback.isChecked())
+            .emojis(emojis)
+            .myEmojiId(myEmojiId)
+            .build();
+    }
+
+    public static FeedbackResponse fromFeedbackOfOthersResume(FeedbackInfo feedback,
+        List<EmojiCount> emojis, Integer myEmojiId) {
+
+        return FeedbackResponse.builder()
+            .id(feedback.getId())
+            .content(feedback.getContent())
+            .commenterId(feedback.getCommenterId())
+            .commenterName(feedback.getCommenterName())
+            .commenterProfileUrl(feedback.getCommenterProfileUrl())
+            .labelContent(feedback.getLabelContent())
+            .createdAt(feedback.getCreatedAt())
+            .countOfReplies(feedback.getCountOfReplies())
             .emojis(emojis)
             .myEmojiId(myEmojiId)
             .build();

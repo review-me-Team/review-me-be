@@ -8,11 +8,11 @@ import java.util.List;
 
 @Getter
 @Builder
-@Schema(description = "예상 질문 목록 응답")
-public class QuestionPageResponse {
+@Schema(description = "예상 질문 댓글 목록 응답")
+public class QuestionCommentPageResponse {
 
-    @Schema(description = "예상 질문 목록")
-    private List<QuestionResponse> questions;
+    @Schema(description = "예상 질문 댓글 목록")
+    private List<QuestionCommentResponse> questionComments;
 
     @Schema(description = "현재 페이지", example = "1")
     private int pageNumber;

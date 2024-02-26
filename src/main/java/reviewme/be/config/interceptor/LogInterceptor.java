@@ -15,23 +15,20 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response,
-                             Object handler) throws Exception {
+        HttpServletResponse response,
+        Object handler) throws Exception {
 
         String requestURI = request.getRequestURI();
 
         String logId = java.util.UUID.randomUUID().toString();
         request.setAttribute(LOG_ID, logId);
-
-        log.info("REQUEST  [{}][{}][{}][{}]", logId, request.getRemoteAddr(), requestURI, handler);
-
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request,
-                                HttpServletResponse response,
-                                Object handler, Exception ex) throws Exception {
+        HttpServletResponse response,
+        Object handler, Exception ex) throws Exception {
 
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);

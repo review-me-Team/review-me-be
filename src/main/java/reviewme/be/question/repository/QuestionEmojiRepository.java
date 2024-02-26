@@ -7,7 +7,7 @@ import reviewme.be.question.entity.QuestionEmoji;
 import javax.persistence.Tuple;
 import java.util.List;
 
-public interface QuestionEmojiRepository extends JpaRepository<QuestionEmoji, Long> {
+public interface QuestionEmojiRepository extends JpaRepository<QuestionEmoji, Long>, QuestionEmojiRepositoryCustom {
 
     List<QuestionEmoji> findByQuestionId(long questionId);
 

@@ -7,7 +7,7 @@ import reviewme.be.feedback.entity.FeedbackEmoji;
 import javax.persistence.Tuple;
 import java.util.List;
 
-public interface FeedbackEmojiRepository extends JpaRepository<FeedbackEmoji, Long> {
+public interface FeedbackEmojiRepository extends JpaRepository<FeedbackEmoji, Long>, FeedbackEmojiRepositoryCustom {
 
     List<FeedbackEmoji> findByFeedbackId(long feedbackId);
 

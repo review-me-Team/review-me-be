@@ -13,6 +13,7 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import reviewme.be.user.exception.NonExistUserException;
 
 @Slf4j
 @Service
@@ -86,7 +87,7 @@ public class JWTService {
 
             return objectMapper.readValue(userProfileJson, clazz);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("사용자 정보를 가져올 수 없습니다.");
+            throw new NonExistUserException("사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요.");
         }
     }
 }
