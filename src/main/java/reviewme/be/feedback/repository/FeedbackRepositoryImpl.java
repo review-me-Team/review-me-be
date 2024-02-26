@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import reviewme.be.feedback.dto.FeedbackCommentInfo;
 import reviewme.be.feedback.dto.FeedbackInfo;
+import reviewme.be.feedback.dto.QFeedbackCommentInfo;
 import reviewme.be.feedback.dto.QFeedbackInfo;
 
 @RequiredArgsConstructor
@@ -46,6 +48,35 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
             .fetchResults();
 
         List<FeedbackInfo> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId, Pageable pageable) {
+
+        QueryResults<FeedbackCommentInfo> results = queryFactory
+            .select(new QFeedbackCommentInfo(
+                feedback.id,
+                feedback.parentFeedback.id,
+                feedback.content,
+                feedback.commenter.id,
+                feedback.commenter.name,
+                feedback.commenter.profileUrl,
+                feedback.createdAt
+            ))
+            .from(feedback)
+            .innerJoin(feedback.commenter)
+            .where(feedback.parentFeedback.id.eq(feedbackId)
+                .and(feedback.deletedAt.isNull())
+            )
+            .orderBy(feedback.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
+
+        List<FeedbackCommentInfo> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);

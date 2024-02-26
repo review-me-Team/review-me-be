@@ -23,7 +23,7 @@ public class Feedback {
     @JoinColumn(name = "user_id")
     private User commenter;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Feedback parentFeedback;
 

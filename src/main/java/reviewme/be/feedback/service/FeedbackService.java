@@ -10,12 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.feedback.dto.FeedbackCommentInfo;
 import reviewme.be.feedback.dto.FeedbackInfo;
 import reviewme.be.feedback.dto.request.CreateFeedbackCommentRequest;
 import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
-import reviewme.be.feedback.dto.response.CommentOfFeedbackPageResponse;
+import reviewme.be.feedback.dto.response.FeedbackCommentPageResponse;
+import reviewme.be.feedback.dto.response.FeedbackCommentResponse;
 import reviewme.be.feedback.dto.response.FeedbackPageResponse;
 import reviewme.be.feedback.dto.response.FeedbackResponse;
 import reviewme.be.feedback.entity.Feedback;
@@ -59,12 +61,8 @@ public class FeedbackService {
             request.getContent(),
             request.getResumePage()));
 
-        // Default Comment Emojis 생성
-        feedbackEmojiRepository.saveAll(
-            FeedbackEmoji.createDefaultFeedbackEmojis(
-                savedFeedback,
-                emojisVO.getEmojis())
-        );
+        // Default Feedback Emojis 생성
+        saveDefaultEmojis(savedFeedback);
     }
 
     @Transactional
@@ -87,12 +85,8 @@ public class FeedbackService {
 
         parentFeedback.plusChildCnt();
 
-        // Default Comment Emojis 생성
-        feedbackEmojiRepository.saveAll(
-            FeedbackEmoji.createDefaultFeedbackEmojis(
-                savedFeedback,
-                emojisVO.getEmojis())
-        );
+        // Default Feedback Emojis 생성
+        saveDefaultEmojis(savedFeedback);
     }
 
     @Transactional(readOnly = true)
@@ -127,11 +121,39 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public CommentOfFeedbackPageResponse getCommentsOfFeedback(long resumeId, long feedbackId, User user,
+    public FeedbackCommentPageResponse getFeedbackComments(long resumeId, long feedbackId,
+        User user,
         Pageable pageable) {
 
+        // 이력서, 부모 피드백 존재 여부 확인
+        resumeService.findById(resumeId);
+        Feedback parentFeedbackById = findParentFeedbackById(feedbackId);
+        System.out.println(parentFeedbackById.getCommenter());
+        System.out.println(parentFeedbackById.getId());
 
-        return null;
+
+        // 피드백 대댓글 목록 조회 후 id 목록 추출
+        Page<FeedbackCommentInfo> feedbackPage = feedbackRepository.findFeedbackCommentsByFeedbackId(
+            feedbackId, pageable);
+        List<FeedbackCommentInfo> feedbackComments = feedbackPage.getContent();
+        List<Long> feedbackCommentIds = getFeedbackCommentIds(feedbackComments);
+
+        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
+            feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackCommentIds));
+
+        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
+            feedbackEmojiRepository.findByUserIdAndFeedbackIdIn(user.getId(), feedbackCommentIds));
+
+        List<FeedbackCommentResponse> feedbackCommentsResponse = collectToFeedbackCommentsResponse(feedbackCommentIds,
+            feedbackComments,
+            emojiCounts, myEmojiIds);
+
+        return FeedbackCommentPageResponse.builder()
+            .feedbackComments(feedbackCommentsResponse)
+            .pageNumber(feedbackPage.getNumber())
+            .lastPage(feedbackPage.getTotalPages() - 1)
+            .pageSize(feedbackPage.getSize())
+            .build();
     }
 
     @Transactional
@@ -190,6 +212,20 @@ public class FeedbackService {
             .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
     }
 
+    private Feedback findParentFeedbackById(long feedbackId) {
+
+        return feedbackRepository.findFeedbackById(feedbackId)
+            .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
+    }
+
+    private void saveDefaultEmojis(Feedback savedFeedback) {
+        feedbackEmojiRepository.saveAll(
+            FeedbackEmoji.createDefaultFeedbackEmojis(
+                savedFeedback,
+                emojisVO.getEmojis())
+        );
+    }
+
     /***************
      * 아래는 피드백 목록 조회 시 사용되는 메서드입니다.
      ***************/
@@ -221,5 +257,32 @@ public class FeedbackService {
         }
 
         return feedbacksResponse;
+    }
+
+    private List<Long> getFeedbackCommentIds(List<FeedbackCommentInfo> feedbackComments) {
+
+        return feedbackComments.stream()
+            .map(FeedbackCommentInfo::getId)
+            .collect(Collectors.toList());
+    }
+
+    private List<FeedbackCommentResponse> collectToFeedbackCommentsResponse(List<Long> feedbackIds,
+        List<FeedbackCommentInfo> feedbackComments,
+        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds) {
+
+        List<FeedbackCommentResponse> feedbackCommentsResponse = new ArrayList<>();
+
+        for (int feedbackCommentIdx = 0; feedbackCommentIdx < feedbackIds.size(); feedbackCommentIdx++) {
+
+            FeedbackCommentInfo feedbackComment = feedbackComments.get(feedbackCommentIdx);
+            List<EmojiCount> emojis = emojiCounts.get(feedbackCommentIdx);
+            Integer myEmojiId = myEmojiIds.get(feedbackCommentIdx);
+
+            feedbackCommentsResponse.add(
+                FeedbackCommentResponse.fromFeedbackComment(feedbackComment, emojis, myEmojiId)
+            );
+        }
+
+        return feedbackCommentsResponse;
     }
 }

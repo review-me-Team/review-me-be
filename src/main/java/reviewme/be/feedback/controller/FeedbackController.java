@@ -17,11 +17,6 @@ import reviewme.be.feedback.repository.FeedbackRepository;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.feedback.service.FeedbackService;
 import reviewme.be.user.entity.User;
-import reviewme.be.util.dto.EmojiCount;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "feedback", description = "피드백(feedback) API")
 @RequestMapping("/resume/{resumeId}/feedback")
@@ -110,21 +105,22 @@ public class FeedbackController {
         @ApiResponse(responseCode = "200", description = "피드백 댓글 목록 조회 성공"),
         @ApiResponse(responseCode = "400", description = "피드백 댓글 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<CommentOfFeedbackPageResponse>> showCommentsOfFeedback(
+    public ResponseEntity<CustomResponse<FeedbackCommentPageResponse>> showCommentsOfFeedback(
         @PathVariable long resumeId,
         @PathVariable long feedbackId,
         @RequestAttribute("user") User user,
-        @PageableDefault(size = 20) Pageable pageable) {
+        @PageableDefault(page = 0, size = 20) Pageable pageable) {
 
-        CommentOfFeedbackPageResponse comments = feedbackService
-            .getCommentsOfFeedback(resumeId, feedbackId, user, pageable);
+        FeedbackCommentPageResponse feedbackComments = feedbackService
+            .getFeedbackComments(resumeId, feedbackId, user, pageable);
 
         return ResponseEntity
             .ok()
             .body(new CustomResponse<>(
                 "success",
                 200,
-                "피드백에 달린 대댓글 조회에 성공했습니다."
+                "피드백에 달린 대댓글 조회에 성공했습니다.",
+                feedbackComments
             ));
     }
 
