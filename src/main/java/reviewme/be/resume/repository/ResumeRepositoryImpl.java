@@ -42,8 +42,10 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
                 .where(
                         scopeIdEq(searchCondition.getScope()),
                         occupationEq(searchCondition.getOccupation()),
-                        yearEq(searchCondition.getYear()),
-                        resume.deletedAt.isNull())
+                        yearGoe(searchCondition.getStartYear()),
+                        yearLoe(searchCondition.getEndYear()),
+                        resume.deletedAt.isNull()
+                )
                 .orderBy(resume.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -65,8 +67,13 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
         return occupationId != null ? resume.occupation.id.eq(occupationId) : null;
     }
 
-    private BooleanExpression yearEq(Integer year) {
+    private BooleanExpression yearGoe(Integer startYear) {
 
-        return year != null ? resume.year.eq(year) : null;
+        return startYear != null ? resume.year.goe(startYear) : null;
+    }
+
+    private BooleanExpression yearLoe(Integer endYear) {
+
+        return endYear != null ? resume.year.loe(endYear) : null;
     }
 }

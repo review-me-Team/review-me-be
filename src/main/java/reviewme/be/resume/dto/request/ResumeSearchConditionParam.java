@@ -10,5 +10,6 @@ import lombok.Setter;
 public class ResumeSearchConditionParam {
     
     private Integer occupation;
-    private Integer year;
+    private Integer startYear;
+    private Integer endYear;
 }
