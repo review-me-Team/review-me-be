@@ -69,8 +69,7 @@ public class ResumeService {
             searchCondition.onlyPublic();
         }
 
-        // TODO: 조회 쿼리 수정 필요
-        return resumeRepository.findAllByDeletedAtIsNull(searchCondition, pageable);
+        return resumeRepository.findResumes(searchCondition, pageable);
     }
 
     @Transactional(readOnly = true)

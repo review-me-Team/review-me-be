@@ -21,7 +21,7 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<ResumeResponse> findAllByDeletedAtIsNull(ResumeSearchCondition searchCondition, Pageable pageable) {
+    public Page<ResumeResponse> findResumes(ResumeSearchCondition searchCondition, Pageable pageable) {
 
         QueryResults<ResumeResponse> results = queryFactory
                 .select(new QResumeResponse(
@@ -42,7 +42,8 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
                 .where(
                         scopeIdEq(searchCondition.getScope()),
                         occupationEq(searchCondition.getOccupation()),
-                        yearEq(searchCondition.getYear()))
+                        yearEq(searchCondition.getYear()),
+                        resume.deletedAt.isNull())
                 .orderBy(resume.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

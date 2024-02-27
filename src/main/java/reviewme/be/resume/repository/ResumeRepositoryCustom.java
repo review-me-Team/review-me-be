@@ -7,6 +7,6 @@ import reviewme.be.resume.dto.response.ResumeResponse;
 
 public interface ResumeRepositoryCustom {
 
-    Page<ResumeResponse> findAllByDeletedAtIsNull(ResumeSearchCondition searchCondition, Pageable pageable);
+    Page<ResumeResponse> findResumes(ResumeSearchCondition searchCondition, Pageable pageable);
 
 }
