@@ -81,6 +81,28 @@ public class ResumeController {
                 ));
     }
 
+    @Operation(summary = "내 이력서 목록 조회", description = "내 이력서 목록을 조회합니다.")
+    @GetMapping("/my")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "내 이력서 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "내 이력서 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<ResumePageResponse>> showMyResumes(
+            @PageableDefault(size=20) Pageable pageable,
+            @RequestAttribute("user") User user) {
+
+//        Page<ResumeResponse> resumes = resumeService.getMyResumes(pageable, user);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "내 이력서 목록 조회에 성공했습니다."
+//                        ResumePageResponse.fromResumePageable(resumes)
+                ));
+    }
+
     @Operation(summary = "이력서 상세 조회", description = "이력서 상세 내용을 조회합니다.")
     @GetMapping("/{resumeId}")
     @ApiResponses({
