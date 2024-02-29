@@ -94,8 +94,7 @@ public class FeedbackService {
         User user,
         Pageable pageable) {
 
-        Resume resume = resumeService.findById(resumeId);
-        boolean isWriter = resume.isWriter(user);
+        resumeService.findById(resumeId);
 
         // 피드백 목록 조회 후 id 목록 추출
         Page<FeedbackInfo> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
@@ -107,7 +106,7 @@ public class FeedbackService {
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackIds));
 
         List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbackIds,
-            feedbacks, emojiCounts, isWriter, user);
+            feedbacks, emojiCounts, user);
 
         return FeedbackPageResponse.builder()
             .feedbacks(feedbacksResponse)
@@ -230,7 +229,7 @@ public class FeedbackService {
 
     private List<FeedbackResponse> collectToFeedbacksResponse(List<Long> feedbackIds,
         List<FeedbackInfo> feedbacks,
-        List<List<EmojiCount>> emojiCounts, boolean isWriter, User user) {
+        List<List<EmojiCount>> emojiCounts, User user) {
 
         List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
 
@@ -240,9 +239,8 @@ public class FeedbackService {
             List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
             Integer myEmojiId = findMyEmojiIdByFeedbackId(feedbackIds.get(feedbackIdx), user);
 
-            FeedbackResponse feedbackResponse = isWriter
-                ? FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId)
-                : FeedbackResponse.fromFeedbackOfOthersResume(feedback, emojis, myEmojiId);
+            FeedbackResponse feedbackResponse = FeedbackResponse.fromFeedbackOfResume(feedback,
+                emojis, myEmojiId);
 
             feedbacksResponse.add(feedbackResponse);
         }
@@ -268,7 +266,8 @@ public class FeedbackService {
 
             FeedbackCommentInfo feedbackComment = feedbackComments.get(feedbackCommentIdx);
             List<EmojiCount> emojis = emojiCounts.get(feedbackCommentIdx);
-            Integer myEmojiId = findMyEmojiIdByFeedbackId(feedbackIds.get(feedbackCommentIdx), user);
+            Integer myEmojiId = findMyEmojiIdByFeedbackId(feedbackIds.get(feedbackCommentIdx),
+                user);
 
             feedbackCommentsResponse.add(
                 FeedbackCommentResponse.fromFeedbackComment(feedbackComment, emojis, myEmojiId)

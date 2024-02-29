@@ -43,7 +43,6 @@ public class QuestionResponse {
     private long countOfReplies;
 
     @Schema(description = "체크 여부", example = "true")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean checked;
 
     @Schema(description = "북마크 여부", example = "true")
@@ -87,6 +86,7 @@ public class QuestionResponse {
             .labelContent(question.getLabelContent())
             .createdAt(question.getCreatedAt())
             .countOfReplies(question.getCountOfReplies())
+            .checked(question.isChecked())
             .emojis(emojis)
             .myEmojiId(myEmojiId)
             .build();
