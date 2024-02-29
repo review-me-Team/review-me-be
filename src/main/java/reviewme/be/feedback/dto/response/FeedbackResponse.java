@@ -39,10 +39,9 @@ public class FeedbackResponse {
     private LocalDateTime createdAt;
 
     @Schema(description = "댓글 개수", example = "10")
-    private long countOfReplies;
+    private long countOfComments;
 
     @Schema(description = "체크 여부", example = "true")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean checked;
 
     @Schema(description = "이모지 정보")
@@ -51,7 +50,7 @@ public class FeedbackResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static FeedbackResponse fromFeedbackOfOwnResume(FeedbackInfo feedback,
+    public static FeedbackResponse fromFeedbackOfResume(FeedbackInfo feedback,
         List<EmojiCount> emojis, Integer myEmojiId) {
 
         return FeedbackResponse.builder()
@@ -62,25 +61,8 @@ public class FeedbackResponse {
             .commenterProfileUrl(feedback.getCommenterProfileUrl())
             .labelContent(feedback.getLabelContent())
             .createdAt(feedback.getCreatedAt())
-            .countOfReplies(feedback.getCountOfReplies())
+            .countOfComments(feedback.getCountOfReplies())
             .checked(feedback.isChecked())
-            .emojis(emojis)
-            .myEmojiId(myEmojiId)
-            .build();
-    }
-
-    public static FeedbackResponse fromFeedbackOfOthersResume(FeedbackInfo feedback,
-        List<EmojiCount> emojis, Integer myEmojiId) {
-
-        return FeedbackResponse.builder()
-            .id(feedback.getId())
-            .content(feedback.getContent())
-            .commenterId(feedback.getCommenterId())
-            .commenterName(feedback.getCommenterName())
-            .commenterProfileUrl(feedback.getCommenterProfileUrl())
-            .labelContent(feedback.getLabelContent())
-            .createdAt(feedback.getCreatedAt())
-            .countOfReplies(feedback.getCountOfReplies())
             .emojis(emojis)
             .myEmojiId(myEmojiId)
             .build();

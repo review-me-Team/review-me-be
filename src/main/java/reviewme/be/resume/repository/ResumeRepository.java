@@ -12,5 +12,4 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeRep
     Optional<Resume> findByIdAndDeletedAtIsNull(long id);
 
     Optional<Resume> findByUrlAndDeletedAtIsNull(String url);
-    List<Resume> findByWriterIdAndDeletedAtIsNull(long userId);
 }

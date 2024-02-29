@@ -45,7 +45,7 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
                 .and(question.deletedAt.isNull()
                     .or(question.deletedAt.isNotNull().and(question.childCnt.gt(0))))
             )
-            .orderBy(question.createdAt.desc())
+            .orderBy(question.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();
@@ -75,7 +75,7 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             .where(question.parentQuestion.id.eq(questionId)
                 .and(question.deletedAt.isNull())
             )
-            .orderBy(question.createdAt.desc())
+            .orderBy(question.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();

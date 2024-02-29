@@ -14,17 +14,21 @@ public class ResumeSearchCondition {
 
     private Integer scope;
     private Integer occupation;
-    private Integer year;
+    private Integer startYear;
+    private Integer endYear;
 
     public ResumeSearchCondition(ResumeSearchConditionParam resumeSearchConditionParam) {
 
         // Default scope is 2 (public, friends only)
         this.scope = 2;
         this.occupation = resumeSearchConditionParam.getOccupation();
-        this.year = resumeSearchConditionParam.getYear();
+        this.startYear = resumeSearchConditionParam.getStartYear();
+        this.endYear = resumeSearchConditionParam.getEndYear();
     }
 
     public void onlyPublic() {
+
+        // is public only
         this.scope = 1;
     }
 }

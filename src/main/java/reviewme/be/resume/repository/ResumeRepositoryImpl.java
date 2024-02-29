@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import reviewme.be.resume.dto.ResumeSearchCondition;
+import reviewme.be.resume.dto.response.MyResumeResponse;
+import reviewme.be.resume.dto.response.QMyResumeResponse;
 import reviewme.be.resume.dto.response.QResumeResponse;
 import reviewme.be.resume.dto.response.ResumeResponse;
 
@@ -21,7 +23,7 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<ResumeResponse> findAllByDeletedAtIsNull(ResumeSearchCondition searchCondition, Pageable pageable) {
+    public Page<ResumeResponse> findResumes(ResumeSearchCondition searchCondition, Pageable pageable) {
 
         QueryResults<ResumeResponse> results = queryFactory
                 .select(new QResumeResponse(
@@ -42,13 +44,47 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
                 .where(
                         scopeIdEq(searchCondition.getScope()),
                         occupationEq(searchCondition.getOccupation()),
-                        yearEq(searchCondition.getYear()))
-                .orderBy(resume.createdAt.desc())
+                        yearGoe(searchCondition.getStartYear()),
+                        yearLoe(searchCondition.getEndYear()),
+                        resume.deletedAt.isNull()
+                )
+                .orderBy(resume.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
 
         List<ResumeResponse> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<MyResumeResponse> findResumesByWriterId(Pageable pageable, long userId) {
+
+        QueryResults<MyResumeResponse> results = queryFactory
+                .select(new QMyResumeResponse(
+                        resume.id,
+                        resume.title,
+                        resume.createdAt,
+                        resume.scope.scope,
+                        resume.occupation.occupation,
+                        resume.year
+                ))
+                .from(resume)
+                .leftJoin(resume.writer)
+                .leftJoin(resume.scope)
+                .leftJoin(resume.occupation)
+                .where(
+                        resume.writer.id.eq(userId),
+                        resume.deletedAt.isNull()
+                )
+                .orderBy(resume.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<MyResumeResponse> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
@@ -64,8 +100,13 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
         return occupationId != null ? resume.occupation.id.eq(occupationId) : null;
     }
 
-    private BooleanExpression yearEq(Integer year) {
+    private BooleanExpression yearGoe(Integer startYear) {
 
-        return year != null ? resume.year.eq(year) : null;
+        return startYear != null ? resume.year.goe(startYear) : null;
+    }
+
+    private BooleanExpression yearLoe(Integer endYear) {
+
+        return endYear != null ? resume.year.loe(endYear) : null;
     }
 }
