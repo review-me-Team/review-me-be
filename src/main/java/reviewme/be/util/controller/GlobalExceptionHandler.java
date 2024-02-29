@@ -13,6 +13,7 @@ import reviewme.be.custom.CustomErrorResponse;
 import reviewme.be.util.exception.NonExistLabelException;
 import reviewme.be.util.exception.NonExistOccupationException;
 import reviewme.be.util.exception.NonExistScopeException;
+import reviewme.be.util.exception.NotLoggedInUserException;
 import reviewme.be.util.exception.NotYoursException;
 
 @RestControllerAdvice
@@ -104,6 +105,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotYoursException.class)
     public ResponseEntity<CustomErrorResponse> notYours(NotYoursException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NotLoggedInUserException.class)
+    public ResponseEntity<CustomErrorResponse> notLoggedInUser(NotLoggedInUserException ex) {
 
         return ResponseEntity
                 .badRequest()

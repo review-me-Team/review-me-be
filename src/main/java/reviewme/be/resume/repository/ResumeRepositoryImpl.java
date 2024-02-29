@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import reviewme.be.resume.dto.ResumeSearchCondition;
+import reviewme.be.resume.dto.response.MyResumeResponse;
+import reviewme.be.resume.dto.response.QMyResumeResponse;
 import reviewme.be.resume.dto.response.QResumeResponse;
 import reviewme.be.resume.dto.response.ResumeResponse;
 
@@ -46,12 +48,43 @@ public class ResumeRepositoryImpl implements ResumeRepositoryCustom {
                         yearLoe(searchCondition.getEndYear()),
                         resume.deletedAt.isNull()
                 )
-                .orderBy(resume.createdAt.desc())
+                .orderBy(resume.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
 
         List<ResumeResponse> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<MyResumeResponse> findResumesByWriterId(Pageable pageable, long userId) {
+
+        QueryResults<MyResumeResponse> results = queryFactory
+                .select(new QMyResumeResponse(
+                        resume.id,
+                        resume.title,
+                        resume.createdAt,
+                        resume.scope.scope,
+                        resume.occupation.occupation,
+                        resume.year
+                ))
+                .from(resume)
+                .leftJoin(resume.writer)
+                .leftJoin(resume.scope)
+                .leftJoin(resume.occupation)
+                .where(
+                        resume.writer.id.eq(userId),
+                        resume.deletedAt.isNull()
+                )
+                .orderBy(resume.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<MyResumeResponse> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
