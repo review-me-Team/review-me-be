@@ -45,7 +45,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
                 .and(feedback.deletedAt.isNull()
                     .or(feedback.deletedAt.isNotNull().and(feedback.childCnt.gt(0))))
             )
-            .orderBy(feedback.createdAt.desc())
+            .orderBy(feedback.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();
@@ -75,7 +75,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
             .where(feedback.parentFeedback.id.eq(feedbackId)
                 .and(feedback.deletedAt.isNull())
             )
-            .orderBy(feedback.createdAt.desc())
+            .orderBy(feedback.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();

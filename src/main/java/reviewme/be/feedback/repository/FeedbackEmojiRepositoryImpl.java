@@ -10,9 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import reviewme.be.util.dto.EmojiCount;
-import reviewme.be.util.dto.MyEmoji;
 import reviewme.be.util.dto.QEmojiCount;
-import reviewme.be.util.dto.QMyEmoji;
 
 @RequiredArgsConstructor
 public class FeedbackEmojiRepositoryImpl implements FeedbackEmojiRepositoryCustom {
@@ -33,25 +31,7 @@ public class FeedbackEmojiRepositoryImpl implements FeedbackEmojiRepositoryCusto
             .innerJoin(feedbackEmoji.feedback, feedback)
             .where(feedbackEmoji.feedback.id.in(feedbackIds))
             .groupBy(emoji.id, feedback.id)
-            .orderBy(feedback.createdAt.desc(), emoji.id.asc())
-            .fetch();
-    }
-
-    @Override
-    public List<MyEmoji> findMyEmojiIdsByFeedbackIdIn(long userId, List<Long> feedbackIds) {
-
-        return queryFactory
-            .select(new QMyEmoji(
-                feedbackEmoji.emoji.id,
-                user.id)
-            )
-            .from(feedbackEmoji)
-            .leftJoin(feedbackEmoji.user, user)
-            .where(feedbackEmoji.feedback.id.in(feedbackIds)
-                .and(feedbackEmoji.user.id.eq(userId))
-                .or(user.id.isNull()))
-            .groupBy(feedbackEmoji.feedback.id)
-            .orderBy(feedbackEmoji.feedback.id.desc())
+            .orderBy(feedback.id.desc(), emoji.id.asc())
             .fetch();
     }
 }

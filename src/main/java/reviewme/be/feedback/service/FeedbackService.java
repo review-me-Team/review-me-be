@@ -106,11 +106,8 @@ public class FeedbackService {
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackIds));
 
-        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
-            feedbackEmojiRepository.findMyEmojiIdsByFeedbackIdIn(user.getId(), feedbackIds));
-
         List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbackIds,
-            feedbacks, emojiCounts, myEmojiIds, isWriter);
+            feedbacks, emojiCounts, isWriter, user);
 
         return FeedbackPageResponse.builder()
             .feedbacks(feedbacksResponse)
@@ -138,13 +135,10 @@ public class FeedbackService {
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackCommentIds));
 
-        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
-            feedbackEmojiRepository.findMyEmojiIdsByFeedbackIdIn(user.getId(), feedbackCommentIds));
-
         List<FeedbackCommentResponse> feedbackCommentsResponse = collectToFeedbackCommentsResponse(
             feedbackCommentIds,
             feedbackComments,
-            emojiCounts, myEmojiIds);
+            emojiCounts, user);
 
         return FeedbackCommentPageResponse.builder()
             .feedbackComments(feedbackCommentsResponse)
@@ -236,7 +230,7 @@ public class FeedbackService {
 
     private List<FeedbackResponse> collectToFeedbacksResponse(List<Long> feedbackIds,
         List<FeedbackInfo> feedbacks,
-        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds, boolean isWriter) {
+        List<List<EmojiCount>> emojiCounts, boolean isWriter, User user) {
 
         List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
 
@@ -244,7 +238,7 @@ public class FeedbackService {
 
             FeedbackInfo feedback = feedbacks.get(feedbackIdx);
             List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
-            Integer myEmojiId = myEmojiIds.get(feedbackIdx);
+            Integer myEmojiId = findMyEmojiIdByFeedbackId(feedbackIds.get(feedbackIdx), user);
 
             FeedbackResponse feedbackResponse = isWriter
                 ? FeedbackResponse.fromFeedbackOfOwnResume(feedback, emojis, myEmojiId)
@@ -265,7 +259,7 @@ public class FeedbackService {
 
     private List<FeedbackCommentResponse> collectToFeedbackCommentsResponse(List<Long> feedbackIds,
         List<FeedbackCommentInfo> feedbackComments,
-        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds) {
+        List<List<EmojiCount>> emojiCounts, User user) {
 
         List<FeedbackCommentResponse> feedbackCommentsResponse = new ArrayList<>();
 
@@ -274,7 +268,7 @@ public class FeedbackService {
 
             FeedbackCommentInfo feedbackComment = feedbackComments.get(feedbackCommentIdx);
             List<EmojiCount> emojis = emojiCounts.get(feedbackCommentIdx);
-            Integer myEmojiId = myEmojiIds.get(feedbackCommentIdx);
+            Integer myEmojiId = findMyEmojiIdByFeedbackId(feedbackIds.get(feedbackCommentIdx), user);
 
             feedbackCommentsResponse.add(
                 FeedbackCommentResponse.fromFeedbackComment(feedbackComment, emojis, myEmojiId)
@@ -282,5 +276,13 @@ public class FeedbackService {
         }
 
         return feedbackCommentsResponse;
+    }
+
+    private Integer findMyEmojiIdByFeedbackId(Long feedbackId, User user) {
+
+        return feedbackEmojiRepository.findByFeedbackIdAndUserId(
+                feedbackId, user.getId())
+            .map(el -> el.getEmoji().getId())
+            .orElse(null);
     }
 }

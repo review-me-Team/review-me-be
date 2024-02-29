@@ -33,7 +33,7 @@ public class QuestionEmojiRepositoryImpl implements QuestionEmojiRepositoryCusto
             .innerJoin(questionEmoji.question, question)
             .where(questionEmoji.question.id.in(questionIds))
             .groupBy(emoji.id, question.id)
-            .orderBy(question.createdAt.desc(), emoji.id.asc())
+            .orderBy(question.id.desc(), emoji.id.asc())
             .fetch();
     }
 
@@ -51,7 +51,7 @@ public class QuestionEmojiRepositoryImpl implements QuestionEmojiRepositoryCusto
                 .and(questionEmoji.user.id.eq(userId))
                 .or(user.id.isNull()))
             .groupBy(questionEmoji.question.id)
-            .orderBy(questionEmoji.question.id.desc())
+            .orderBy(questionEmoji.id.desc(), questionEmoji.question.id.desc())
             .fetch();
     }
 }

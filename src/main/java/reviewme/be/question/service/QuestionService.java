@@ -99,11 +99,8 @@ public class QuestionService {
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             questionEmojiRepository.findEmojiCountByQuestionIds(questionIds));
 
-        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
-            questionEmojiRepository.findMyEmojiIdsByQuestionIds(user.getId(), questionIds));
-
         List<QuestionResponse> questionsResponse = collectToQuestionsResponse(questionIds,
-            questions, emojiCounts, myEmojiIds, isWriter);
+            questions, emojiCounts, isWriter, user);
 
         return QuestionPageResponse.builder()
             .questions(questionsResponse)
@@ -131,12 +128,9 @@ public class QuestionService {
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             questionEmojiRepository.findEmojiCountByQuestionIds(questionCommentIds));
 
-        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
-            questionEmojiRepository.findMyEmojiIdsByQuestionIds(user.getId(), questionCommentIds));
-
         List<QuestionCommentResponse> questionCommentsResponse = collectToQuestionCommentsResponse(
             questionCommentIds, questionComments, emojiCounts,
-            myEmojiIds);
+            user);
 
         return QuestionCommentPageResponse.builder()
             .questionComments(questionCommentsResponse)
@@ -279,7 +273,7 @@ public class QuestionService {
 
     private List<QuestionResponse> collectToQuestionsResponse(List<Long> questionIds,
         List<QuestionInfo> questions,
-        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds, boolean isWriter) {
+        List<List<EmojiCount>> emojiCounts, boolean isWriter, User user) {
 
         List<QuestionResponse> questionsResponse = new ArrayList<>();
 
@@ -287,7 +281,7 @@ public class QuestionService {
 
             QuestionInfo question = questions.get(questionIdx);
             List<EmojiCount> emojiCount = emojiCounts.get(questionIdx);
-            Integer myEmojiId = myEmojiIds.get(questionIdx);
+            Integer myEmojiId = findMyEmojiIdByQuestionId(questionIds.get(questionIdx), user);
 
             QuestionResponse questionResponse = isWriter
                 ? QuestionResponse.fromQuestionOfOwnResume(question, emojiCount, myEmojiId)
@@ -309,7 +303,7 @@ public class QuestionService {
     private List<QuestionCommentResponse> collectToQuestionCommentsResponse(
         List<Long> questionCommentIds,
         List<QuestionCommentInfo> questionComments,
-        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds) {
+        List<List<EmojiCount>> emojiCounts, User user) {
 
         List<QuestionCommentResponse> questionCommentResponses = new ArrayList<>();
 
@@ -318,7 +312,8 @@ public class QuestionService {
 
             QuestionCommentInfo questionComment = questionComments.get(questionCommentIdx);
             List<EmojiCount> emojiCount = emojiCounts.get(questionCommentIdx);
-            Integer myEmojiId = myEmojiIds.get(questionCommentIdx);
+            Integer myEmojiId = findMyEmojiIdByQuestionId(
+                questionCommentIds.get(questionCommentIdx), user);
 
             questionCommentResponses.add(
                 QuestionCommentResponse.fromQuestionComment(questionComment, emojiCount, myEmojiId)
@@ -326,5 +321,13 @@ public class QuestionService {
         }
 
         return questionCommentResponses;
+    }
+
+    private Integer findMyEmojiIdByQuestionId(Long questionId, User user) {
+
+        return questionEmojiRepository.findByQuestionIdAndUserId(
+                questionId, user.getId())
+            .map(el -> el.getEmoji().getId())
+            .orElse(null);
     }
 }
