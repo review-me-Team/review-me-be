@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import reviewme.be.friend.entity.Friend;
 import reviewme.be.user.dto.response.QUserResponse;
 import reviewme.be.user.dto.response.UserResponse;
 
@@ -45,6 +46,18 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public List<Friend> findFriendRelation(long followerUserId, long followingUserId) {
+
+        return queryFactory
+                .selectFrom(friend)
+                .where(
+                    (friend.followerUser.id.eq(followerUserId).and(friend.followingUser.id.eq(followingUserId)))
+                    .or(friend.followerUser.id.eq(followingUserId).and(friend.followingUser.id.eq(followerUserId)))
+                )
+                .fetch();
     }
 
     private BooleanExpression followingUserEq(Long userId) {

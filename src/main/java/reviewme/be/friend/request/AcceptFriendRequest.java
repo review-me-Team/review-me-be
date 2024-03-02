@@ -14,5 +14,5 @@ public class AcceptFriendRequest {
 
     @Schema(description = "수락할 친구의 ID", example = "1")
     @NotNull(message = "친구 ID는 필수 입력 값입니다.")
-    private Long userId;
+    private long userId;
 }

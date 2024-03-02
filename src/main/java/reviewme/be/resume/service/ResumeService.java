@@ -13,7 +13,6 @@ import reviewme.be.friend.service.FriendService;
 import reviewme.be.resume.dto.ResumeSearchCondition;
 import reviewme.be.resume.dto.request.ResumeSearchConditionParam;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
-import reviewme.be.resume.dto.response.MyResumePageResponse;
 import reviewme.be.resume.dto.response.MyResumeResponse;
 import reviewme.be.resume.dto.response.ResumeDetailResponse;
 import reviewme.be.resume.dto.response.ResumeResponse;
@@ -22,10 +21,10 @@ import reviewme.be.resume.exception.BadFileExtensionException;
 import reviewme.be.resume.exception.NonExistResumeException;
 import reviewme.be.resume.repository.ResumeRepository;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
+import reviewme.be.user.service.UserService;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
 import reviewme.be.user.entity.User;
-import reviewme.be.util.exception.NotLoggedInUserException;
 import reviewme.be.util.service.UtilService;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -40,8 +39,8 @@ public class ResumeService {
 
     private final S3Client s3Client;
     private final ResumeRepository resumeRepository;
-
     private final FriendService friendService;
+    private final UserService userService;
     private final UtilService utilService;
 
     @Value("${AWS_S3_BUCKET_NAME}")
@@ -79,9 +78,7 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public Page<MyResumeResponse> getMyResumes(Pageable pageable, User user) {
 
-        if (user.isAnonymous()) {
-            throw new NotLoggedInUserException("로그인이 필요한 서비스입니다.");
-        }
+        userService.validateLoggedInUser(user);
 
         return resumeRepository.findResumesByWriterId(pageable,
             user.getId());

@@ -13,6 +13,7 @@ import reviewme.be.user.repository.UserRepository;
 import reviewme.be.user.entity.User;
 
 import java.util.Optional;
+import reviewme.be.util.exception.NotLoggedInUserException;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +42,14 @@ public class UserService {
     public Page<UserResponse> getUsersByStartName(String start, Pageable pageable) {
 
         return userRepository.findUsersByStartName(start, pageable);
+    }
+
+    public boolean validateLoggedInUser(User user) {
+
+        if (user.isAnonymous()) {
+            throw new NotLoggedInUserException("로그인이 필요한 서비스입니다.");
+        }
+
+        return true;
     }
 }

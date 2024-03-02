@@ -36,8 +36,8 @@ public class Feedback {
     private Resume resume;
 
     private String content;
-    private int resumePage;
-    private boolean checked;
+    private Integer resumePage;
+    private Boolean checked;
     private long childCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

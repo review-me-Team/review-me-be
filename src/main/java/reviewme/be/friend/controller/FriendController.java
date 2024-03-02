@@ -17,6 +17,7 @@ import reviewme.be.user.dto.response.UserPageResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.friend.service.FriendService;
 import reviewme.be.user.dto.response.UserResponse;
+import reviewme.be.user.entity.User;
 
 @Tag(name = "friend", description = "친구(friend) API")
 @RequestMapping("/friend")
@@ -26,122 +27,131 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    // 개발 편의성을 위해 로그인 기능 구현 전 userId를 1로 고정
-    private long userId = 1L;
-
     @Operation(summary = "친구 요청", description = "친구를 요청합니다.")
     @PostMapping
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "친구 요청 성공"),
-            @ApiResponse(responseCode = "400", description = "친구 요청 실패")
+        @ApiResponse(responseCode = "200", description = "친구 요청 성공"),
+        @ApiResponse(responseCode = "400", description = "친구 요청 실패")
     })
-    public ResponseEntity<CustomResponse> followFriend(@Validated @RequestBody FollowFriendRequest followFriendRequest) {
+    public ResponseEntity<CustomResponse<Void>> followFriend(
+        @Validated @RequestBody FollowFriendRequest followFriendRequest,
+        @RequestAttribute("user") User user) {
 
-        friendService.requestFriend(userId, followFriendRequest.getUserId());
+        friendService.requestFriend(followFriendRequest, user);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "친구 요청에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "친구 요청에 성공했습니다."
+            ));
     }
 
     @Operation(summary = "친구 요청 수락", description = "친구 요청을 수락합니다.")
     @PatchMapping
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "친구 요청 수락 성공"),
-            @ApiResponse(responseCode = "400", description = "친구 요청 수락 실패")
+        @ApiResponse(responseCode = "200", description = "친구 요청 수락 성공"),
+        @ApiResponse(responseCode = "400", description = "친구 요청 수락 실패")
     })
-    public ResponseEntity<CustomResponse> acceptFriend(@Validated @RequestBody AcceptFriendRequest acceptFriendRequest) {
+    public ResponseEntity<CustomResponse<Void>> acceptFriend(
+        @Validated @RequestBody AcceptFriendRequest acceptFriendRequest,
+        @RequestAttribute("user") User user) {
 
-        friendService.acceptFriend(userId, acceptFriendRequest.getUserId());
+        friendService.acceptFriend(acceptFriendRequest, user);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "친구 요청 수락에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "친구 요청 수락에 성공했습니다."
+            ));
     }
 
     @Operation(summary = "친구 목록 조회", description = "내 친구 목록을 조회합니다.")
     @GetMapping
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "친구 목록 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "친구 목록 조회 실패")
+        @ApiResponse(responseCode = "200", description = "친구 목록 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "친구 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<UserPageResponse>> showFriends(@PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<UserPageResponse>> showFriends(
+        @PageableDefault(size = 20) Pageable pageable,
+        @RequestAttribute("user") User user) {
 
-        Page<UserResponse> friends = friendService.getFriends(userId, pageable);
+        Page<UserResponse> friends = friendService.getFriends(user, pageable);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "친구 목록 조회에 성공했습니다.",
-                        UserPageResponse.fromUserPageable(friends)
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "친구 목록 조회에 성공했습니다.",
+                UserPageResponse.fromUserPageable(friends)
+            ));
     }
 
     @Operation(summary = "나에게 친구 요청 온 목록 조회", description = "나에게 친구 요청 온 목록을 조회합니다.")
     @GetMapping("/follower")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "친구 요청 목록 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "친구 요청 목록 조회 실패")
+        @ApiResponse(responseCode = "200", description = "친구 요청 목록 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "친구 요청 목록 조회 실패")
     })
-    public ResponseEntity<CustomResponse<UserPageResponse>> showFollowFriends(@PageableDefault(size=20) Pageable pageable) {
+    public ResponseEntity<CustomResponse<UserPageResponse>> showFollowFriends(
+        @PageableDefault(size = 20) Pageable pageable,
+        @RequestAttribute("user") User user) {
 
-        Page<UserResponse> friendRequests = friendService.getFriendRequests(userId, pageable);
+        Page<UserResponse> friendRequests = friendService.getFriendRequests(user, pageable);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "친구 요청 온 목록 조회에 성공했습니다.",
-                        UserPageResponse.fromUserPageable(friendRequests)
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "친구 요청 온 목록 조회에 성공했습니다.",
+                UserPageResponse.fromUserPageable(friendRequests)
+            ));
     }
 
     @Operation(summary = "친구 삭제", description = "친구를 삭제합니다.")
     @DeleteMapping("/{friendId}")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "친구 삭제 성공"),
-            @ApiResponse(responseCode = "400", description = "친구 삭제 실패")
+        @ApiResponse(responseCode = "200", description = "친구 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "친구 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteFriend(@PathVariable long friendId) {
+    public ResponseEntity<CustomResponse<Void>> deleteFriend(
+        @PathVariable long friendId,
+        @RequestAttribute("user") User user) {
 
-        friendService.deleteFriend(userId, friendId);
+        friendService.deleteFriend(friendId, user);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "친구 삭제에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "친구 삭제에 성공했습니다."
+            ));
     }
 
     @Operation(summary = "친구 요청 거절", description = "친구 요청을 거절합니다.")
     @PatchMapping("/{friendId}")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "친구 요청 거절 성공"),
-            @ApiResponse(responseCode = "400", description = "친구 요청 거절 실패")
+        @ApiResponse(responseCode = "200", description = "친구 요청 거절 성공"),
+        @ApiResponse(responseCode = "400", description = "친구 요청 거절 실패")
     })
-    public ResponseEntity<CustomResponse> rejectFriendRequest(@PathVariable long friendId) {
+    public ResponseEntity<CustomResponse> rejectFriendRequest(
+        @PathVariable long friendId,
+        @RequestAttribute("user") User user) {
 
-        friendService.cancelFriendRequest(userId, friendId);
+        friendService.cancelFriendRequest(friendId, user);
 
         return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "친구 요청 거절에 성공했습니다."
-                ));
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "친구 요청 거절에 성공했습니다."
+            ));
     }
 }
