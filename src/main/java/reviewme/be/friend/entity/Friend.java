@@ -44,8 +44,9 @@ public class Friend {
                 .build();
     }
 
-    public void acceptRequest() {
+    public void accept() {
 
         this.accepted = true;
     }
+
 }

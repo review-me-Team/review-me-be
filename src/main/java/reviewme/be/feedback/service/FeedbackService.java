@@ -50,6 +50,8 @@ public class FeedbackService {
         Resume resume = resumeService.findById(resumeId);
         Label label = null;
 
+        // TODO: 이력서 공개 범위에 따라 요청한 사용자가 작성할 수 있는지 검증
+
         if (request.getLabelId() != null) {
             label = utilService.findFeedbackLabelById(request.getLabelId());
         }
@@ -72,6 +74,8 @@ public class FeedbackService {
         // 이력서, 피드백 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
         Feedback parentFeedback = findByIdAndResumeId(parentId, resumeId);
+
+        // TODO: 이력서 공개 범위에 따라 요청한 사용자가 작성할 수 있는지 검증
 
         if (!parentFeedback.isParentFeedback()) {
             throw new NonExistFeedbackException("해당 피드백에는 대댓글을 추가할 수 없습니다.");

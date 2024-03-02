@@ -1,5 +1,6 @@
 package reviewme.be.friend.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,12 +12,12 @@ import reviewme.be.friend.exception.AlreadyFriendRequestedException;
 import reviewme.be.friend.exception.NotOnTheFriendRelationException;
 import reviewme.be.friend.exception.NotOnTheFriendRequestException;
 import reviewme.be.friend.repository.FriendRepository;
+import reviewme.be.friend.request.AcceptFriendRequest;
+import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.user.dto.response.UserResponse;
 import reviewme.be.user.service.UserService;
 import reviewme.be.user.entity.User;
-
-
-// TODO: Follower, follwing 관계 다시 확인하기
+import reviewme.be.util.exception.NotLoggedInUserException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,97 +27,112 @@ public class FriendService {
     private final UserService userService;
 
     @Transactional
-    public void requestFriend(long userId, long followingUserId) {
+    public void requestFriend(FollowFriendRequest request, User followerUser) {
 
-        User followerUser = userService.getUserById(userId);
-        User followingUser = userService.getUserById(followingUserId);
+        // TODO: 상대방이 이미 나에게 친구 요청 보낸 사람인 경우 플로우 회의 후 로직 추가
 
-        if (friendRepository.isRequested(userId, followingUserId)) {
-            throw new AlreadyFriendRequestedException("이미 친구 요청을 보냈습니다.");
-        }
+        // 친구 요청할 사용자 확인
+        User followingUser = userService.getUserById(request.getUserId());
 
-        if (friendRepository.isFriend(userId, followingUserId)) {
-            throw new AlreadyFriendRelationException("이미 친구 관계인 회원입니다.");
-        }
+        // 이미 친구 요청한 상태이거나 이미 친구인 상태라면 예외
+        validateNewFriendRequest(followerUser, followingUser);
+        validateIsAlreadyFriend(followerUser, followingUser);
 
         friendRepository.save(
-                Friend.newRequest(followerUser, followingUser));
+            Friend.newRequest(followerUser, followingUser));
     }
 
     @Transactional
-    public void acceptFriend(long userId, long followingUserId) {
+    public void acceptFriend(AcceptFriendRequest request, User followingUser) {
 
-        User user = userService.getUserById(userId);
-        User followingUser = userService.getUserById(followingUserId);
+        // 나에게 친구 요청을 보낸 사람
+        User followerUser = userService.getUserById(request.getUserId());
 
-        if (friendRepository.isFriend(userId, followingUserId)) {
-            throw new AlreadyFriendRelationException("이미 친구 관계인 회원입니다.");
-        }
+        // 이미 친구인 상태거나 친구 요청 목록에 없다면 예외
+        validateIsAlreadyFriend(followingUser, followerUser);
+        Friend friendRequest = getFriendRequest(followerUser, followingUser);
 
-        if (!friendRepository.isRequested(userId, followingUserId)) {
-            throw new NotOnTheFriendRequestException("친구 요청 목록에 없습니다.");
-        }
-
-        Friend friend = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsFalse(userId, followingUserId);
-
-        friend.acceptRequest();
-
+        // 친구 요청 수락 및 새로운 관계 형성
+        friendRequest.accept();
         friendRepository.save(
-                Friend.newRelation(followingUser, user));
+            Friend.newRelation(followingUser, followerUser));
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getFriends(long userId, Pageable pageable) {
+    public Page<UserResponse> getFriends(User user, Pageable pageable) {
+
+        userService.validateLoggedInUser(user);
 
         boolean isFriend = true;
 
-        return friendRepository.findFriendsByUserId(userId, isFriend, pageable);
+        return friendRepository.findFriendsByUserId(user.getId(), isFriend, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getFriendRequests(long userId, Pageable pageable) {
+    public Page<UserResponse> getFriendRequests(User user, Pageable pageable) {
+
+        userService.validateLoggedInUser(user);
 
         boolean isFriend = false;
 
-        return friendRepository.findFriendsByUserId(userId, isFriend, pageable);
+        return friendRepository.findFriendsByUserId(user.getId(), isFriend, pageable);
     }
 
     @Transactional
-    public void deleteFriend(long userId, long friendId) {
+    public void deleteFriend(long friendId, User user) {
 
-        User user = userService.getUserById(userId);
+        // 존재하는 유저인지 확인
         User friend = userService.getUserById(friendId);
 
-        if (!friendRepository.isFriend(userId, friendId)) {
-            throw new NotOnTheFriendRelationException("친구 관계가 아닙니다.");
-        }
+        // 친구 관계가 아니라면 예외
+        validateIsFriend(user, friend);
 
-        Friend friendRequested = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(userId, friendId);
-        Friend friendRelation = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsTrue(friendId, userId);
-
-        friendRepository.delete(friendRequested);
-        friendRepository.delete(friendRelation);
+        // 친구 관계 삭제
+        List<Friend> friendRelation = friendRepository.findFriendRelation(user.getId(), friend.getId());
+        friendRepository.deleteAll(friendRelation);
     }
 
     @Transactional
-    public void cancelFriendRequest(long userId, long followerUserId) {
+    public void cancelFriendRequest(long followerUserId, User user) {
 
-        // followerUserId가 userId에게 보낸 친구 요청을 취소한다. (Follower: 나를 팔로우 하는 사람!)
-
-        User user = userService.getUserById(userId);
+        // 친구 요청을 보낸 사람 검증
         User followerUser = userService.getUserById(followerUserId);
 
-        if (!friendRepository.isRequested(followerUserId, userId)) {
-            throw new NotOnTheFriendRequestException("친구 요청 목록에 없습니다.");
-        }
-
-        Friend friend = friendRepository.findByFollowerUserIdAndFollowingUserIdAndAcceptedIsFalse(followerUserId, userId);
-
-        friendRepository.delete(friend);
+        // 친구 요청 목록에 없다면 예외
+        Friend friendRequest = getFriendRequest(followerUser, user);
+        friendRepository.delete(friendRequest);
     }
 
     public boolean isFriend(long userId, long friendId) {
 
         return friendRepository.isFriend(userId, friendId);
+    }
+
+    private void validateNewFriendRequest(User followerUser, User followingUser) {
+
+        friendRepository.findByFollowerUserAndFollowingUserAndAcceptedIsFalse(followerUser, followingUser)
+            .ifPresent(friend -> {
+                throw new AlreadyFriendRequestedException("이미 친구 요청을 보냈습니다.");
+            });
+    }
+
+    private void validateIsAlreadyFriend(User followerUser, User followingUser) {
+
+        if (friendRepository.isFriend(followerUser.getId(), followingUser.getId())) {
+            throw new AlreadyFriendRelationException("이미 친구 관계인 회원입니다.");
+        }
+    }
+
+    private Friend getFriendRequest(User followerUser, User followingUser) {
+
+        return friendRepository.findByFollowerUserAndFollowingUserAndAcceptedIsFalse(followerUser, followingUser)
+            .orElseThrow(() -> new NotOnTheFriendRequestException("친구 요청 목록에 없습니다."));
+    }
+
+    private void validateIsFriend(User user, User friend) {
+
+        if (!friendRepository.isFriend(user.getId(), friend.getId())) {
+            throw new NotOnTheFriendRelationException("친구 관계가 아닙니다.");
+        }
     }
 }
