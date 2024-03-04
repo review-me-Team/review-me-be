@@ -8,4 +8,5 @@ public interface QuestionEmojiRepository extends JpaRepository<QuestionEmoji, Lo
 
     Optional<QuestionEmoji> findByQuestionIdAndUserId(long questionId, long userId);
 
+    void deleteAllByQuestionId(long questionId);
 }

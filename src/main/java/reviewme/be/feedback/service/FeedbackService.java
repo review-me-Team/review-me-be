@@ -204,7 +204,7 @@ public class FeedbackService {
         Feedback feedback = findByIdAndResumeId(feedbackId, resumeId);
 
         // 기존 이모지 삭제
-        feedbackEmojiRepository.findByUserIdAndFeedbackId(user.getId(), feedbackId)
+        feedbackEmojiRepository.findByFeedbackIdAndUserId(feedbackId, user.getId())
             .ifPresent(
                 feedbackEmojiRepository::delete
             );

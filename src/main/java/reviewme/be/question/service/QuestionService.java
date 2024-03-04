@@ -1,5 +1,6 @@
 package reviewme.be.question.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.EmojiCount;
+import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.entity.Label;
 import reviewme.be.util.repository.LabelRepository;
 import reviewme.be.util.service.UtilService;
@@ -149,8 +151,9 @@ public class QuestionService {
         // 질문 존재 여부 및 삭제 권한 확인
         Question question = findById(questionId);
         question.validateUser(user);
-
-        question.softDelete();
+        LocalDateTime deletedAt = LocalDateTime.now();
+        question.softDelete(deletedAt);
+        questionEmojiRepository.deleteAllByQuestionId(questionId);
 
         if (question.getParentQuestion() != null) {
             question.getParentQuestion().minusChildCnt();
@@ -200,6 +203,30 @@ public class QuestionService {
     }
 
     @Transactional
+    public void updateQuestionEmoji(UpdateQuestionEmojiRequest request, long resumeId,
+        long questionId, User user) {
+
+        // 이력서로 피드백 존재 여부 확인
+        Question question = findByIdAndResumeId(questionId, resumeId);
+
+        // 기존 이모지 삭제
+        questionEmojiRepository.findByQuestionIdAndUserId(questionId, user.getId())
+            .ifPresent(
+                questionEmojiRepository::delete
+            );
+
+        Integer emojiId = request.getId();
+
+        if (emojiId == null) return;
+
+        Emoji emoji = emojisVO.findEmojiById(emojiId);
+
+        questionEmojiRepository.save(
+            new QuestionEmoji(user, question, emoji)
+        );
+    }
+
+    @Transactional(readOnly = true)
     public List<Label> findQuestionLabels(long resumeId) {
 
         // 이력서 존재 여부 확인

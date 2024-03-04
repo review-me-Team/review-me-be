@@ -31,6 +31,12 @@ public class QuestionEmoji {
     @JoinColumn(name = "emoji_id")
     private Emoji emoji;
 
+    public QuestionEmoji(User user, Question question, Emoji emoji) {
+        this.user = user;
+        this.question = question;
+        this.emoji = emoji;
+    }
+
     public static List<QuestionEmoji> createDefaultQuestionEmojis(Question question,
         List<Emoji> emojis) {
 
