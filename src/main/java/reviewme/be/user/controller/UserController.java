@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
@@ -54,7 +53,7 @@ public class UserController {
 
         UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(request.getCode());
 
-        String jwt = createJwtByAccessToken(userGitHubToken.getAccessToken());
+        String jwt = createJwtByGitHubToken(userGitHubToken.getAccessToken(), userGitHubToken.getExpiresIn());
 
         setRefreshToken(response, userGitHubToken.getRefreshToken());
 
@@ -84,7 +83,7 @@ public class UserController {
 
         UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(
             refreshToken);
-        String jwt = createJwtByAccessToken(userRefreshedToken.getAccessToken());
+        String jwt = createJwtByGitHubToken(userRefreshedToken.getAccessToken(), userRefreshedToken.getExpiresIn());
 
         setRefreshToken(response, userRefreshedToken.getRefreshToken());
 
@@ -112,7 +111,7 @@ public class UserController {
 
         UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(code);
 
-        String jwt = createJwtByAccessToken(userGitHubToken.getAccessToken());
+        String jwt = createJwtByGitHubToken(userGitHubToken.getAccessToken(), userGitHubToken.getExpiresIn());
 
         setRefreshToken(response, userGitHubToken.getRefreshToken());
 
@@ -142,7 +141,7 @@ public class UserController {
 
         UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(
             refreshToken);
-        String jwt = createJwtByAccessToken(userRefreshedToken.getAccessToken());
+        String jwt = createJwtByGitHubToken(userRefreshedToken.getAccessToken(), userRefreshedToken.getExpiresIn());
 
         setRefreshToken(response, userRefreshedToken.getRefreshToken());
 
@@ -184,19 +183,19 @@ public class UserController {
             ));
     }
 
-    private String createJwtByAccessToken(String accessToken) {
+    private String createJwtByGitHubToken(String accessToken, long expiresIn) {
 
         UserGitHubProfile userGitHubProfile = oauthLoginService.getUserGitHubProfile(accessToken);
         UserProfileResponse userProfileResponse = userService.getUserByGithubProfile(
             userGitHubProfile);
 
-        return jwtService.createJwt(userProfileResponse, getJwtExpiredAt());
+        return jwtService.createJwt(userProfileResponse, getJwtExpiredAt(expiresIn));
     }
 
-    private static Date getJwtExpiredAt() {
+    private static Date getJwtExpiredAt(long expiresIn) {
 
         long currentTime = System.currentTimeMillis();
-        long twoWeeksInMillis = 1000 * 60 * 60 * 24 * 14;
+        long twoWeeksInMillis = expiresIn * 1000L;
 
         return new Date(currentTime + twoWeeksInMillis);
     }
