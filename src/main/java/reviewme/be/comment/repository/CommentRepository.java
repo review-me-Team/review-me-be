@@ -7,4 +7,6 @@ import reviewme.be.comment.entity.Comment;
 public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
 
     Optional<Comment> findByIdAndDeletedAtIsNull(long commentId);
+
+    Optional<Comment> findByIdAndResumeIdAndDeletedAtIsNull(long commentId, long resumeId);
 }

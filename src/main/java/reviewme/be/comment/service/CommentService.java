@@ -23,14 +23,12 @@ import reviewme.be.user.entity.User;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Emoji;
-import reviewme.be.util.exception.NonExistEmojiException;
 import reviewme.be.util.service.UtilService;
 import reviewme.be.util.vo.EmojisVO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,8 +74,9 @@ public class CommentService {
             commentEmojiRepository.findEmojiCountByCommentIds(commentIds));
 
         // 내가 선택한 이모지 목록 조회
-        List<Integer> myEmojiIds = utilService.getMyEmojiIds(commentEmojiRepository.findByUserIdAndCommentIdIn(
-            user.getId(), commentIds));
+        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
+            commentEmojiRepository.findByUserIdAndCommentIdIn(
+                user.getId(), commentIds));
 
         List<CommentResponse> commentsResponse = collectToCommentsResponse(commentIds, comments,
             emojiCounts, myEmojiIds);
@@ -119,35 +118,37 @@ public class CommentService {
 
     @Transactional
     public void updateCommentEmoji(UpdateCommentEmojiRequest updateCommentEmoji,
-        long commentId, User user) {
+        long resumeId, long commentId, User user) {
 
-        Comment comment = findById(commentId);
+        // 이력서로 댓글 존재 여부 검증
+        Comment comment = findByIdAndResumeId(commentId, resumeId);
+
+        // 기존 이모지 삭제
+        commentEmojiRepository.findByUserIdAndCommentId(user.getId(), commentId)
+            .ifPresent(
+                commentEmojiRepository::delete
+            );
 
         Integer emojiId = updateCommentEmoji.getId();
 
-        Optional<CommentEmoji> myCommentEmoji = commentEmojiRepository.findByUserIdAndCommentId(
-            user.getId(), commentId);
+        if (emojiId == null) return;
 
         Emoji emoji = emojisVO.findEmojiById(emojiId);
 
-        if (myCommentEmoji.isEmpty()) {
-            commentEmojiRepository.save(CommentEmoji.ofCreated(
-                userService.getUserById(user.getId()),
-                comment,
-                emoji));
-            return;
-        }
-
-        if (emojiId != null && !emojisVO.validateEmojiById(emojiId)) {
-            throw new NonExistEmojiException("존재하지 않는 이모지입니다.");
-        }
-
-        myCommentEmoji.get().updateEmoji(emoji);
+        commentEmojiRepository.save(
+            CommentEmoji.ofCreated(user, comment, emoji)
+        );
     }
 
     private Comment findById(long commentId) {
 
         return commentRepository.findByIdAndDeletedAtIsNull(commentId)
+            .orElseThrow(() -> new NonExistCommentException("존재하지 않는 댓글입니다."));
+    }
+
+    private Comment findByIdAndResumeId(long commentId, long resumeId) {
+
+        return commentRepository.findByIdAndResumeIdAndDeletedAtIsNull(commentId, resumeId)
             .orElseThrow(() -> new NonExistCommentException("존재하지 않는 댓글입니다."));
     }
 

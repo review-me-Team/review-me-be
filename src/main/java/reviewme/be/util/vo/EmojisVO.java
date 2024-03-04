@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reviewme.be.util.entity.Emoji;
+import reviewme.be.util.exception.NonExistEmojiException;
 import reviewme.be.util.repository.EmojiRepository;
 
 import javax.annotation.PostConstruct;
@@ -40,10 +41,10 @@ public class EmojisVO {
         return emojis.containsKey(emojiId);
     }
 
-    public Emoji findEmojiById(Integer emojiId) {
+    public Emoji findEmojiById(int emojiId) {
 
-        if (emojiId != null && !validateEmojiById(emojiId)) {
-            throw new IllegalArgumentException("존재하지 않는 이모지입니다.");
+        if (!validateEmojiById(emojiId)) {
+            throw new NonExistEmojiException("존재하지 않는 emojiId입니다.");
         }
 
         return emojis.get(emojiId);

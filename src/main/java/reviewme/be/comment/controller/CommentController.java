@@ -129,7 +129,7 @@ public class CommentController {
         @PathVariable long commentId,
         @RequestAttribute("user") User user) {
 
-        commentService.updateCommentEmoji(updateCommentEmojiRequest, commentId, user);
+        commentService.updateCommentEmoji(updateCommentEmojiRequest, resumeId, commentId, user);
 
         return ResponseEntity
             .ok()
