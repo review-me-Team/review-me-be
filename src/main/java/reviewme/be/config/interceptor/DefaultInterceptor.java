@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import reviewme.be.user.dto.response.UserProfileResponse;
 import reviewme.be.user.entity.User;
+import reviewme.be.user.exception.ExpiredTokenException;
 import reviewme.be.user.exception.ManipulatedTokenException;
 import reviewme.be.user.exception.NoValidBearerFormatException;
 import reviewme.be.user.service.JWTService;
@@ -39,7 +40,7 @@ public class DefaultInterceptor implements HandlerInterceptor {
         }
 
         if (jwtService.validateJwtIsExpired(jwt)) {
-            throw new NoValidBearerFormatException("유효 기간이 만료된 토큰입니다.");
+            throw new ExpiredTokenException("유효 기간이 만료된 토큰입니다.");
         }
 
         UserProfileResponse loggedInUser = jwtService.extractUserFromJwt(jwt, UserProfileResponse.class);

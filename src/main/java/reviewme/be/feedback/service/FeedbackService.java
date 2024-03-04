@@ -1,7 +1,6 @@
 package reviewme.be.feedback.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -160,7 +159,7 @@ public class FeedbackService {
         // 피드백 존재 여부 확인 및 유저 검증
         Feedback feedback = findById(feedbackId);
         feedback.validateUser(user);
-        LocalDateTime deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime deletedAt = LocalDateTime.now();
         feedback.softDelete(deletedAt);
         feedbackEmojiRepository.deleteAllByFeedbackId(feedbackId);
 

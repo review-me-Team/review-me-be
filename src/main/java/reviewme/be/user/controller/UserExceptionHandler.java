@@ -27,8 +27,8 @@ public class UserExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "Not Found",
+                        404,
                         ex.getMessage()));
     }
 
@@ -104,8 +104,8 @@ public class UserExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "Unauthorized",
+                        401,
                         ex.getMessage()));
     }
 

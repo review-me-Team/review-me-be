@@ -15,8 +15,8 @@ public class CommentExceptionHandler {
         return ResponseEntity
             .badRequest()
             .body(new CustomErrorResponse(
-                "Bad Request",
-                400,
+                "Not Found",
+                404,
                 ex.getMessage()));
     }
 }

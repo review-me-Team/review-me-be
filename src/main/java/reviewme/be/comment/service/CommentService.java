@@ -23,6 +23,7 @@ import reviewme.be.user.entity.User;
 import reviewme.be.user.service.UserService;
 import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Emoji;
+import reviewme.be.util.exception.NonExistEmojiException;
 import reviewme.be.util.service.UtilService;
 import reviewme.be.util.vo.EmojisVO;
 
@@ -138,7 +139,7 @@ public class CommentService {
         }
 
         if (emojiId != null && !emojisVO.validateEmojiById(emojiId)) {
-            throw new NonExistCommentException("존재하지 않는 이모지입니다.");
+            throw new NonExistEmojiException("존재하지 않는 이모지입니다.");
         }
 
         myCommentEmoji.get().updateEmoji(emoji);

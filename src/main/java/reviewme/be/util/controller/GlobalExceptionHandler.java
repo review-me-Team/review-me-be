@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reviewme.be.custom.CustomErrorResponse;
+import reviewme.be.util.exception.NonExistEmojiException;
 import reviewme.be.util.exception.NonExistLabelException;
 import reviewme.be.util.exception.NonExistOccupationException;
 import reviewme.be.util.exception.NonExistScopeException;
@@ -77,8 +78,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "Not Found",
+                        404,
                         ex.getMessage()));
     }
 
@@ -88,8 +89,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "Not Found",
+                        404,
                         ex.getMessage()));
     }
     @ExceptionHandler(NonExistScopeException.class)
@@ -98,8 +99,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "Not Found",
+                        404,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NonExistEmojiException.class)
+    public ResponseEntity<CustomErrorResponse> nonExistEmoji(NonExistEmojiException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "Not Found",
+                        404,
                         ex.getMessage()));
     }
 
@@ -120,8 +132,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "Unauthorized",
+                        401,
                         ex.getMessage()));
     }
 }
