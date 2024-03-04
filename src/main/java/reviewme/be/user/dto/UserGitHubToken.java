@@ -12,4 +12,5 @@ public class UserGitHubToken {
 
     private String accessToken;
     private String refreshToken;
+    private long expiresIn;
 }

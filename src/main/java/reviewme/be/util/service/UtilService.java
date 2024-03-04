@@ -37,7 +37,7 @@ public class UtilService {
         Map<Long, Label> feedbackLabels = feedbackLabelsVO.getFeedbackLabels();
 
         if (!feedbackLabels.containsKey(id)) {
-            throw new NonExistLabelException("[ERROR] 존재하지 않는 라벨입니다.");
+            throw new NonExistLabelException("존재하지 않는 feedbackLabelId입니다.");
         }
 
         return feedbackLabels.get(id);
@@ -48,7 +48,7 @@ public class UtilService {
         Map<Integer, Occupation> occupations = occupationsVO.getOccupations();
 
         if (!occupations.containsKey(id)) {
-            throw new NonExistOccupationException("[ERROR] 존재하지 않는 직군입니다.");
+            throw new NonExistOccupationException("존재하지 않는 occupationId 입니다.");
         }
 
         return occupations.get(id);
@@ -59,7 +59,7 @@ public class UtilService {
         Map<Integer, Scope> scopes = scopesVO.getScopes();
 
         if (!scopes.containsKey(id)) {
-            throw new NonExistScopeException("[ERROR] 존재하지 않는 공개범위입니다.");
+            throw new NonExistScopeException("존재하지 않는 scopeId입니다.");
         }
 
         return scopes.get(id);

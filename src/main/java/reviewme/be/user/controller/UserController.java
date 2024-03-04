@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
@@ -54,7 +53,7 @@ public class UserController {
 
         UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(request.getCode());
 
-        String jwt = createJwtByAccessToken(userGitHubToken.getAccessToken());
+        String jwt = createJwtByGitHubToken(userGitHubToken.getAccessToken(), userGitHubToken.getExpiresIn());
 
         setRefreshToken(response, userGitHubToken.getRefreshToken());
 
@@ -84,7 +83,65 @@ public class UserController {
 
         UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(
             refreshToken);
-        String jwt = createJwtByAccessToken(userRefreshedToken.getAccessToken());
+        String jwt = createJwtByGitHubToken(userRefreshedToken.getAccessToken(), userRefreshedToken.getExpiresIn());
+
+        setRefreshToken(response, userRefreshedToken.getRefreshToken());
+
+        return ResponseEntity
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "로그인에 성공했습니다.",
+                LoginUserResponse.builder()
+                    .jwt(jwt)
+                    .build()
+            ));
+    }
+
+    @Operation(summary = "GitHub으로 로그인", description = "GitHub 계정을 통해 사용자가 로그인합니다.")
+    @GetMapping("/login/oauth")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "로그인 성공"),
+        @ApiResponse(responseCode = "400", description = "로그인 실패")
+    })
+    public ResponseEntity<CustomResponse<LoginUserResponse>> getLoginWithGitHub(
+        @RequestParam("code") String code,
+        HttpServletResponse response) {
+
+        UserGitHubToken userGitHubToken = oauthLoginService.getUserGitHubToken(code);
+
+        String jwt = createJwtByGitHubToken(userGitHubToken.getAccessToken(), userGitHubToken.getExpiresIn());
+
+        setRefreshToken(response, userGitHubToken.getRefreshToken());
+
+        return ResponseEntity
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "로그인에 성공했습니다.",
+                LoginUserResponse.builder()
+                    .jwt(jwt)
+                    .build()
+            ));
+    }
+
+    @Operation(summary = "사용자 토큰 새로고침", description = "기한이 만료된 토큰을 새로 만듭니다.")
+    @GetMapping("/user/refresh")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "토큰 새로 받기 성공"),
+        @ApiResponse(responseCode = "400", description = "토큰 새로 받기 실패")
+    })
+    public ResponseEntity<CustomResponse<LoginUserResponse>> getRefreshJwt(
+        HttpServletRequest request,
+        HttpServletResponse response) {
+
+        String refreshToken = findRefreshTokenFromRequest(request);
+
+        UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(
+            refreshToken);
+        String jwt = createJwtByGitHubToken(userRefreshedToken.getAccessToken(), userRefreshedToken.getExpiresIn());
 
         setRefreshToken(response, userRefreshedToken.getRefreshToken());
 
@@ -126,19 +183,19 @@ public class UserController {
             ));
     }
 
-    private String createJwtByAccessToken(String accessToken) {
+    private String createJwtByGitHubToken(String accessToken, long expiresIn) {
 
         UserGitHubProfile userGitHubProfile = oauthLoginService.getUserGitHubProfile(accessToken);
         UserProfileResponse userProfileResponse = userService.getUserByGithubProfile(
             userGitHubProfile);
 
-        return jwtService.createJwt(userProfileResponse, getJwtExpiredAt());
+        return jwtService.createJwt(userProfileResponse, getJwtExpiredAt(expiresIn));
     }
 
-    private static Date getJwtExpiredAt() {
+    private static Date getJwtExpiredAt(long expiresIn) {
 
         long currentTime = System.currentTimeMillis();
-        long twoWeeksInMillis = 1000 * 60 * 60 * 24 * 14;
+        long twoWeeksInMillis = expiresIn * 1000L;
 
         return new Date(currentTime + twoWeeksInMillis);
     }

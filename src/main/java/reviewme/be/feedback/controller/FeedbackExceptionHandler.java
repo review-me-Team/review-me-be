@@ -16,13 +16,13 @@ public class FeedbackExceptionHandler {
         return ResponseEntity
             .badRequest()
             .body(new CustomErrorResponse(
-                "Bad Request",
-                400,
+                "Not Found",
+                404,
                 ex.getMessage()));
     }
 
     @ExceptionHandler(NotParentFeedbackException.class)
-    public ResponseEntity<CustomErrorResponse> notParentFeedbac(NotParentFeedbackException ex) {
+    public ResponseEntity<CustomErrorResponse> notParentFeedback(NotParentFeedbackException ex) {
 
         return ResponseEntity
             .badRequest()
