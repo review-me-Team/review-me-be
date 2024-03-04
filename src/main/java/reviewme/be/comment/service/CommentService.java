@@ -43,13 +43,13 @@ public class CommentService {
     private final EmojisVO emojisVO;
 
     @Transactional
-    public void saveComment(User commenter, long resumeId, PostCommentRequest postComment) {
+    public void saveComment(User commenter, long resumeId, PostCommentRequest request) {
 
         Resume resume = resumeService.findById(resumeId);
         LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         Comment savedComment = commentRepository.save(
-            new Comment(commenter, resume, postComment.getContent(), createdAt)
+            new Comment(commenter, resume, request.getContent(), createdAt)
         );
 
         // Default Comment Emojis 생성
@@ -105,7 +105,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(UpdateCommentContentRequest updateComment, User user, long resumeId,
+    public void updateComment(UpdateCommentContentRequest request, User user, long resumeId,
         long commentId) {
 
         resumeService.findById(resumeId);
@@ -113,11 +113,11 @@ public class CommentService {
         Comment comment = findById(commentId);
         comment.validateUser(user);
 
-        comment.updateContent(updateComment.getContent(), LocalDateTime.now());
+        comment.updateContent(request.getContent(), LocalDateTime.now());
     }
 
     @Transactional
-    public void updateCommentEmoji(UpdateCommentEmojiRequest updateCommentEmoji,
+    public void updateCommentEmoji(UpdateCommentEmojiRequest request,
         long resumeId, long commentId, User user) {
 
         // 이력서로 댓글 존재 여부 검증
@@ -129,7 +129,7 @@ public class CommentService {
                 commentEmojiRepository::delete
             );
 
-        Integer emojiId = updateCommentEmoji.getId();
+        Integer emojiId = request.getId();
 
         if (emojiId == null) return;
 

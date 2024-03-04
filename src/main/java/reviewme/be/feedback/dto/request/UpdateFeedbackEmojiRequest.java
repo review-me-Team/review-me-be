@@ -13,6 +13,5 @@ import javax.validation.constraints.NotNull;
 public class UpdateFeedbackEmojiRequest {
 
     @Schema(description = "피드백 이모지 ID", example = "1")
-    @NotNull(message = "피드백 이모지 ID는 필수 입력 값입니다.")
-    private Long id;
+    private Integer id;
 }

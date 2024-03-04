@@ -15,6 +15,7 @@ import reviewme.be.feedback.dto.request.CreateFeedbackCommentRequest;
 import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackContentRequest;
+import reviewme.be.feedback.dto.request.UpdateFeedbackEmojiRequest;
 import reviewme.be.feedback.dto.response.FeedbackCommentPageResponse;
 import reviewme.be.feedback.dto.response.FeedbackCommentResponse;
 import reviewme.be.feedback.dto.response.FeedbackPageResponse;
@@ -28,6 +29,7 @@ import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.EmojiCount;
+import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.entity.Label;
 import reviewme.be.util.service.UtilService;
 import reviewme.be.util.vo.EmojisVO;
@@ -151,7 +153,7 @@ public class FeedbackService {
     }
 
     @Transactional
-    public void deleteFeedback(User user, long resumeId, long feedbackId) {
+    public void deleteFeedback(long resumeId, long feedbackId, User user) {
 
         // 이력서 존재 여부 확인
         resumeService.findById(resumeId);
@@ -169,8 +171,8 @@ public class FeedbackService {
     }
 
     @Transactional
-    public void updateFeedbackContent(UpdateFeedbackContentRequest request, User user,
-        long resumeId, long feedbackId) {
+    public void updateFeedbackContent(UpdateFeedbackContentRequest request,
+        long resumeId, long feedbackId, User user) {
 
         // 이력서 존재 여부 확인
         resumeService.findById(resumeId);
@@ -192,6 +194,30 @@ public class FeedbackService {
         // 피드백 존재 여부 확인
         Feedback feedback = findByIdAndResumeId(feedbackId, resumeId);
         feedback.updateChecked(request.isChecked());
+    }
+
+    @Transactional
+    public void updateFeedbackEmoji(UpdateFeedbackEmojiRequest request, long resumeId,
+        long feedbackId, User user) {
+
+        // 이력서로 피드백 존재 여부 확인
+        Feedback feedback = findByIdAndResumeId(feedbackId, resumeId);
+
+        // 기존 이모지 삭제
+        feedbackEmojiRepository.findByUserIdAndFeedbackId(user.getId(), feedbackId)
+            .ifPresent(
+                feedbackEmojiRepository::delete
+            );
+
+        Integer emojiId = request.getId();
+
+        if (emojiId == null) return;
+
+        Emoji emoji = emojisVO.findEmojiById(emojiId);
+
+        feedbackEmojiRepository.save(
+            new FeedbackEmoji(user, feedback, emoji)
+        );
     }
 
     private Feedback findById(long feedbackId) {
