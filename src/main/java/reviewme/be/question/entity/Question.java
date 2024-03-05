@@ -99,9 +99,9 @@ public class Question {
         this.bookmarked = bookmarked;
     }
 
-    public void softDelete() {
+    public void softDelete(LocalDateTime deletedAt) {
 
-        this.deletedAt = LocalDateTime.now();
+        this.deletedAt = deletedAt;
     }
 
     public boolean isParentQuestion() {

@@ -12,8 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.feedback.dto.request.*;
 import reviewme.be.feedback.dto.response.*;
-import reviewme.be.feedback.repository.FeedbackEmojiRepository;
-import reviewme.be.feedback.repository.FeedbackRepository;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.feedback.service.FeedbackService;
 import reviewme.be.user.entity.User;
@@ -25,8 +23,6 @@ import reviewme.be.user.entity.User;
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
-    private final FeedbackRepository feedbackRepository;
-    private final FeedbackEmojiRepository feedbackEmojiRepository;
 
     @Operation(summary = "피드백 추가", description = "피드백을 추가합니다.")
     @PostMapping
@@ -130,12 +126,12 @@ public class FeedbackController {
         @ApiResponse(responseCode = "200", description = "피드백 삭제 성공"),
         @ApiResponse(responseCode = "400", description = "피드백 삭제 실패")
     })
-    public ResponseEntity<CustomResponse> deleteFeedback(
+    public ResponseEntity<CustomResponse<Void>> deleteFeedback(
         @PathVariable long resumeId,
         @PathVariable long feedbackId,
         @RequestAttribute("user") User user) {
 
-        feedbackService.deleteFeedback(user, resumeId, feedbackId);
+        feedbackService.deleteFeedback(resumeId, feedbackId, user);
 
         return ResponseEntity
             .ok()
@@ -152,14 +148,14 @@ public class FeedbackController {
         @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),
         @ApiResponse(responseCode = "400", description = "피드백 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackContent(
+    public ResponseEntity<CustomResponse<Void>> updateFeedbackContent(
         @Validated @RequestBody UpdateFeedbackContentRequest updateFeedbackContentRequest,
         @RequestAttribute("user") User user,
         @PathVariable long resumeId,
         @PathVariable long feedbackId) {
 
-        feedbackService.updateFeedbackContent(updateFeedbackContentRequest, user, resumeId,
-            feedbackId);
+        feedbackService.updateFeedbackContent(updateFeedbackContentRequest, resumeId,
+            feedbackId, user);
 
         return ResponseEntity
             .ok()
@@ -176,7 +172,7 @@ public class FeedbackController {
         @ApiResponse(responseCode = "200", description = "피드백 체크 상태 수정 성공"),
         @ApiResponse(responseCode = "400", description = "피드백 체크 상태 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackCheck(
+    public ResponseEntity<CustomResponse<Void>> updateFeedbackCheck(
         @Validated @RequestBody UpdateFeedbackCheckRequest updateFeedbackCheckRequest,
         @PathVariable long resumeId,
         @PathVariable long feedbackId,
@@ -199,10 +195,13 @@ public class FeedbackController {
         @ApiResponse(responseCode = "200", description = "피드백 이모지 수정 성공"),
         @ApiResponse(responseCode = "400", description = "피드백 이모지 수정 실패")
     })
-    public ResponseEntity<CustomResponse> updateFeedbackEmoji(
-        @Validated @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest,
+    public ResponseEntity<CustomResponse<Void>> updateFeedbackEmoji(
+        @RequestBody UpdateFeedbackEmojiRequest updateFeedbackEmojiRequest,
         @PathVariable long resumeId,
-        @PathVariable long feedbackId) {
+        @PathVariable long feedbackId,
+        @RequestAttribute("user") User user) {
+
+        feedbackService.updateFeedbackEmoji(updateFeedbackEmojiRequest, resumeId, feedbackId, user);
 
         return ResponseEntity
             .ok()

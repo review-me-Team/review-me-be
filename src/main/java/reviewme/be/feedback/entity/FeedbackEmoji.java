@@ -31,6 +31,12 @@ public class FeedbackEmoji {
     @JoinColumn(name = "emoji_id")
     private Emoji emoji;
 
+    public FeedbackEmoji(User user, Feedback feedback, Emoji emoji) {
+        this.user = user;
+        this.feedback = feedback;
+        this.emoji = emoji;
+    }
+
     public static List<FeedbackEmoji> createDefaultFeedbackEmojis(Feedback feedback,
         List<Emoji> emojis) {
 

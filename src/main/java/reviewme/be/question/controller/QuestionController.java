@@ -253,8 +253,12 @@ public class QuestionController {
         @ApiResponse(responseCode = "400", description = "예상 질문 이모지 상태 수정 실패")
     })
     public ResponseEntity<CustomResponse<Void>> updateQuestionEmoji(
-        @Validated @RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest,
-        @PathVariable long resumeId, @PathVariable long questionId) {
+        @RequestBody UpdateQuestionEmojiRequest updateQuestionEmojiRequest,
+        @PathVariable long resumeId,
+        @PathVariable long questionId,
+        @RequestAttribute("user") User user) {
+
+        questionService.updateQuestionEmoji(updateQuestionEmojiRequest, resumeId, questionId, user);
 
         return ResponseEntity
             .ok()

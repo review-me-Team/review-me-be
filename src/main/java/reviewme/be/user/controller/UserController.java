@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reviewme.be.custom.CustomResponse;
@@ -202,12 +203,15 @@ public class UserController {
 
     private void setRefreshToken(HttpServletResponse response, String refreshToken) {
 
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60 * 24 * 14);
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .maxAge(60 * 60 * 24 * 14)
+            .sameSite("None")
+            .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     private String findRefreshTokenFromRequest(HttpServletRequest request) {
