@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Builder
@@ -19,7 +20,7 @@ public class CreateQuestionRequest {
     private String content;
 
     @Schema(description = "라벨 내용", example = "react-query", required = false)
-    @Max(value = 20, message = "라벨 내용은 20자 이하로 입력해야 합니다.")
+    @Length(max = 20, message = "라벨 내용은 20자 이하여야 합니다.")
     private String labelContent;
 
     @Schema(description = "이력서 페이지", example = "1")
