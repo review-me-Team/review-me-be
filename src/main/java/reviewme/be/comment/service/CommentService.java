@@ -65,21 +65,17 @@ public class CommentService {
 
         resumeService.findById(resumeId);
 
-        // 댓글 목록 조회 후 id 목록 추출
-        Page<CommentInfo> comments = commentRepository.findCommentsByResumeId(resumeId, pageable);
+        // 댓글 목록 조회와 내가 선택한 이모지 조회 후 id 목록 추출
+        Page<CommentInfo> comments = commentRepository.findCommentsByResumeId(resumeId, user.getId(), pageable);
         List<Long> commentIds = getCommentIds(comments);
 
         // 댓글별 이모지 개수 조회
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             commentEmojiRepository.findEmojiCountByCommentIds(commentIds));
 
-        // 내가 선택한 이모지 목록 조회
-        List<Integer> myEmojiIds = utilService.getMyEmojiIds(
-            commentEmojiRepository.findByUserIdAndCommentIdIn(
-                user.getId(), commentIds));
 
         List<CommentResponse> commentsResponse = collectToCommentsResponse(commentIds, comments,
-            emojiCounts, myEmojiIds);
+            emojiCounts);
 
         return CommentPageResponse.builder()
             .comments(commentsResponse)
@@ -166,20 +162,18 @@ public class CommentService {
      */
     private List<CommentResponse> collectToCommentsResponse(List<Long> commentIds,
         Page<CommentInfo> comments,
-        List<List<EmojiCount>> emojiCounts, List<Integer> myEmojiIds) {
+        List<List<EmojiCount>> emojiCounts) {
 
         List<CommentResponse> commentsResponse = new ArrayList<>();
         for (int commentIdx = 0; commentIdx < commentIds.size(); commentIdx++) {
 
             CommentInfo comment = comments.getContent().get(commentIdx);
             List<EmojiCount> emojis = emojiCounts.get(commentIdx);
-            Integer myEmojiId = myEmojiIds.get(commentIdx);
 
             commentsResponse.add(
                 CommentResponse.fromComment(
                     comment,
-                    emojis,
-                    myEmojiId));
+                    emojis));
         }
 
         return commentsResponse;

@@ -40,8 +40,7 @@ public class CommentResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static CommentResponse fromComment(CommentInfo comment, List<EmojiCount> emojis,
-        Integer myEmojiId) {
+    public static CommentResponse fromComment(CommentInfo comment, List<EmojiCount> emojis) {
 
         return CommentResponse.builder()
             .id(comment.getId())
@@ -51,7 +50,7 @@ public class CommentResponse {
             .commenterProfileUrl(comment.getCommenterProfileUrl())
             .createdAt(comment.getCreatedAt())
             .emojis(emojis)
-            .myEmojiId(myEmojiId)
+            .myEmojiId(comment.getMyEmojiId())
             .build();
     }
 }

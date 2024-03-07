@@ -1,6 +1,7 @@
 package reviewme.be.comment.repository;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import reviewme.be.comment.dto.QCommentInfo;
 import java.util.List;
 
 import static reviewme.be.comment.entity.QComment.comment;
+import static reviewme.be.comment.entity.QCommentEmoji.commentEmoji;
 
 @RequiredArgsConstructor
 public class CommentRepositoryImpl implements CommentRepositoryCustom {
@@ -19,7 +21,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<CommentInfo> findCommentsByResumeId(long resumeId, Pageable pageable) {
+    public Page<CommentInfo> findCommentsByResumeId(long resumeId, long userId, Pageable pageable) {
 
         QueryResults<CommentInfo> results = queryFactory
             .select(new QCommentInfo(
@@ -28,7 +30,13 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 comment.commenter.id,
                 comment.commenter.name,
                 comment.commenter.profileUrl,
-                comment.createdAt
+                comment.createdAt,
+                JPAExpressions
+                    .select(commentEmoji.emoji.id)
+                    .from(commentEmoji)
+                    .where(commentEmoji.comment.id.eq(comment.id)
+                        .and(commentEmoji.user.id.eq(userId))
+                    )
             ))
             .from(comment)
             .leftJoin(comment.commenter)
