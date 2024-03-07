@@ -1,7 +1,6 @@
 package reviewme.be.feedback.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +38,7 @@ public class FeedbackResponse {
     private LocalDateTime createdAt;
 
     @Schema(description = "댓글 개수", example = "10")
-    private long countOfComments;
+    private long countOfReplies;
 
     @Schema(description = "체크 여부", example = "true")
     private Boolean checked;
@@ -61,7 +60,7 @@ public class FeedbackResponse {
             .commenterProfileUrl(feedback.getCommenterProfileUrl())
             .labelContent(feedback.getLabelContent())
             .createdAt(feedback.getCreatedAt())
-            .countOfComments(feedback.getCountOfReplies())
+            .countOfReplies(feedback.getCountOfReplies())
             .checked(feedback.isChecked())
             .emojis(emojis)
             .myEmojiId(myEmojiId)

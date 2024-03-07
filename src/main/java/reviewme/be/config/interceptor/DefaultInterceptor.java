@@ -3,6 +3,7 @@ package reviewme.be.config.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import reviewme.be.user.dto.response.UserProfileResponse;
@@ -13,6 +14,7 @@ import reviewme.be.user.exception.NoValidBearerFormatException;
 import reviewme.be.user.service.JWTService;
 import reviewme.be.user.service.UserService;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DefaultInterceptor implements HandlerInterceptor {
@@ -28,6 +30,8 @@ public class DefaultInterceptor implements HandlerInterceptor {
         if (header == null) {
             throw new NoValidBearerFormatException("Authorization header가 존재하지 않습니다.");
         }
+
+        log.info("Authorization header: {}", header);
 
         if (request.getHeader("Authorization").split(" ").length != 2) {
             throw new NoValidBearerFormatException("Bearer 토큰이 존재하지 않습니다.");
