@@ -217,7 +217,9 @@ public class QuestionService {
 
         Integer emojiId = request.getId();
 
-        if (emojiId == null) return;
+        if (emojiId == null) {
+            return;
+        }
 
         Emoji emoji = emojisVO.findEmojiById(emojiId);
 
@@ -243,11 +245,6 @@ public class QuestionService {
      * @return
      */
     private Label verifyQuestionLabel(CreateQuestionRequest request, Resume resume) {
-
-        if (request.getLabelId() != null) {
-
-            return utilService.findById(request.getLabelId());
-        }
 
         if (request.getLabelContent() != null && !request.getLabelContent().isEmpty()) {
 

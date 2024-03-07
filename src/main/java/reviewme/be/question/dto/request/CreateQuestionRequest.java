@@ -1,6 +1,7 @@
 package reviewme.be.question.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.Max;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -17,10 +18,8 @@ public class CreateQuestionRequest {
     @NotBlank(message = "예상 질문 내용은 필수 입력 값입니다.")
     private String content;
 
-    @Schema(description = "라벨 ID", example = "1", required = false)
-    private Long labelId;
-
     @Schema(description = "라벨 내용", example = "react-query", required = false)
+    @Max(value = 20, message = "라벨 내용은 20자 이하로 입력해야 합니다.")
     private String labelContent;
 
     @Schema(description = "이력서 페이지", example = "1")
