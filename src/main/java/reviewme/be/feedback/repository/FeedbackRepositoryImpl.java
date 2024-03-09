@@ -66,7 +66,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
     }
 
     @Override
-    public Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId, long userId,
+    public Page<FeedbackCommentInfo> findFeedbackCommentsByParentId(long feedbackId, long userId,
         Pageable pageable) {
 
         QueryResults<FeedbackCommentInfo> results = queryFactory
@@ -90,7 +90,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
             .where(feedback.parentFeedback.id.eq(feedbackId)
                 .and(feedback.deletedAt.isNull())
             )
-            .orderBy(feedback.id.asc())
+            .orderBy(feedback.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();

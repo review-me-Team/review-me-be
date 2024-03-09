@@ -90,7 +90,7 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             .where(question.parentQuestion.id.eq(questionId)
                 .and(question.deletedAt.isNull())
             )
-            .orderBy(question.id.asc())
+            .orderBy(question.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();

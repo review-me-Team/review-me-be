@@ -2,6 +2,7 @@ package reviewme.be.question.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -125,6 +126,8 @@ public class QuestionService {
         Page<QuestionCommentInfo> questionCommentPage = questionRepository.findQuestionCommentsByQuestionId(
             parentQuestionId, user.getId(), pageable);
         List<QuestionCommentInfo> questionComments = questionCommentPage.getContent();
+        questionComments = sortQuestionCommentsByIdAsc(questionComments);
+
         List<Long> questionCommentIds = extractQuestionCommentIds(questionComments);
 
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
@@ -341,5 +344,15 @@ public class QuestionService {
         }
 
         return questionCommentResponses;
+    }
+
+    /**
+     * 대댓글 조회 시 id 오름차순으로 재정렬
+     */
+    private List<QuestionCommentInfo> sortQuestionCommentsByIdAsc(List<QuestionCommentInfo> questionCommentInfos) {
+
+        return questionCommentInfos.stream()
+            .sorted(Comparator.comparingLong(QuestionCommentInfo::getId))
+            .collect(Collectors.toList());
     }
 }

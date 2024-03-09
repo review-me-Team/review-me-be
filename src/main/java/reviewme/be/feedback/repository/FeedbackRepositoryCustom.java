@@ -9,5 +9,5 @@ public interface FeedbackRepositoryCustom {
 
     Page<FeedbackInfo> findFeedbacksByResumeIdAndResumePage(long resumeId, long userId, int resumePage, Pageable pageable);
 
-    Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId, long userId, Pageable pageable);
+    Page<FeedbackCommentInfo> findFeedbackCommentsByParentId(long feedbackId, long userId, Pageable pageable);
 }
