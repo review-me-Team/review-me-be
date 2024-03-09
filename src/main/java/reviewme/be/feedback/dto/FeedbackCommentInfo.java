@@ -34,9 +34,12 @@ public class FeedbackCommentInfo {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
+    @Schema(description = "내가 선택한 이모지 Id", example = "1")
+    private Integer myEmojiId;
+
     @QueryProjection
     public FeedbackCommentInfo(long id, long parentId, String content, long commenterId, String commenterName,
-        String commenterProfileUrl, LocalDateTime createdAt) {
+        String commenterProfileUrl, LocalDateTime createdAt, Integer myEmojiId) {
 
         this.id = id;
         this.parentId = parentId;
@@ -45,6 +48,7 @@ public class FeedbackCommentInfo {
         this.commenterName = commenterName;
         this.commenterProfileUrl = commenterProfileUrl;
         this.createdAt = createdAt;
+        this.myEmojiId = myEmojiId;
     }
 
 }

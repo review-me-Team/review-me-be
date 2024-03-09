@@ -1,9 +1,11 @@
 package reviewme.be.feedback.repository;
 
 import static reviewme.be.feedback.entity.QFeedback.feedback;
+import static reviewme.be.feedback.entity.QFeedbackEmoji.feedbackEmoji;
 import static reviewme.be.util.entity.QLabel.label;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,8 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<FeedbackInfo> findFeedbacksByResumeIdAndResumePage(long resumeId, int resumePage,
+    public Page<FeedbackInfo> findFeedbacksByResumeIdAndResumePage(long resumeId, long userId,
+        int resumePage,
         Pageable pageable) {
 
         QueryResults<FeedbackInfo> results = queryFactory
@@ -34,7 +37,13 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
                 feedback.commenter.profileUrl,
                 feedback.createdAt,
                 feedback.childCnt,
-                feedback.checked
+                feedback.checked,
+                JPAExpressions
+                    .select(feedbackEmoji.emoji.id)
+                    .from(feedbackEmoji)
+                    .where(feedbackEmoji.feedback.id.eq(feedback.id)
+                        .and(feedbackEmoji.user.id.eq(userId))
+                    )
             ))
             .from(feedback)
             .innerJoin(feedback.commenter)
@@ -57,7 +66,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
     }
 
     @Override
-    public Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId,
+    public Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId, long userId,
         Pageable pageable) {
 
         QueryResults<FeedbackCommentInfo> results = queryFactory
@@ -68,7 +77,13 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
                 feedback.commenter.id,
                 feedback.commenter.name,
                 feedback.commenter.profileUrl,
-                feedback.createdAt
+                feedback.createdAt,
+                JPAExpressions
+                    .select(feedbackEmoji.emoji.id)
+                    .from(feedbackEmoji)
+                    .where(feedbackEmoji.feedback.id.eq(feedback.id)
+                        .and(feedbackEmoji.user.id.eq(userId))
+                    )
             ))
             .from(feedback)
             .innerJoin(feedback.commenter)

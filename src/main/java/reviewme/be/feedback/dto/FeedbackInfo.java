@@ -40,9 +40,12 @@ public class FeedbackInfo {
     @Schema(description = "체크 여부", example = "true")
     private boolean checked;
 
+    @Schema(description = "내가 선택한 이모지 Id", example = "1")
+    private Integer myEmojiId;
+
     @QueryProjection
     public FeedbackInfo(long id, String content, String labelContent, long commenterId, String commenterName,
-        String commenterProfileUrl, LocalDateTime createdAt, long countOfReplies, boolean checked) {
+        String commenterProfileUrl, LocalDateTime createdAt, long countOfReplies, boolean checked, Integer myEmojiId) {
         this.id = id;
         this.content = content;
         this.labelContent = labelContent;
@@ -52,5 +55,6 @@ public class FeedbackInfo {
         this.createdAt = createdAt;
         this.countOfReplies = countOfReplies;
         this.checked = checked;
+        this.myEmojiId = myEmojiId;
     }
 }

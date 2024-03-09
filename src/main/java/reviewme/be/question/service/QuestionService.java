@@ -102,7 +102,7 @@ public class QuestionService {
             questionEmojiRepository.findEmojiCountByQuestionIds(questionIds));
 
         List<QuestionResponse> questionsResponse = collectToQuestionsResponse(questionIds,
-            questions, emojiCounts, isWriter, user);
+            questions, emojiCounts, isWriter);
 
         return QuestionPageResponse.builder()
             .questions(questionsResponse)
@@ -131,8 +131,7 @@ public class QuestionService {
             questionEmojiRepository.findEmojiCountByQuestionIds(questionCommentIds));
 
         List<QuestionCommentResponse> questionCommentsResponse = collectToQuestionCommentsResponse(
-            questionCommentIds, questionComments, emojiCounts,
-            user);
+            questionCommentIds, questionComments, emojiCounts);
 
         return QuestionCommentPageResponse.builder()
             .questionComments(questionCommentsResponse)
@@ -297,7 +296,7 @@ public class QuestionService {
 
     private List<QuestionResponse> collectToQuestionsResponse(List<Long> questionIds,
         List<QuestionInfo> questions,
-        List<List<EmojiCount>> emojiCounts, boolean isWriter, User user) {
+        List<List<EmojiCount>> emojiCounts, boolean isWriter) {
 
         List<QuestionResponse> questionsResponse = new ArrayList<>();
 
@@ -326,7 +325,7 @@ public class QuestionService {
     private List<QuestionCommentResponse> collectToQuestionCommentsResponse(
         List<Long> questionCommentIds,
         List<QuestionCommentInfo> questionComments,
-        List<List<EmojiCount>> emojiCounts, User user) {
+        List<List<EmojiCount>> emojiCounts) {
 
         List<QuestionCommentResponse> questionCommentResponses = new ArrayList<>();
 
@@ -342,13 +341,5 @@ public class QuestionService {
         }
 
         return questionCommentResponses;
-    }
-
-    private Integer findMyEmojiIdByQuestionId(Long questionId, User user) {
-
-        return questionEmojiRepository.findByQuestionIdAndUserId(
-                questionId, user.getId())
-            .map(el -> el.getEmoji().getId())
-            .orElse(null);
     }
 }

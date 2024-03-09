@@ -20,7 +20,6 @@ import reviewme.be.comment.repository.CommentRepository;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
-import reviewme.be.user.service.UserService;
 import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Emoji;
 import reviewme.be.util.service.UtilService;
@@ -37,7 +36,6 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentEmojiRepository commentEmojiRepository;
-    private final UserService userService;
     private final ResumeService resumeService;
     private final UtilService utilService;
     private final EmojisVO emojisVO;

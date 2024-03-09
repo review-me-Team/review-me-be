@@ -44,7 +44,7 @@ public class FeedbackCommentResponse {
     private Integer myEmojiId;
 
     public static FeedbackCommentResponse fromFeedbackComment(FeedbackCommentInfo feedbackComment,
-        List<EmojiCount> emojis, Integer myEmojiId) {
+        List<EmojiCount> emojis) {
 
         return FeedbackCommentResponse.builder()
             .id(feedbackComment.getId())
@@ -55,7 +55,7 @@ public class FeedbackCommentResponse {
             .commenterProfileUrl(feedbackComment.getCommenterProfileUrl())
             .createdAt(feedbackComment.getCreatedAt())
             .emojis(emojis)
-            .myEmojiId(myEmojiId)
+            .myEmojiId(feedbackComment.getMyEmojiId())
             .build();
     }
 }
