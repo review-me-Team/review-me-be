@@ -43,9 +43,12 @@ public class QuestionInfo {
     @Schema(description = "북마크 여부", example = "true")
     private boolean bookmarked;
 
+    @Schema(description = "내가 선택한 이모지 Id", example = "1")
+    private Integer myEmojiId;
+
     @QueryProjection
     public QuestionInfo(long id, String content, String labelContent, long commenterId, String commenterName,
-        String commenterProfileUrl, LocalDateTime createdAt, long countOfReplies, boolean checked, boolean bookmarked) {
+        String commenterProfileUrl, LocalDateTime createdAt, long countOfReplies, boolean checked, boolean bookmarked, Integer myEmojiId) {
         this.id = id;
         this.content = content;
         this.labelContent = labelContent;
@@ -56,5 +59,6 @@ public class QuestionInfo {
         this.countOfReplies = countOfReplies;
         this.checked = checked;
         this.bookmarked = bookmarked;
+        this.myEmojiId = myEmojiId;
     }
 }

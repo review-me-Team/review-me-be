@@ -94,7 +94,7 @@ public class QuestionService {
 
         // 예상 질문 목록 조회 후 id 목록 추출
         Page<QuestionInfo> questionPage = questionRepository.findQuestionsByResumeIdAndResumePage(
-            resumeId, resumePage, pageable);
+            resumeId, user.getId(), resumePage, pageable);
         List<QuestionInfo> questions = questionPage.getContent();
         List<Long> questionIds = extractQuestionIds(questions);
 
@@ -123,7 +123,7 @@ public class QuestionService {
 
         // 예상 질문에 달린 대댓글 목록 조회
         Page<QuestionCommentInfo> questionCommentPage = questionRepository.findQuestionCommentsByQuestionId(
-            parentQuestionId, pageable);
+            parentQuestionId, user.getId(), pageable);
         List<QuestionCommentInfo> questionComments = questionCommentPage.getContent();
         List<Long> questionCommentIds = extractQuestionCommentIds(questionComments);
 
@@ -305,11 +305,10 @@ public class QuestionService {
 
             QuestionInfo question = questions.get(questionIdx);
             List<EmojiCount> emojiCount = emojiCounts.get(questionIdx);
-            Integer myEmojiId = findMyEmojiIdByQuestionId(questionIds.get(questionIdx), user);
 
             QuestionResponse questionResponse = isWriter
-                ? QuestionResponse.fromQuestionOfOwnResume(question, emojiCount, myEmojiId)
-                : QuestionResponse.fromQuestionOfOtherResume(question, emojiCount, myEmojiId);
+                ? QuestionResponse.fromQuestionOfOwnResume(question, emojiCount)
+                : QuestionResponse.fromQuestionOfOtherResume(question, emojiCount);
 
             questionsResponse.add(questionResponse);
         }
@@ -336,11 +335,9 @@ public class QuestionService {
 
             QuestionCommentInfo questionComment = questionComments.get(questionCommentIdx);
             List<EmojiCount> emojiCount = emojiCounts.get(questionCommentIdx);
-            Integer myEmojiId = findMyEmojiIdByQuestionId(
-                questionCommentIds.get(questionCommentIdx), user);
 
             questionCommentResponses.add(
-                QuestionCommentResponse.fromQuestionComment(questionComment, emojiCount, myEmojiId)
+                QuestionCommentResponse.fromQuestionComment(questionComment, emojiCount)
             );
         }
 
