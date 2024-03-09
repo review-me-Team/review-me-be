@@ -90,7 +90,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
             .where(feedback.parentFeedback.id.eq(feedbackId)
                 .and(feedback.deletedAt.isNull())
             )
-            .orderBy(feedback.id.desc())
+            .orderBy(feedback.id.asc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();
