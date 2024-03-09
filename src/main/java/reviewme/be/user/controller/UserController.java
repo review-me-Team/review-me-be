@@ -75,6 +75,8 @@ public class UserController {
         HttpServletRequest request,
         HttpServletResponse response) {
 
+        // TODO: 사용자 정보 업데이트
+
         String refreshToken = findRefreshTokenFromRequest(request);
 
         UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(
