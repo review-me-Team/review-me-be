@@ -7,7 +7,7 @@ import reviewme.be.question.dto.QuestionInfo;
 
 public interface QuestionRepositoryCustom {
 
-    Page<QuestionInfo> findQuestionsByResumeIdAndResumePage(long resumeId, int resumePage, Pageable pageable);
+    Page<QuestionInfo> findQuestionsByResumeIdAndResumePage(long resumeId, long userId, int resumePage, Pageable pageable);
 
-    Page<QuestionCommentInfo> findQuestionCommentsByQuestionId(long questionId, Pageable pageable);
+    Page<QuestionCommentInfo> findQuestionCommentsByQuestionId(long questionId, long userId, Pageable pageable);
 }

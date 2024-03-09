@@ -2,6 +2,7 @@ package reviewme.be.question.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -94,7 +95,7 @@ public class QuestionService {
 
         // 예상 질문 목록 조회 후 id 목록 추출
         Page<QuestionInfo> questionPage = questionRepository.findQuestionsByResumeIdAndResumePage(
-            resumeId, resumePage, pageable);
+            resumeId, user.getId(), resumePage, pageable);
         List<QuestionInfo> questions = questionPage.getContent();
         List<Long> questionIds = extractQuestionIds(questions);
 
@@ -102,7 +103,7 @@ public class QuestionService {
             questionEmojiRepository.findEmojiCountByQuestionIds(questionIds));
 
         List<QuestionResponse> questionsResponse = collectToQuestionsResponse(questionIds,
-            questions, emojiCounts, isWriter, user);
+            questions, emojiCounts, isWriter);
 
         return QuestionPageResponse.builder()
             .questions(questionsResponse)
@@ -123,16 +124,17 @@ public class QuestionService {
 
         // 예상 질문에 달린 대댓글 목록 조회
         Page<QuestionCommentInfo> questionCommentPage = questionRepository.findQuestionCommentsByQuestionId(
-            parentQuestionId, pageable);
+            parentQuestionId, user.getId(), pageable);
         List<QuestionCommentInfo> questionComments = questionCommentPage.getContent();
+        questionComments = sortQuestionCommentsByIdAsc(questionComments);
+
         List<Long> questionCommentIds = extractQuestionCommentIds(questionComments);
 
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             questionEmojiRepository.findEmojiCountByQuestionIds(questionCommentIds));
 
         List<QuestionCommentResponse> questionCommentsResponse = collectToQuestionCommentsResponse(
-            questionCommentIds, questionComments, emojiCounts,
-            user);
+            questionCommentIds, questionComments, emojiCounts);
 
         return QuestionCommentPageResponse.builder()
             .questionComments(questionCommentsResponse)
@@ -297,7 +299,7 @@ public class QuestionService {
 
     private List<QuestionResponse> collectToQuestionsResponse(List<Long> questionIds,
         List<QuestionInfo> questions,
-        List<List<EmojiCount>> emojiCounts, boolean isWriter, User user) {
+        List<List<EmojiCount>> emojiCounts, boolean isWriter) {
 
         List<QuestionResponse> questionsResponse = new ArrayList<>();
 
@@ -305,11 +307,10 @@ public class QuestionService {
 
             QuestionInfo question = questions.get(questionIdx);
             List<EmojiCount> emojiCount = emojiCounts.get(questionIdx);
-            Integer myEmojiId = findMyEmojiIdByQuestionId(questionIds.get(questionIdx), user);
 
             QuestionResponse questionResponse = isWriter
-                ? QuestionResponse.fromQuestionOfOwnResume(question, emojiCount, myEmojiId)
-                : QuestionResponse.fromQuestionOfOtherResume(question, emojiCount, myEmojiId);
+                ? QuestionResponse.fromQuestionOfOwnResume(question, emojiCount)
+                : QuestionResponse.fromQuestionOfOtherResume(question, emojiCount);
 
             questionsResponse.add(questionResponse);
         }
@@ -327,7 +328,7 @@ public class QuestionService {
     private List<QuestionCommentResponse> collectToQuestionCommentsResponse(
         List<Long> questionCommentIds,
         List<QuestionCommentInfo> questionComments,
-        List<List<EmojiCount>> emojiCounts, User user) {
+        List<List<EmojiCount>> emojiCounts) {
 
         List<QuestionCommentResponse> questionCommentResponses = new ArrayList<>();
 
@@ -336,22 +337,22 @@ public class QuestionService {
 
             QuestionCommentInfo questionComment = questionComments.get(questionCommentIdx);
             List<EmojiCount> emojiCount = emojiCounts.get(questionCommentIdx);
-            Integer myEmojiId = findMyEmojiIdByQuestionId(
-                questionCommentIds.get(questionCommentIdx), user);
 
             questionCommentResponses.add(
-                QuestionCommentResponse.fromQuestionComment(questionComment, emojiCount, myEmojiId)
+                QuestionCommentResponse.fromQuestionComment(questionComment, emojiCount)
             );
         }
 
         return questionCommentResponses;
     }
 
-    private Integer findMyEmojiIdByQuestionId(Long questionId, User user) {
+    /**
+     * 대댓글 조회 시 id 오름차순으로 재정렬
+     */
+    private List<QuestionCommentInfo> sortQuestionCommentsByIdAsc(List<QuestionCommentInfo> questionCommentInfos) {
 
-        return questionEmojiRepository.findByQuestionIdAndUserId(
-                questionId, user.getId())
-            .map(el -> el.getEmoji().getId())
-            .orElse(null);
+        return questionCommentInfos.stream()
+            .sorted(Comparator.comparingLong(QuestionCommentInfo::getId))
+            .collect(Collectors.toList());
     }
 }

@@ -50,7 +50,7 @@ public class FeedbackResponse {
     private Integer myEmojiId;
 
     public static FeedbackResponse fromFeedbackOfResume(FeedbackInfo feedback,
-        List<EmojiCount> emojis, Integer myEmojiId) {
+        List<EmojiCount> emojis) {
 
         return FeedbackResponse.builder()
             .id(feedback.getId())
@@ -63,7 +63,7 @@ public class FeedbackResponse {
             .countOfReplies(feedback.getCountOfReplies())
             .checked(feedback.isChecked())
             .emojis(emojis)
-            .myEmojiId(myEmojiId)
+            .myEmojiId(feedback.getMyEmojiId())
             .build();
     }
 }

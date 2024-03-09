@@ -21,7 +21,7 @@ public class ResumeSearchCondition {
 
         // Default scope is 2 (public, friends only)
         this.scope = 2;
-        this.occupation = resumeSearchConditionParam.getOccupation();
+        this.occupation = resumeSearchConditionParam.getOccupationId();
         this.startYear = resumeSearchConditionParam.getStartYear();
         this.endYear = resumeSearchConditionParam.getEndYear();
     }

@@ -1,9 +1,11 @@
 package reviewme.be.question.repository;
 
 import static reviewme.be.question.entity.QQuestion.question;
+import static reviewme.be.question.entity.QQuestionEmoji.questionEmoji;
 import static reviewme.be.util.entity.QLabel.label;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,8 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<QuestionInfo> findQuestionsByResumeIdAndResumePage(long resumeId, int resumePage,
+    public Page<QuestionInfo> findQuestionsByResumeIdAndResumePage(long resumeId, long userId,
+        int resumePage,
         Pageable pageable) {
 
         QueryResults<QuestionInfo> results = queryFactory
@@ -35,7 +38,13 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
                 question.createdAt,
                 question.childCnt,
                 question.checked,
-                question.bookmarked
+                question.bookmarked,
+                JPAExpressions
+                    .select(questionEmoji.emoji.id)
+                    .from(questionEmoji)
+                    .where(questionEmoji.question.id.eq(question.id)
+                        .and(questionEmoji.user.id.eq(userId))
+                    )
             ))
             .from(question)
             .innerJoin(question.commenter)
@@ -58,7 +67,7 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
 
     @Override
     public Page<QuestionCommentInfo> findQuestionCommentsByQuestionId(long questionId,
-        Pageable pageable) {
+        long userId, Pageable pageable) {
 
         QueryResults<QuestionCommentInfo> results = queryFactory
             .select(new QQuestionCommentInfo(
@@ -68,7 +77,13 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
                 question.commenter.id,
                 question.commenter.name,
                 question.commenter.profileUrl,
-                question.createdAt
+                question.createdAt,
+                JPAExpressions
+                    .select(questionEmoji.emoji.id)
+                    .from(questionEmoji)
+                    .where(questionEmoji.question.id.eq(question.id)
+                        .and(questionEmoji.user.id.eq(userId))
+                    )
             ))
             .from(question)
             .innerJoin(question.commenter)

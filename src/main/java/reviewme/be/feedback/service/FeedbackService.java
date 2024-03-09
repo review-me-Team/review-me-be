@@ -2,6 +2,7 @@ package reviewme.be.feedback.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -101,17 +102,19 @@ public class FeedbackService {
 
         resumeService.findById(resumeId);
 
-        // 피드백 목록 조회 후 id 목록 추출
+        // 피드백 목록 조회
         Page<FeedbackInfo> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
-            resumeId, resumePage, pageable);
+            resumeId, user.getId(), resumePage, pageable);
         List<FeedbackInfo> feedbacks = feedbackPage.getContent();
+
+        // id 목록 추출
         List<Long> feedbackIds = extractFeedbackIds(feedbacks);
 
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackIds));
 
-        List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbackIds,
-            feedbacks, emojiCounts, user);
+        List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbacks,
+            emojiCounts);
 
         return FeedbackPageResponse.builder()
             .feedbacks(feedbacksResponse)
@@ -126,29 +129,33 @@ public class FeedbackService {
         User user,
         Pageable pageable) {
 
+        // TODO: 사용하는 입장에서 생각해 쿼리를 수정할 필요가 있어보임, 최신 순 조회 후 재정렬 해야할 지 등
+        // DB에서는 최신 순 내림차순으로 조회하고, 서비스에서는 그 데이터 중 최신 순 오름차순으로 재정렬하는 방식으로 변경해야할 지 고민해보기
+
         // 이력서, 부모 피드백 존재 여부 확인
         resumeService.findById(resumeId);
         findParentFeedbackById(parentFeedbackId);
 
-        // 피드백 대댓글 목록 조회 후 id 목록 추출
-        Page<FeedbackCommentInfo> feedbackPage = feedbackRepository.findFeedbackCommentsByFeedbackId(
-            parentFeedbackId, pageable);
-        List<FeedbackCommentInfo> feedbackComments = feedbackPage.getContent();
+        // 피드백 대댓글 목록 조회 후 id 오름차순으로 재정렬
+        Page<FeedbackCommentInfo> feedbackCommentPage = feedbackRepository.findFeedbackCommentsByParentId(
+            parentFeedbackId, user.getId(), pageable);
+        List<FeedbackCommentInfo> feedbackComments = feedbackCommentPage.getContent();
+        feedbackComments = sortFeedbackCommentsByIdAsc(feedbackComments);
+
+        // id 목록 추출
         List<Long> feedbackCommentIds = extractFeedbackCommentIds(feedbackComments);
 
         List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
             feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackCommentIds));
 
         List<FeedbackCommentResponse> feedbackCommentsResponse = collectToFeedbackCommentsResponse(
-            feedbackCommentIds,
-            feedbackComments,
-            emojiCounts, user);
+            feedbackComments, emojiCounts);
 
         return FeedbackCommentPageResponse.builder()
             .feedbackComments(feedbackCommentsResponse)
-            .pageNumber(feedbackPage.getNumber())
-            .lastPage(feedbackPage.getTotalPages() - 1)
-            .pageSize(feedbackPage.getSize())
+            .pageNumber(feedbackCommentPage.getNumber())
+            .lastPage(feedbackCommentPage.getTotalPages() - 1)
+            .pageSize(feedbackCommentPage.getSize())
             .build();
     }
 
@@ -211,7 +218,9 @@ public class FeedbackService {
 
         Integer emojiId = request.getId();
 
-        if (emojiId == null) return;
+        if (emojiId == null) {
+            return;
+        }
 
         Emoji emoji = emojisVO.findEmojiById(emojiId);
 
@@ -256,20 +265,19 @@ public class FeedbackService {
             .collect(Collectors.toList());
     }
 
-    private List<FeedbackResponse> collectToFeedbacksResponse(List<Long> feedbackIds,
+    private List<FeedbackResponse> collectToFeedbacksResponse(
         List<FeedbackInfo> feedbacks,
-        List<List<EmojiCount>> emojiCounts, User user) {
+        List<List<EmojiCount>> emojiCounts) {
 
         List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
 
-        for (int feedbackIdx = 0; feedbackIdx < feedbackIds.size(); feedbackIdx++) {
+        for (int feedbackIdx = 0; feedbackIdx < feedbacks.size(); feedbackIdx++) {
 
             FeedbackInfo feedback = feedbacks.get(feedbackIdx);
             List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
-            Integer myEmojiId = findMyEmojiIdByFeedbackId(feedbackIds.get(feedbackIdx), user);
 
             FeedbackResponse feedbackResponse = FeedbackResponse.fromFeedbackOfResume(feedback,
-                emojis, myEmojiId);
+                emojis);
 
             feedbacksResponse.add(feedbackResponse);
         }
@@ -284,33 +292,33 @@ public class FeedbackService {
             .collect(Collectors.toList());
     }
 
-    private List<FeedbackCommentResponse> collectToFeedbackCommentsResponse(List<Long> feedbackIds,
+    private List<FeedbackCommentResponse> collectToFeedbackCommentsResponse(
         List<FeedbackCommentInfo> feedbackComments,
-        List<List<EmojiCount>> emojiCounts, User user) {
+        List<List<EmojiCount>> emojiCounts) {
 
         List<FeedbackCommentResponse> feedbackCommentsResponse = new ArrayList<>();
 
-        for (int feedbackCommentIdx = 0; feedbackCommentIdx < feedbackIds.size();
+        for (int feedbackCommentIdx = 0; feedbackCommentIdx < feedbackComments.size();
             feedbackCommentIdx++) {
 
             FeedbackCommentInfo feedbackComment = feedbackComments.get(feedbackCommentIdx);
             List<EmojiCount> emojis = emojiCounts.get(feedbackCommentIdx);
-            Integer myEmojiId = findMyEmojiIdByFeedbackId(feedbackIds.get(feedbackCommentIdx),
-                user);
 
             feedbackCommentsResponse.add(
-                FeedbackCommentResponse.fromFeedbackComment(feedbackComment, emojis, myEmojiId)
+                FeedbackCommentResponse.fromFeedbackComment(feedbackComment, emojis)
             );
         }
 
         return feedbackCommentsResponse;
     }
 
-    private Integer findMyEmojiIdByFeedbackId(Long feedbackId, User user) {
+    /**
+     * 대댓글 조회 시 id 오름차순으로 재정렬
+     */
+    private List<FeedbackCommentInfo> sortFeedbackCommentsByIdAsc(List<FeedbackCommentInfo> feedbackCommentInfos) {
 
-        return feedbackEmojiRepository.findByFeedbackIdAndUserId(
-                feedbackId, user.getId())
-            .map(el -> el.getEmoji().getId())
-            .orElse(null);
+        return feedbackCommentInfos.stream()
+            .sorted(Comparator.comparingLong(FeedbackCommentInfo::getId))
+            .collect(Collectors.toList());
     }
 }

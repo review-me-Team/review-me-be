@@ -56,7 +56,7 @@ public class QuestionResponse {
     private Integer myEmojiId;
 
     public static QuestionResponse fromQuestionOfOwnResume(QuestionInfo question,
-        List<EmojiCount> emojis, Integer myEmojiId) {
+        List<EmojiCount> emojis) {
 
         return QuestionResponse.builder()
             .id(question.getId())
@@ -70,12 +70,12 @@ public class QuestionResponse {
             .checked(question.isChecked())
             .bookmarked(question.isBookmarked())
             .emojis(emojis)
-            .myEmojiId(myEmojiId)
+            .myEmojiId(question.getMyEmojiId())
             .build();
     }
 
     public static QuestionResponse fromQuestionOfOtherResume(QuestionInfo question,
-        List<EmojiCount> emojis, Integer myEmojiId) {
+        List<EmojiCount> emojis) {
 
         return QuestionResponse.builder()
             .id(question.getId())
@@ -88,7 +88,7 @@ public class QuestionResponse {
             .countOfReplies(question.getCountOfReplies())
             .checked(question.isChecked())
             .emojis(emojis)
-            .myEmojiId(myEmojiId)
+            .myEmojiId(question.getMyEmojiId())
             .build();
     }
 }

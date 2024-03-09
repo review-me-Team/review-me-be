@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ResumeSearchConditionParam {
     
-    private Integer occupation;
+    private Integer occupationId;
     private Integer startYear;
     private Integer endYear;
 }

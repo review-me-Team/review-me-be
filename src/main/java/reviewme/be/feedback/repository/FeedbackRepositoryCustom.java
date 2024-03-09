@@ -7,7 +7,7 @@ import reviewme.be.feedback.dto.FeedbackInfo;
 
 public interface FeedbackRepositoryCustom {
 
-    Page<FeedbackInfo> findFeedbacksByResumeIdAndResumePage(long resumeId, int resumePage, Pageable pageable);
+    Page<FeedbackInfo> findFeedbacksByResumeIdAndResumePage(long resumeId, long userId, int resumePage, Pageable pageable);
 
-    Page<FeedbackCommentInfo> findFeedbackCommentsByFeedbackId(long feedbackId, Pageable pageable);
+    Page<FeedbackCommentInfo> findFeedbackCommentsByParentId(long feedbackId, long userId, Pageable pageable);
 }

@@ -13,6 +13,7 @@ import reviewme.be.user.exception.ManipulatedTokenException;
 import reviewme.be.user.exception.NoValidBearerFormatException;
 import reviewme.be.user.service.JWTService;
 import reviewme.be.user.service.UserService;
+import reviewme.be.util.exception.NotLoggedInUserException;
 
 @Slf4j
 @Component
@@ -28,7 +29,7 @@ public class DefaultInterceptor implements HandlerInterceptor {
         String header = request.getHeader("Authorization");
 
         if (header == null) {
-            throw new NoValidBearerFormatException("Authorization header가 존재하지 않습니다.");
+            throw new NotLoggedInUserException("Authorization header가 존재하지 않습니다.");
         }
 
         log.info("Authorization header: {}", header);
