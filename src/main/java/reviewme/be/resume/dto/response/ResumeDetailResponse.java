@@ -16,6 +16,9 @@ public class ResumeDetailResponse {
     @Schema(description = "이력서 제목", example = "네이버 신입 개발자 준비")
     private String title;
 
+    @Schema(description = "이력서 작성자 ID", example = "1")
+    private long writerId;
+
     @Schema(description = "이력서 작성자 이름", example = "aken-you")
     private String writerName;
 
@@ -29,9 +32,11 @@ public class ResumeDetailResponse {
     private int year;
 
     public static ResumeDetailResponse fromResume(Resume resume) {
+
         return ResumeDetailResponse.builder()
                 .resumeUrl(resume.getUrl())
                 .title(resume.getTitle())
+                .writerId(resume.getWriter().getId())
                 .writerName(resume.getWriter().getName())
                 .writerProfileUrl(resume.getWriter().getProfileUrl())
                 .occupation(resume.getOccupation().getOccupation())
