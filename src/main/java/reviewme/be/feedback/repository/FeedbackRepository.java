@@ -19,6 +19,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long>, Feedb
     @Query("select f "
         + "from Feedback f "
         + "where f.id = :feedbackId "
-        + "and (f.deletedAt is null) or (f.deletedAt is not null and f.childCnt > 0) ")
-    Optional<Feedback> findFeedbackById(@Param("feedbackId") long feedbackId);
+        + "and (f.deletedAt is null or (f.deletedAt is not null and f.childCnt > 0)) ")
+    Optional<Feedback> findParentFeedbackById(@Param("feedbackId") long feedbackId);
 }

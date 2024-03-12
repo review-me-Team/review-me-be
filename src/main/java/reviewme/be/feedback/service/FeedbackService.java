@@ -170,7 +170,7 @@ public class FeedbackService {
         feedback.validateUser(user);
         LocalDateTime deletedAt = LocalDateTime.now();
         feedback.softDelete(deletedAt);
-        feedbackEmojiRepository.deleteAllByFeedbackId(feedbackId);
+        feedbackEmojiRepository.deleteAllByFeedbackIdAndUserIdIsNotNull(feedbackId);
 
         if (feedback.getParentFeedback() != null) {
             feedback.getParentFeedback().minusChildCnt();
@@ -243,7 +243,7 @@ public class FeedbackService {
 
     private Feedback findParentFeedbackById(long feedbackId) {
 
-        return feedbackRepository.findFeedbackById(feedbackId)
+        return feedbackRepository.findParentFeedbackById(feedbackId)
             .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
     }
 
