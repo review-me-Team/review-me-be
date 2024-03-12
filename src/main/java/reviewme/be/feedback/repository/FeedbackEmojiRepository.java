@@ -8,5 +8,5 @@ public interface FeedbackEmojiRepository extends JpaRepository<FeedbackEmoji, Lo
 
     Optional<FeedbackEmoji> findByFeedbackIdAndUserId(long feedbackId, long userId);
 
-    void deleteAllByFeedbackId(long feedbackId);
+    void deleteAllByFeedbackIdAndUserIdIsNotNull(long feedbackId);
 }

@@ -170,7 +170,7 @@ public class FeedbackService {
         feedback.validateUser(user);
         LocalDateTime deletedAt = LocalDateTime.now();
         feedback.softDelete(deletedAt);
-        feedbackEmojiRepository.deleteAllByFeedbackId(feedbackId);
+        feedbackEmojiRepository.deleteAllByFeedbackIdAndUserIdIsNotNull(feedbackId);
 
         if (feedback.getParentFeedback() != null) {
             feedback.getParentFeedback().minusChildCnt();

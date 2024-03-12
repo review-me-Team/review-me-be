@@ -155,7 +155,7 @@ public class QuestionService {
         question.validateUser(user);
         LocalDateTime deletedAt = LocalDateTime.now();
         question.softDelete(deletedAt);
-        questionEmojiRepository.deleteAllByQuestionId(questionId);
+        questionEmojiRepository.deleteAllByQuestionIdAndUserIdIsNotNull(questionId);
 
         if (question.getParentQuestion() != null) {
             question.getParentQuestion().minusChildCnt();
