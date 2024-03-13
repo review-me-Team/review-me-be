@@ -16,16 +16,11 @@ public class Label {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "resume_id")
-    private Resume resume;
-
     private String content;
 
-    public static Label ofCreated(Resume resume, String content) {
+    public static Label ofCreated(String content) {
 
         return Label.builder()
-            .resume(resume)
             .content(content)
             .build();
     }

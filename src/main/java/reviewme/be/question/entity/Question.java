@@ -27,9 +27,7 @@ public class Question {
     @JoinColumn(name = "parent_id")
     private Question parentQuestion;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "label_id")
-    private Label label;
+    private String labelContent;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id")
@@ -43,12 +41,12 @@ public class Question {
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
-    public static Question createQuestion(User commenter, Resume resume, Label label, String content, Integer resumePage) {
+    public static Question createQuestion(User commenter, Resume resume, String labelContent, String content, Integer resumePage) {
 
         return Question.builder()
             .commenter(commenter)
             .resume(resume)
-            .label(label)
+            .labelContent(labelContent)
             .content(content)
             .resumePage(resumePage)
             .bookmarked(false)
