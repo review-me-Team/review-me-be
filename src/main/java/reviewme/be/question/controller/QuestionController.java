@@ -149,7 +149,7 @@ public class QuestionController {
             ));
     }
 
-    @Operation(summary = "예상 질문 내용 수정", description = "예상 질문 내용을 수정합니다.")
+    @Operation(summary = "예상 질문 수정", description = "예상 질문을 수정합니다.")
     @PatchMapping("/{questionId}")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "예상 질문 수정 성공"),

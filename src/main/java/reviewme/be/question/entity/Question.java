@@ -82,8 +82,9 @@ public class Question {
         this.childCnt--;
     }
 
-    public void updateContent(String content) {
+    public void updateContent(String labelContent, String content) {
 
+        this.labelContent = labelContent;
         this.content = content;
     }
 

@@ -169,7 +169,7 @@ public class QuestionService {
         Question question = findById(questionId);
         question.validateUser(user);
 
-        question.updateContent(request.getContent());
+        question.updateContent(request.getLabelContent(), request.getContent());
     }
 
     @Transactional
