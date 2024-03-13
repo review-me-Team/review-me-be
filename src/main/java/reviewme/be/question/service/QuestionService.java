@@ -41,7 +41,6 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final QuestionEmojiRepository questionEmojiRepository;
     private final ResumeService resumeService;
-    private final LabelRepository labelRepository;
     private final UtilService utilService;
     private final EmojisVO emojisVO;
 
@@ -51,11 +50,8 @@ public class QuestionService {
         // 이력서 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
 
-        // 예상 질문 라벨 조회 (없다면 생성)
-        Label label = verifyQuestionLabel(request, resume);
-
         Question savedQuestion = questionRepository.save(
-            Question.createQuestion(commenter, resume, label, request.getContent(),
+            Question.createQuestion(commenter, resume, request.getLabelContent(), request.getContent(),
                 request.getResumePage()));
 
         saveDefaultEmojis(savedQuestion);
@@ -173,7 +169,7 @@ public class QuestionService {
         Question question = findById(questionId);
         question.validateUser(user);
 
-        question.updateContent(request.getContent());
+        question.updateContent(request.getLabelContent(), request.getContent());
     }
 
     @Transactional
@@ -228,35 +224,6 @@ public class QuestionService {
         questionEmojiRepository.save(
             new QuestionEmoji(user, question, emoji)
         );
-    }
-
-    @Transactional(readOnly = true)
-    public List<Label> findQuestionLabels(long resumeId) {
-
-        // 이력서 존재 여부 확인
-        resumeService.findById(resumeId);
-
-        return labelRepository.findByResumeIdOrderByContentAsc(resumeId);
-    }
-
-    /**
-     * labelId가 있다면 해당 labelId로 label을 찾고, 이미 존재하는 labelContent라면 해당 label을 반환하고, 없다면 새로 생성
-     *
-     * @param request (Optional labelId, Optional labelContent)
-     * @param resume
-     * @return
-     */
-    private Label verifyQuestionLabel(CreateQuestionRequest request, Resume resume) {
-
-        if (request.getLabelContent() != null && !request.getLabelContent().isEmpty()) {
-
-            return labelRepository.findByResumeIdAndContent(resume.getId(),
-                    request.getLabelContent())
-                .orElseGet(
-                    () -> labelRepository.save(Label.ofCreated(resume, request.getLabelContent())));
-        }
-
-        return null;
     }
 
     private Question findById(long questionId) {

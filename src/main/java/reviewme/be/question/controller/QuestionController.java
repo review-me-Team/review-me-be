@@ -149,7 +149,7 @@ public class QuestionController {
             ));
     }
 
-    @Operation(summary = "예상 질문 내용 수정", description = "예상 질문 내용을 수정합니다.")
+    @Operation(summary = "예상 질문 수정", description = "예상 질문을 수정합니다.")
     @PatchMapping("/{questionId}")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "예상 질문 수정 성공"),
@@ -217,32 +217,6 @@ public class QuestionController {
                 "success",
                 200,
                 "예상 질문 북마크 상태 수정에 성공했습니다."
-            ));
-    }
-
-    @Operation(summary = "예상 질문 라벨 목록 조회", description = "예상 질문 라벨 목록을 조회합니다.")
-    @GetMapping("/label")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "예상 질문 라벨 목록 조회 성공"),
-        @ApiResponse(responseCode = "400", description = "예상 질문 라벨 목록 조회 실패")
-    })
-    public ResponseEntity<CustomResponse<LabelPageResponse>> showQuestionLabels(
-        @PathVariable long resumeId) {
-
-        List<LabelResponse> questionLabelsResponse = questionService.findQuestionLabels(resumeId)
-            .stream()
-            .map(LabelResponse::fromLabel)
-            .collect(Collectors.toList());
-
-        return ResponseEntity
-            .ok()
-            .body(new CustomResponse<>(
-                "success",
-                200,
-                "예상 질문 라벨 목록 조회에 성공했습니다.",
-                LabelPageResponse.builder()
-                    .labels(questionLabelsResponse)
-                    .build()
             ));
     }
 

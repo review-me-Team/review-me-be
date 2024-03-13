@@ -1,5 +1,6 @@
 package reviewme.be.user.entity;
 
+import java.time.LocalDateTime;
 import lombok.*;
 import reviewme.be.user.dto.UserGitHubProfile;
 
@@ -24,12 +25,14 @@ public class User {
     private long githubId;
     private String name;
     private String profileUrl;
+    private LocalDateTime createdAt;
 
-    public User(UserGitHubProfile userGitHubProfile) {
+    public User(UserGitHubProfile userGitHubProfile, LocalDateTime createdAt) {
 
         this.githubId = userGitHubProfile.getId();
         this.name = userGitHubProfile.getLogin();
         this.profileUrl = userGitHubProfile.getAvatarUrl();
+        this.createdAt = createdAt;
     }
 
     public void validateSameUser(User user) {
@@ -41,6 +44,8 @@ public class User {
 
     public boolean isAnonymous() {
 
-        return this.id == 0L;
+        long anonymousUserId = 0L;
+
+        return this.id == anonymousUserId;
     }
 }

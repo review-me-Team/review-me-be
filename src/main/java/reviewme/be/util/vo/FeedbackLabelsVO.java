@@ -24,7 +24,7 @@ public class FeedbackLabelsVO {
     @PostConstruct
     public void init() {
 
-        feedbackLabelList = labelRepository.findByResumeIsNull();
+        feedbackLabelList = labelRepository.findAll();
 
         feedbackLabels = feedbackLabelList.stream()
                 .collect(
