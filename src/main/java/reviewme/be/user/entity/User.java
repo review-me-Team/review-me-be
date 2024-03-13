@@ -41,6 +41,8 @@ public class User {
 
     public boolean isAnonymous() {
 
-        return this.id == 0L;
+        long anonymousUserId = 0L;
+
+        return this.id == anonymousUserId;
     }
 }
