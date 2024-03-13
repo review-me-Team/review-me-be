@@ -2,7 +2,6 @@ package reviewme.be.question.repository;
 
 import static reviewme.be.question.entity.QQuestion.question;
 import static reviewme.be.question.entity.QQuestionEmoji.questionEmoji;
-import static reviewme.be.util.entity.QLabel.label;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPAExpressions;
@@ -31,7 +30,7 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             .select(new QQuestionInfo(
                 question.id,
                 question.content,
-                label.content,
+                question.labelContent,
                 question.commenter.id,
                 question.commenter.name,
                 question.commenter.profileUrl,
@@ -48,7 +47,6 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             ))
             .from(question)
             .innerJoin(question.commenter)
-            .leftJoin(question.label, label)
             .where(question.resume.id.eq(resumeId)
                 .and(question.resumePage.eq(resumePage))
                 .and(question.deletedAt.isNull()
