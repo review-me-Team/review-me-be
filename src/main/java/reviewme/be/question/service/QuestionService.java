@@ -41,7 +41,6 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final QuestionEmojiRepository questionEmojiRepository;
     private final ResumeService resumeService;
-    private final LabelRepository labelRepository;
     private final UtilService utilService;
     private final EmojisVO emojisVO;
 
@@ -225,15 +224,6 @@ public class QuestionService {
         questionEmojiRepository.save(
             new QuestionEmoji(user, question, emoji)
         );
-    }
-
-    @Transactional(readOnly = true)
-    public List<Label> findQuestionLabels(long resumeId) {
-
-        // 이력서 존재 여부 확인
-        resumeService.findById(resumeId);
-
-        return labelRepository.findByResumeIdOrderByContentAsc(resumeId);
     }
 
     private Question findById(long questionId) {
