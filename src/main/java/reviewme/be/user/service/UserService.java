@@ -1,5 +1,6 @@
 package reviewme.be.user.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +33,10 @@ public class UserService {
 
         Optional<User> user = userRepository.findByGithubId(userGithubProfile.getId());
 
+        LocalDateTime createdAt = LocalDateTime.now();
+
         User loggedInUser = user.orElseGet(
-                () -> userRepository.save(new User(userGithubProfile)));
+                () -> userRepository.save(new User(userGithubProfile, createdAt)));
 
         return UserProfileResponse.fromUser(loggedInUser);
     }
