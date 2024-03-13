@@ -37,7 +37,6 @@ public class Resume {
     private String title;
     private String url;
     private int year;
-    private int commentCnt;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
 
@@ -50,7 +49,6 @@ public class Resume {
             .title(uploadResumeRequest.getTitle())
             .url(fileName)
             .year(uploadResumeRequest.getYear())
-            .commentCnt(0)
             .createdAt(LocalDateTime.now())
             .build();
     }
