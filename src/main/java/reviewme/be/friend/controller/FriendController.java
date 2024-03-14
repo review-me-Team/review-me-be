@@ -91,7 +91,7 @@ public class FriendController {
             ));
     }
 
-    @Operation(summary = "나에게 친구 요청 온 목록 조회", description = "나에게 친구 요청 온 목록을 조회합니다.")
+    @Operation(summary = "나에게 온 친구 요청 목록 조회", description = "나에게 온 친구 요청 목록을 조회합니다.")
     @GetMapping("/follower")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "친구 요청 목록 조회 성공"),
@@ -101,15 +101,37 @@ public class FriendController {
         @PageableDefault(size = 20) Pageable pageable,
         @RequestAttribute("user") User user) {
 
-        Page<UserResponse> friendRequests = friendService.getFriendRequests(user, pageable);
+        Page<UserResponse> receivedFriendRequests = friendService.getReceivedFriendRequests(user, pageable);
 
         return ResponseEntity
             .ok()
             .body(new CustomResponse<>(
                 "success",
                 200,
-                "친구 요청 온 목록 조회에 성공했습니다.",
-                UserPageResponse.fromUserPageable(friendRequests)
+                "나에게 온 친구 요청 목록 조회에 성공했습니다.",
+                UserPageResponse.fromUserPageable(receivedFriendRequests)
+            ));
+    }
+
+    @Operation(summary = "내가 보낸 친구 요청 목록 조회", description = "내가 보낸 친구 요청 목록을 조회합니다.")
+    @GetMapping("/following")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "내가 보낸 친구 요청 목록 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "내가 보낸 친구 요청 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<UserPageResponse>> showFollowingFriends(
+        @PageableDefault(size = 20) Pageable pageable,
+        @RequestAttribute("user") User user) {
+
+        Page<UserResponse> sentFriendRequests = friendService.getSentFriendRequests(user, pageable);
+
+        return ResponseEntity
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "내가 보낸 친구 요청 목록 조회에 성공했습니다.",
+                UserPageResponse.fromUserPageable(sentFriendRequests)
             ));
     }
 

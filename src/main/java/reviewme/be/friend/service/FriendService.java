@@ -17,7 +17,6 @@ import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.user.dto.response.UserResponse;
 import reviewme.be.user.service.UserService;
 import reviewme.be.user.entity.User;
-import reviewme.be.util.exception.NotLoggedInUserException;
 
 @Service
 @RequiredArgsConstructor
@@ -69,13 +68,21 @@ public class FriendService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getFriendRequests(User user, Pageable pageable) {
+    public Page<UserResponse> getReceivedFriendRequests(User user, Pageable pageable) {
 
         userService.validateLoggedInUser(user);
 
         boolean isFriend = false;
 
         return friendRepository.findFriendsByUserId(user.getId(), isFriend, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getSentFriendRequests(User user, Pageable pageable) {
+
+        userService.validateLoggedInUser(user);
+
+        return friendRepository.findSentFriendRequests(user.getId(), pageable);
     }
 
     @Transactional

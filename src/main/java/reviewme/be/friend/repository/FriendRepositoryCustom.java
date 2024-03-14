@@ -10,5 +10,7 @@ public interface FriendRepositoryCustom {
 
     Page<UserResponse> findFriendsByUserId(long userId, boolean accepted, Pageable pageable);
 
+    Page<UserResponse> findSentFriendRequests(long followerId, Pageable pageable);
+
     List<Friend> findFriendRelation(long followerUserId, long followingUserId);
 }
