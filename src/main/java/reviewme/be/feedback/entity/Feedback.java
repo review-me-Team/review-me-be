@@ -99,8 +99,9 @@ public class Feedback {
         this.deletedAt = deletedAt;
     }
 
-    public void updateContent(String content) {
+    public void updateContent(Label label, String content) {
 
+        this.label = label;
         this.content = content;
     }
 

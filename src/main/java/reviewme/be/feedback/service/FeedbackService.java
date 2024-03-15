@@ -187,7 +187,14 @@ public class FeedbackService {
         // 피드백 존재 여부 확인 및 유저 검증
         Feedback feedback = findById(feedbackId);
         feedback.validateUser(user);
-        feedback.updateContent(request.getContent());
+
+        Label label = null;
+
+        if (request.getLabelId() != null) {
+            label = utilService.findFeedbackLabelById(request.getLabelId());
+        }
+
+        feedback.updateContent(label, request.getContent());
     }
 
     @Transactional
