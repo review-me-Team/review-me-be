@@ -1,7 +1,11 @@
 package reviewme.be.user.entity;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import reviewme.be.user.dto.UserGitHubProfile;
 
 import javax.persistence.Entity;
@@ -14,6 +18,7 @@ import reviewme.be.user.exception.NoAuthorizationException;
 @Getter
 @Builder
 @EqualsAndHashCode(of = "id")
+@EntityListeners(value = AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User {
@@ -25,14 +30,18 @@ public class User {
     private long githubId;
     private String name;
     private String profileUrl;
+
+    @Column(updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    public User(UserGitHubProfile userGitHubProfile, LocalDateTime createdAt) {
+    private LocalDateTime deletedAt;
+
+    public User(UserGitHubProfile userGitHubProfile) {
 
         this.githubId = userGitHubProfile.getId();
         this.name = userGitHubProfile.getLogin();
         this.profileUrl = userGitHubProfile.getAvatarUrl();
-        this.createdAt = createdAt;
     }
 
     public void validateSameUser(User user) {

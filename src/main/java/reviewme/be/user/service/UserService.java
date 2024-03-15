@@ -33,10 +33,8 @@ public class UserService {
 
         Optional<User> user = userRepository.findByGithubId(userGithubProfile.getId());
 
-        LocalDateTime createdAt = LocalDateTime.now();
-
         User loggedInUser = user.orElseGet(
-                () -> userRepository.save(new User(userGithubProfile, createdAt)));
+                () -> userRepository.save(new User(userGithubProfile)));
 
         return UserProfileResponse.fromUser(loggedInUser);
     }

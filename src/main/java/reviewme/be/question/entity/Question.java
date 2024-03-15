@@ -1,8 +1,10 @@
 package reviewme.be.question.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import reviewme.be.resume.entity.Resume;
-import reviewme.be.util.entity.Label;
 import reviewme.be.user.entity.User;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
+@EntityListeners(value = AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Question {
@@ -38,7 +41,14 @@ public class Question {
     private Boolean bookmarked;
     private Boolean checked;
     private Long childCnt;
+
+    @Column(updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
     private LocalDateTime deletedAt;
 
     public static Question createQuestion(User commenter, Resume resume, String labelContent, String content, Integer resumePage) {
@@ -52,7 +62,6 @@ public class Question {
             .bookmarked(false)
             .checked(false)
             .childCnt(0L)
-            .createdAt(LocalDateTime.now())
             .build();
     }
 
@@ -63,7 +72,6 @@ public class Question {
             .resume(resume)
             .parentQuestion(parentQuestion)
             .content(content)
-            .createdAt(LocalDateTime.now())
             .build();
     }
 
