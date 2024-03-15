@@ -8,6 +8,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +17,7 @@ import reviewme.be.feedback.dto.FeedbackCommentInfo;
 import reviewme.be.feedback.dto.FeedbackInfo;
 import reviewme.be.feedback.dto.QFeedbackCommentInfo;
 import reviewme.be.feedback.dto.QFeedbackInfo;
+import reviewme.be.feedback.entity.Feedback;
 
 @RequiredArgsConstructor
 public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
@@ -99,5 +101,21 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Optional<Feedback> findParentFeedbackByIdAndResumeId(long feedbackId, long resumeId) {
+
+        return Optional.ofNullable(
+            queryFactory
+                .selectFrom(feedback)
+                .where(feedback.id.eq(feedbackId)
+                    .and(feedback.resume.id.eq(resumeId))
+                    .and(feedback.parentFeedback.isNull())
+                    .and(feedback.deletedAt.isNull()
+                        .or(feedback.deletedAt.isNotNull().and(feedback.childCnt.gt(0))))
+                )
+                .fetchOne()
+        );
     }
 }

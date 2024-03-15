@@ -108,6 +108,7 @@ public class Question {
 
     public void softDelete(LocalDateTime deletedAt) {
 
+        this.content = null;
         this.deletedAt = deletedAt;
     }
 

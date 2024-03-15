@@ -75,7 +75,7 @@ public class FeedbackService {
 
         // 이력서, 피드백 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
-        Feedback parentFeedback = findByIdAndResumeId(parentId, resumeId);
+        Feedback parentFeedback = findParentFeedbackByIdAndResumeId(parentId, resumeId);
 
         // TODO: 이력서 공개 범위에 따라 요청한 사용자가 작성할 수 있는지 검증
 
@@ -251,6 +251,13 @@ public class FeedbackService {
     private Feedback findParentFeedbackById(long feedbackId) {
 
         return feedbackRepository.findParentFeedbackById(feedbackId)
+            .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
+    }
+
+    // 대댓글 추가 시, 삭제된 피드백에도 추가할 수 있다.
+    private Feedback findParentFeedbackByIdAndResumeId(long feedbackId, long resumeId) {
+
+        return feedbackRepository.findParentFeedbackByIdAndResumeId(feedbackId, resumeId)
             .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
     }
 

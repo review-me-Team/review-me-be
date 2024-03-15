@@ -63,7 +63,7 @@ public class QuestionService {
 
         // 이력서, 예상 질문 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
-        Question parentQuestion = findByIdAndResumeId(parentId, resumeId);
+        Question parentQuestion = findParentQuestionByIdAndResumeId(parentId, resumeId);
 
         if (!parentQuestion.isParentQuestion()) {
             throw new NotParentQuestionException("해당 예상 질문에는 대댓글을 추가할 수 없습니다.");
@@ -242,6 +242,13 @@ public class QuestionService {
     private Question findParentQuestionById(long questionId) {
 
         return questionRepository.findQuestionById(questionId)
+            .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 예상 질문입니다."));
+    }
+
+    // 대댓글 추가 시 삭제된 예상 질문에도 추가할 수 있다.
+    private Question findParentQuestionByIdAndResumeId(long questionId, long resumeId) {
+
+        return questionRepository.findParentQuestionByIdAndResumeId(questionId, resumeId)
             .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 예상 질문입니다."));
     }
 
