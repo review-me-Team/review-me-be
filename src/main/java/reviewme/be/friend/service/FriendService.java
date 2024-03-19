@@ -17,7 +17,6 @@ import reviewme.be.friend.request.FollowFriendRequest;
 import reviewme.be.user.dto.response.UserResponse;
 import reviewme.be.user.service.UserService;
 import reviewme.be.user.entity.User;
-import reviewme.be.util.exception.NotLoggedInUserException;
 
 @Service
 @RequiredArgsConstructor
@@ -59,23 +58,31 @@ public class FriendService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getFriends(User user, Pageable pageable) {
+    public Page<UserResponse> getFriends(User user, String start, Pageable pageable) {
 
         userService.validateLoggedInUser(user);
 
         boolean isFriend = true;
 
-        return friendRepository.findFriendsByUserId(user.getId(), isFriend, pageable);
+        return friendRepository.findFriendsByUserId(user.getId(), start, isFriend, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getFriendRequests(User user, Pageable pageable) {
+    public Page<UserResponse> getReceivedFriendRequests(User user, String start, Pageable pageable) {
 
         userService.validateLoggedInUser(user);
 
         boolean isFriend = false;
 
-        return friendRepository.findFriendsByUserId(user.getId(), isFriend, pageable);
+        return friendRepository.findFriendsByUserId(user.getId(), start, isFriend, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getSentFriendRequests(User user, String start, Pageable pageable) {
+
+        userService.validateLoggedInUser(user);
+
+        return friendRepository.findSentFriendRequests(user.getId(), start, pageable);
     }
 
     @Transactional

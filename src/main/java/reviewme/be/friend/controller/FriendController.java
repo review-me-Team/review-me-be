@@ -1,6 +1,7 @@
 package reviewme.be.friend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -77,9 +78,10 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showFriends(
         @PageableDefault(size = 20) Pageable pageable,
+        @RequestParam(required = false) String start,
         @RequestAttribute("user") User user) {
 
-        Page<UserResponse> friends = friendService.getFriends(user, pageable);
+        Page<UserResponse> friends = friendService.getFriends(user, start, pageable);
 
         return ResponseEntity
             .ok()
@@ -91,7 +93,7 @@ public class FriendController {
             ));
     }
 
-    @Operation(summary = "나에게 친구 요청 온 목록 조회", description = "나에게 친구 요청 온 목록을 조회합니다.")
+    @Operation(summary = "나에게 온 친구 요청 목록 조회", description = "나에게 온 친구 요청 목록을 조회합니다.")
     @GetMapping("/follower")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "친구 요청 목록 조회 성공"),
@@ -99,17 +101,41 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showFollowFriends(
         @PageableDefault(size = 20) Pageable pageable,
+        @RequestParam(required = false) String start,
         @RequestAttribute("user") User user) {
 
-        Page<UserResponse> friendRequests = friendService.getFriendRequests(user, pageable);
+        Page<UserResponse> receivedFriendRequests = friendService.getReceivedFriendRequests(user, start, pageable);
 
         return ResponseEntity
             .ok()
             .body(new CustomResponse<>(
                 "success",
                 200,
-                "친구 요청 온 목록 조회에 성공했습니다.",
-                UserPageResponse.fromUserPageable(friendRequests)
+                "나에게 온 친구 요청 목록 조회에 성공했습니다.",
+                UserPageResponse.fromUserPageable(receivedFriendRequests)
+            ));
+    }
+
+    @Operation(summary = "내가 보낸 친구 요청 목록 조회", description = "내가 보낸 친구 요청 목록을 조회합니다.")
+    @GetMapping("/following")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "내가 보낸 친구 요청 목록 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "내가 보낸 친구 요청 목록 조회 실패")
+    })
+    public ResponseEntity<CustomResponse<UserPageResponse>> showFollowingFriends(
+        @PageableDefault(size = 20) Pageable pageable,
+        @RequestParam(required = false) String start,
+        @RequestAttribute("user") User user) {
+
+        Page<UserResponse> sentFriendRequests = friendService.getSentFriendRequests(user, start, pageable);
+
+        return ResponseEntity
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "내가 보낸 친구 요청 목록 조회에 성공했습니다.",
+                UserPageResponse.fromUserPageable(sentFriendRequests)
             ));
     }
 

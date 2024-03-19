@@ -44,10 +44,9 @@ public class CommentService {
     public void saveComment(User commenter, long resumeId, PostCommentRequest request) {
 
         Resume resume = resumeService.findById(resumeId);
-        LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         Comment savedComment = commentRepository.save(
-            new Comment(commenter, resume, request.getContent(), createdAt)
+            new Comment(commenter, resume, request.getContent())
         );
 
         // Default Comment Emojis 생성

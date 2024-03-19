@@ -7,6 +7,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,6 +16,7 @@ import reviewme.be.question.dto.QQuestionCommentInfo;
 import reviewme.be.question.dto.QQuestionInfo;
 import reviewme.be.question.dto.QuestionCommentInfo;
 import reviewme.be.question.dto.QuestionInfo;
+import reviewme.be.question.entity.Question;
 
 @RequiredArgsConstructor
 public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
@@ -97,5 +99,19 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Optional<Question> findParentQuestionByIdAndResumeId(long questionId, long resumeId) {
+
+        return Optional.ofNullable(queryFactory
+            .selectFrom(question)
+            .where(question.id.eq(questionId)
+                .and(question.resume.id.eq(resumeId))
+                .and(question.parentQuestion.isNull())
+                .and(question.deletedAt.isNull()
+                    .or(question.deletedAt.isNotNull().and(question.childCnt.gt(0))))
+            )
+            .fetchOne());
     }
 }

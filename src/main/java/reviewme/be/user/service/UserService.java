@@ -33,18 +33,17 @@ public class UserService {
 
         Optional<User> user = userRepository.findByGithubId(userGithubProfile.getId());
 
-        LocalDateTime createdAt = LocalDateTime.now();
-
         User loggedInUser = user.orElseGet(
-                () -> userRepository.save(new User(userGithubProfile, createdAt)));
+                () -> userRepository.save(new User(userGithubProfile)));
 
         return UserProfileResponse.fromUser(loggedInUser);
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getUsersByStartName(String start, Pageable pageable) {
+    public Page<UserResponse> getUsersByStartName(long userId, String start, Pageable pageable) {
 
-        return userRepository.findUsersByStartName(start, pageable);
+        System.out.println(userId);
+        return userRepository.findUsersByStartName(userId, start, pageable);
     }
 
     public boolean validateLoggedInUser(User user) {

@@ -1,9 +1,10 @@
 package reviewme.be.resume.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import reviewme.be.resume.dto.request.UpdateResumeRequest;
 import reviewme.be.resume.dto.request.UploadResumeRequest;
-import reviewme.be.resume.exception.NonExistResumeException;
 import reviewme.be.util.entity.Occupation;
 import reviewme.be.util.entity.Scope;
 import reviewme.be.user.entity.User;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
+@EntityListeners(value = AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Resume {
@@ -37,7 +39,11 @@ public class Resume {
     private String title;
     private String url;
     private int year;
+
+    @Column(updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
+
     private LocalDateTime deletedAt;
 
     public static Resume ofCreated(UploadResumeRequest uploadResumeRequest, User user, Scope scope,
@@ -49,7 +55,6 @@ public class Resume {
             .title(uploadResumeRequest.getTitle())
             .url(fileName)
             .year(uploadResumeRequest.getYear())
-            .createdAt(LocalDateTime.now())
             .build();
     }
 

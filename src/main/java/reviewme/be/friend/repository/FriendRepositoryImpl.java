@@ -22,25 +22,54 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<UserResponse> findFriendsByUserId(long userId, boolean accpeted, Pageable pageable) {
+    public Page<UserResponse> findFriendsByUserId(long userId, String start,
+        boolean accpeted,
+        Pageable pageable) {
 
         // order by name asc
         QueryResults<UserResponse> results = queryFactory
-                .select(new QUserResponse(
-                        friend.followerUser.id,
-                        friend.followerUser.name,
-                        friend.followerUser.profileUrl
-                ))
-                .from(friend)
-                .leftJoin(friend.followingUser, user)
-                .where(
-                        followingUserEq(userId),
-                        friend.accepted.eq(accpeted)
-                )
-                .orderBy(friend.followerUser.name.asc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
+            .select(new QUserResponse(
+                friend.followerUser.id,
+                friend.followerUser.name,
+                friend.followerUser.profileUrl
+            ))
+            .from(friend)
+            .leftJoin(friend.followingUser, user)
+            .where(
+                startNameEqInFriends(start),
+                followingUserEq(userId),
+                friend.accepted.eq(accpeted)
+            )
+            .orderBy(friend.followerUser.name.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
+
+        List<UserResponse> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<UserResponse> findSentFriendRequests(long followerId, String start, Pageable pageable) {
+
+        QueryResults<UserResponse> results = queryFactory.select(new QUserResponse(
+                friend.followingUser.id,
+                friend.followingUser.name,
+                friend.followingUser.profileUrl
+            ))
+            .from(friend)
+            .leftJoin(friend.followerUser, user)
+            .where(
+                followerUserEq(followerId),
+                startNameEqInSentFriendRequests(start),
+                friend.accepted.eq(false)
+            )
+            .orderBy(friend.followerUser.name.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
 
         List<UserResponse> content = results.getResults();
         long total = results.getTotal();
@@ -52,16 +81,33 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
     public List<Friend> findFriendRelation(long followerUserId, long followingUserId) {
 
         return queryFactory
-                .selectFrom(friend)
-                .where(
-                    (friend.followerUser.id.eq(followerUserId).and(friend.followingUser.id.eq(followingUserId)))
-                    .or(friend.followerUser.id.eq(followingUserId).and(friend.followingUser.id.eq(followerUserId)))
-                )
-                .fetch();
+            .selectFrom(friend)
+            .where(
+                (friend.followerUser.id.eq(followerUserId)
+                    .and(friend.followingUser.id.eq(followingUserId)))
+                    .or(friend.followerUser.id.eq(followingUserId)
+                        .and(friend.followingUser.id.eq(followerUserId)))
+            )
+            .fetch();
     }
 
     private BooleanExpression followingUserEq(Long userId) {
 
         return userId != null ? friend.followingUser.id.eq(userId) : null;
+    }
+
+    private BooleanExpression followerUserEq(Long userId) {
+
+        return userId != null ? friend.followerUser.id.eq(userId) : null;
+    }
+
+    private BooleanExpression startNameEqInFriends(String start) {
+
+        return start != null ? friend.followerUser.name.startsWith(start) : null;
+    }
+
+    private BooleanExpression startNameEqInSentFriendRequests(String start) {
+
+        return start != null ? friend.followingUser.name.startsWith(start) : null;
     }
 }

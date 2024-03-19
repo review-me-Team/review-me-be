@@ -20,6 +20,7 @@ import reviewme.be.user.dto.response.LoginUserResponse;
 import reviewme.be.user.dto.response.UserPageResponse;
 import reviewme.be.user.dto.response.UserProfileResponse;
 import reviewme.be.user.dto.response.UserResponse;
+import reviewme.be.user.entity.User;
 import reviewme.be.user.exception.NoRefreshTokenException;
 import reviewme.be.user.exception.NoSearchConditionException;
 import reviewme.be.user.service.JWTService;
@@ -105,13 +106,14 @@ public class UserController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showUsersStartsWith(
         @PageableDefault(size = 20) Pageable pageable,
-        @RequestParam String start) {
+        @RequestParam String start,
+        @RequestAttribute("user") User user) {
 
         if (start == null || start.isEmpty()) {
             throw new NoSearchConditionException("검색할 이름을 입력해주세요.");
         }
 
-        Page<UserResponse> searchedUsers = userService.getUsersByStartName(start, pageable);
+        Page<UserResponse> searchedUsers = userService.getUsersByStartName(user.getId(), start, pageable);
 
         return ResponseEntity
             .ok()

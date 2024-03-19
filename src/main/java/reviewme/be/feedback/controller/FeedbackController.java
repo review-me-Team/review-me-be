@@ -142,7 +142,7 @@ public class FeedbackController {
             ));
     }
 
-    @Operation(summary = "피드백 내용 수정", description = "피드백 내용을 수정합니다.")
+    @Operation(summary = "피드백 수정", description = "피드백을 수정합니다.")
     @PatchMapping("/{feedbackId}")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "피드백 수정 성공"),

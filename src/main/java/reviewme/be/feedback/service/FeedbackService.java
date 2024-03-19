@@ -75,7 +75,7 @@ public class FeedbackService {
 
         // 이력서, 피드백 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
-        Feedback parentFeedback = findByIdAndResumeId(parentId, resumeId);
+        Feedback parentFeedback = findParentFeedbackByIdAndResumeId(parentId, resumeId);
 
         // TODO: 이력서 공개 범위에 따라 요청한 사용자가 작성할 수 있는지 검증
 
@@ -128,9 +128,6 @@ public class FeedbackService {
     public FeedbackCommentPageResponse getFeedbackComments(long resumeId, long parentFeedbackId,
         User user,
         Pageable pageable) {
-
-        // TODO: 사용하는 입장에서 생각해 쿼리를 수정할 필요가 있어보임, 최신 순 조회 후 재정렬 해야할 지 등
-        // DB에서는 최신 순 내림차순으로 조회하고, 서비스에서는 그 데이터 중 최신 순 오름차순으로 재정렬하는 방식으로 변경해야할 지 고민해보기
 
         // 이력서, 부모 피드백 존재 여부 확인
         resumeService.findById(resumeId);
@@ -187,7 +184,14 @@ public class FeedbackService {
         // 피드백 존재 여부 확인 및 유저 검증
         Feedback feedback = findById(feedbackId);
         feedback.validateUser(user);
-        feedback.updateContent(request.getContent());
+
+        Label label = null;
+
+        if (request.getLabelId() != null) {
+            label = utilService.findFeedbackLabelById(request.getLabelId());
+        }
+
+        feedback.updateContent(label, request.getContent());
     }
 
     @Transactional
@@ -244,6 +248,13 @@ public class FeedbackService {
     private Feedback findParentFeedbackById(long feedbackId) {
 
         return feedbackRepository.findParentFeedbackById(feedbackId)
+            .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
+    }
+
+    // 대댓글 추가 시, 삭제된 피드백에도 추가할 수 있다.
+    private Feedback findParentFeedbackByIdAndResumeId(long feedbackId, long resumeId) {
+
+        return feedbackRepository.findParentFeedbackByIdAndResumeId(feedbackId, resumeId)
             .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
     }
 

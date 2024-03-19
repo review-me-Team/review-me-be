@@ -1,6 +1,9 @@
 package reviewme.be.feedback.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.util.entity.Label;
 import reviewme.be.user.entity.User;
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
+@EntityListeners(value = AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Feedback {
@@ -39,7 +43,14 @@ public class Feedback {
     private Integer resumePage;
     private Boolean checked;
     private long childCnt;
+
+    @Column(updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
     private LocalDateTime deletedAt;
 
     public static Feedback createdFeedback(User commenter, Resume resume, Label label,
@@ -53,7 +64,6 @@ public class Feedback {
             .resumePage(resumePage)
             .checked(false)
             .childCnt(0)
-            .createdAt(LocalDateTime.now())
             .build();
     }
 
@@ -65,7 +75,6 @@ public class Feedback {
             .resume(resume)
             .parentFeedback(parentFeedback)
             .content(content)
-            .createdAt(LocalDateTime.now())
             .build();
     }
 
@@ -90,8 +99,9 @@ public class Feedback {
         this.deletedAt = deletedAt;
     }
 
-    public void updateContent(String content) {
+    public void updateContent(Label label, String content) {
 
+        this.label = label;
         this.content = content;
     }
 

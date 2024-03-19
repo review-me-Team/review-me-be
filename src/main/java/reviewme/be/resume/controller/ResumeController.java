@@ -115,7 +115,6 @@ public class ResumeController {
         @PathVariable long resumeId,
         @RequestAttribute("user") User user) {
 
-        // TODO: pdf url 암호화 필요
         ResumeDetailResponse resumeDetail = resumeService.getResumeDetail(resumeId, user);
 
         return ResponseEntity

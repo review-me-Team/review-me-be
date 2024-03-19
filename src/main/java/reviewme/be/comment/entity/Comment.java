@@ -1,6 +1,9 @@
 package reviewme.be.comment.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import reviewme.be.resume.entity.Resume;
 import reviewme.be.user.entity.User;
 
@@ -9,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@EntityListeners(value = AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Comment {
@@ -26,16 +30,21 @@ public class Comment {
     private Resume resume;
 
     private String content;
+
+    @Column(updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
     private LocalDateTime updatedAt;
+
     private LocalDateTime deletedAt;
 
-    public Comment(User commenter, Resume resume, String content, LocalDateTime createdAt) {
+    public Comment(User commenter, Resume resume, String content) {
 
         this.commenter = commenter;
         this.resume = resume;
         this.content = content;
-        this.createdAt = createdAt;
     }
 
     public void validateUser(User user) {
