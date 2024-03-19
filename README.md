@@ -21,6 +21,6 @@
 ### Back-End
 
 <img src="https://img.shields.io/badge/Java-007396?style=flat&logo=java&logoColor=white"/> <img src="https://img.shields.io/badge/Gradle-02303A?style=flat&logo=Gradle&logoColor=white"/> <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring%20Data%20JPA-03EF62?style=flat"/> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/> ![QueryDSL](https://img.shields.io/badge/QueryDSL-blueviolet?style=flat)
-![OAuth 2.0](https://img.shields.io/badge/OAuth-EB5424?style=flat) ![RestDocs](https://img.shields.io/badge/RestDocs-63E296?style=flat&logoColor=white)
+![OAuth 2.0](https://img.shields.io/badge/OAuth-EB5424?style=flat) ![Swagger](https://img.shields.io/badge/Swagger-63E296?style=flat&logoColor=white)
 ![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
 <br><br>
