@@ -129,9 +129,6 @@ public class FeedbackService {
         User user,
         Pageable pageable) {
 
-        // TODO: 사용하는 입장에서 생각해 쿼리를 수정할 필요가 있어보임, 최신 순 조회 후 재정렬 해야할 지 등
-        // DB에서는 최신 순 내림차순으로 조회하고, 서비스에서는 그 데이터 중 최신 순 오름차순으로 재정렬하는 방식으로 변경해야할 지 고민해보기
-
         // 이력서, 부모 피드백 존재 여부 확인
         resumeService.findById(resumeId);
         findParentFeedbackById(parentFeedbackId);
