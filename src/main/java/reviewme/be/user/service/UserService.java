@@ -40,9 +40,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getUsersByStartName(String start, Pageable pageable) {
+    public Page<UserResponse> getUsersByStartName(long userId, String start, Pageable pageable) {
 
-        return userRepository.findUsersByStartName(start, pageable);
+        System.out.println(userId);
+        return userRepository.findUsersByStartName(userId, start, pageable);
     }
 
     public boolean validateLoggedInUser(User user) {

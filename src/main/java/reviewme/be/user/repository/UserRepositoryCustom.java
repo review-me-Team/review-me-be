@@ -6,5 +6,5 @@ import reviewme.be.user.dto.response.UserResponse;
 
 public interface UserRepositoryCustom {
 
-    Page<UserResponse> findUsersByStartName(String name, Pageable pageable);
+    Page<UserResponse> findUsersByStartName(long userId, String name, Pageable pageable);
 }

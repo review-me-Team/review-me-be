@@ -1,6 +1,7 @@
 package reviewme.be.user.repository;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +22,17 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<UserResponse> findUsersByStartName(String name, Pageable pageable) {
+    public Page<UserResponse> findUsersByStartName(long userId, String name, Pageable pageable) {
 
-        JPAQuery<Long> followingIds = queryFactory
+        JPAQuery<Long> followingIds = new JPAQuery<Long>()
             .select(friend.followerUser.id)
             .from(friend)
-            .where(friend.followingUser.id.eq(user.id));
+            .where(friend.followingUser.id.eq(userId));
 
-        JPAQuery<Long> follwerIds = queryFactory
+        JPAQuery<Long> follwerIds = new JPAQuery<Long>()
             .select(friend.followingUser.id)
             .from(friend)
-            .where(friend.followerUser.id.eq(user.id));
+            .where(friend.followerUser.id.eq(userId));
 
         QueryResults<UserResponse> results = queryFactory
             .select(new QUserResponse(
@@ -44,6 +45,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 user.name.startsWith(name)
                     .and(user.id.notIn(followingIds))
                     .and(user.id.notIn(follwerIds))
+                    .and(user.id.ne(userId))
             )
             .orderBy(user.name.asc())
             .offset(pageable.getOffset())
