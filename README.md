@@ -13,6 +13,7 @@
 ![AWS EC2](https://img.shields.io/badge/Amazon%20EC2-FA7343?style=flat&logo=amazonec2&logoColor=white)
 ![AWS S3](https://img.shields.io/badge/Amazon%20S3-569A31?style=flat&logo=amazons3&logoColor=white)
 ![AWS RDS](https://img.shields.io/badge/Amazon%20RDS-527FFF?style=flat&logo=amazonrds&logoColor=white)
+![AWS CloudFront](https://img.shields.io/badge/Amazon%20CloudFront-9A6AF6?style=flat&logo=amazonec2&logoColor=white)
 <br></br>
 ![nginx](https://img.shields.io/badge/nginx-009639?style=flat&logo=nginx&logoColor=white)
 ![Github Actions](https://img.shields.io/badge/Github%20Actions-2088FF?style=flat&logo=GithubActions&logoColor=white)
