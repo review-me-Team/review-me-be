@@ -1,7 +1,6 @@
 package reviewme.be.friend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -166,11 +165,11 @@ public class FriendController {
         @ApiResponse(responseCode = "200", description = "친구 요청 거절 성공"),
         @ApiResponse(responseCode = "400", description = "친구 요청 거절 실패")
     })
-    public ResponseEntity<CustomResponse> rejectFriendRequest(
+    public ResponseEntity<CustomResponse<Void>> rejectFriendRequest(
         @PathVariable long friendId,
         @RequestAttribute("user") User user) {
 
-        friendService.cancelFriendRequest(friendId, user);
+        friendService.rejectFriendRequest(friendId, user);
 
         return ResponseEntity
             .ok()
@@ -180,4 +179,26 @@ public class FriendController {
                 "친구 요청 거절에 성공했습니다."
             ));
     }
+
+    @Operation(summary = "친구 요청 취소", description = "친구 요청을 취소합니다.")
+    @DeleteMapping("/following/{userId}")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "친구 요청 취소 성공"),
+        @ApiResponse(responseCode = "400", description = "친구 요청 취소 실패")
+    })
+    public ResponseEntity<CustomResponse<Void>> cancelSentFriendRequest(
+        @PathVariable("userId") long userId,
+        @RequestAttribute("user") User user) {
+
+        friendService.cancelFriendRequest(userId, user);
+
+        return ResponseEntity
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "친구 요청 거절에 성공했습니다."
+            ));
+    }
+
 }
