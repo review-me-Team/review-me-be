@@ -1,6 +1,7 @@
 package reviewme.be.friend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -77,9 +78,10 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showFriends(
         @PageableDefault(size = 20) Pageable pageable,
+        @RequestParam(required = false) String start,
         @RequestAttribute("user") User user) {
 
-        Page<UserResponse> friends = friendService.getFriends(user, pageable);
+        Page<UserResponse> friends = friendService.getFriends(user, start, pageable);
 
         return ResponseEntity
             .ok()
@@ -99,9 +101,10 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showFollowFriends(
         @PageableDefault(size = 20) Pageable pageable,
+        @RequestParam(required = false) String start,
         @RequestAttribute("user") User user) {
 
-        Page<UserResponse> receivedFriendRequests = friendService.getReceivedFriendRequests(user, pageable);
+        Page<UserResponse> receivedFriendRequests = friendService.getReceivedFriendRequests(user, start, pageable);
 
         return ResponseEntity
             .ok()
@@ -121,9 +124,10 @@ public class FriendController {
     })
     public ResponseEntity<CustomResponse<UserPageResponse>> showFollowingFriends(
         @PageableDefault(size = 20) Pageable pageable,
+        @RequestParam(required = false) String start,
         @RequestAttribute("user") User user) {
 
-        Page<UserResponse> sentFriendRequests = friendService.getSentFriendRequests(user, pageable);
+        Page<UserResponse> sentFriendRequests = friendService.getSentFriendRequests(user, start, pageable);
 
         return ResponseEntity
             .ok()

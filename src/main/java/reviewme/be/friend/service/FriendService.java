@@ -58,31 +58,31 @@ public class FriendService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getFriends(User user, Pageable pageable) {
+    public Page<UserResponse> getFriends(User user, String start, Pageable pageable) {
 
         userService.validateLoggedInUser(user);
 
         boolean isFriend = true;
 
-        return friendRepository.findFriendsByUserId(user.getId(), isFriend, pageable);
+        return friendRepository.findFriendsByUserId(user.getId(), start, isFriend, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getReceivedFriendRequests(User user, Pageable pageable) {
+    public Page<UserResponse> getReceivedFriendRequests(User user, String start, Pageable pageable) {
 
         userService.validateLoggedInUser(user);
 
         boolean isFriend = false;
 
-        return friendRepository.findFriendsByUserId(user.getId(), isFriend, pageable);
+        return friendRepository.findFriendsByUserId(user.getId(), start, isFriend, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> getSentFriendRequests(User user, Pageable pageable) {
+    public Page<UserResponse> getSentFriendRequests(User user, String start, Pageable pageable) {
 
         userService.validateLoggedInUser(user);
 
-        return friendRepository.findSentFriendRequests(user.getId(), pageable);
+        return friendRepository.findSentFriendRequests(user.getId(), start, pageable);
     }
 
     @Transactional

@@ -22,7 +22,8 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<UserResponse> findFriendsByUserId(long userId, boolean accpeted,
+    public Page<UserResponse> findFriendsByUserId(long userId, String start,
+        boolean accpeted,
         Pageable pageable) {
 
         // order by name asc
@@ -35,6 +36,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
             .from(friend)
             .leftJoin(friend.followingUser, user)
             .where(
+                startNameEqInFriends(start),
                 followingUserEq(userId),
                 friend.accepted.eq(accpeted)
             )
@@ -50,7 +52,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
     }
 
     @Override
-    public Page<UserResponse> findSentFriendRequests(long followerId, Pageable pageable) {
+    public Page<UserResponse> findSentFriendRequests(long followerId, String start, Pageable pageable) {
 
         QueryResults<UserResponse> results = queryFactory.select(new QUserResponse(
                 friend.followingUser.id,
@@ -61,6 +63,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
             .leftJoin(friend.followerUser, user)
             .where(
                 followerUserEq(followerId),
+                startNameEqInSentFriendRequests(start),
                 friend.accepted.eq(false)
             )
             .orderBy(friend.followerUser.name.asc())
@@ -96,5 +99,15 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
     private BooleanExpression followerUserEq(Long userId) {
 
         return userId != null ? friend.followerUser.id.eq(userId) : null;
+    }
+
+    private BooleanExpression startNameEqInFriends(String start) {
+
+        return start != null ? friend.followerUser.name.startsWith(start) : null;
+    }
+
+    private BooleanExpression startNameEqInSentFriendRequests(String start) {
+
+        return start != null ? friend.followingUser.name.startsWith(start) : null;
     }
 }
