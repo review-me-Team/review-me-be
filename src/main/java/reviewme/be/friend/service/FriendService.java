@@ -100,13 +100,24 @@ public class FriendService {
     }
 
     @Transactional
-    public void cancelFriendRequest(long followerUserId, User user) {
+    public void rejectFriendRequest(long followerUserId, User user) {
 
         // 친구 요청을 보낸 사람 검증
         User followerUser = userService.getUserById(followerUserId);
 
         // 친구 요청 목록에 없다면 예외
         Friend friendRequest = getFriendRequest(followerUser, user);
+        friendRepository.delete(friendRequest);
+    }
+
+    @Transactional
+    public void cancelFriendRequest(long followingUserId, User user) {
+
+        // 친구 요청을 보낸 사람 검증
+        User followingUser = userService.getUserById(followingUserId);
+
+        // 친구 요청 목록에 없다면 예외
+        Friend friendRequest = getFriendRequest(user, followingUser);
         friendRepository.delete(friendRequest);
     }
 
