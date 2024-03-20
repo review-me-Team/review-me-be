@@ -36,22 +36,4 @@ public class QuestionEmojiRepositoryImpl implements QuestionEmojiRepositoryCusto
             .orderBy(question.id.desc(), emoji.id.asc())
             .fetch();
     }
-
-    @Override
-    public List<MyEmoji> findMyEmojiIdsByQuestionIds(long userId, List<Long> questionIds) {
-
-        return queryFactory
-            .select(new QMyEmoji(
-                questionEmoji.emoji.id,
-                user.id)
-            )
-            .from(questionEmoji)
-            .leftJoin(questionEmoji.user, user)
-            .where(questionEmoji.question.id.in(questionIds)
-                .and(questionEmoji.user.id.eq(userId))
-                .or(user.id.isNull()))
-            .groupBy(questionEmoji.question.id)
-            .orderBy(questionEmoji.id.desc(), questionEmoji.question.id.desc())
-            .fetch();
-    }
 }

@@ -7,6 +7,4 @@ import reviewme.be.util.dto.MyEmoji;
 public interface QuestionEmojiRepositoryCustom {
 
     List<EmojiCount> findEmojiCountByQuestionIds(List<Long> questionIds);
-
-    List<MyEmoji> findMyEmojiIdsByQuestionIds(long userId, List<Long> questionIds);
 }
