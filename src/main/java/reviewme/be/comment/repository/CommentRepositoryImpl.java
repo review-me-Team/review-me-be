@@ -43,7 +43,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
             .where(comment.resume.id.eq(resumeId)
                 .and(comment.deletedAt.isNull())
             )
-            .orderBy(comment.createdAt.desc())
+            .orderBy(comment.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();
