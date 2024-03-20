@@ -10,9 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import reviewme.be.util.dto.EmojiCount;
-import reviewme.be.util.dto.MyEmoji;
 import reviewme.be.util.dto.QEmojiCount;
-import reviewme.be.util.dto.QMyEmoji;
 
 @RequiredArgsConstructor
 public class CommentEmojiRepositoryImpl implements CommentEmojiRepositoryCustom {

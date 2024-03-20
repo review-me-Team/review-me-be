@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import reviewme.be.comment.entity.CommentEmoji;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CommentEmojiRepository extends JpaRepository<CommentEmoji, Long>, CommentEmojiRepositoryCustom {
