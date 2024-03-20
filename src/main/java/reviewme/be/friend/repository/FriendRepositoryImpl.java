@@ -66,7 +66,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
                 startNameEqInSentFriendRequests(start),
                 friend.accepted.eq(false)
             )
-            .orderBy(friend.followerUser.name.asc())
+            .orderBy(friend.followingUser.name.asc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();
