@@ -36,22 +36,4 @@ public class CommentEmojiRepositoryImpl implements CommentEmojiRepositoryCustom 
             .orderBy(comment.id.desc(), emoji.id.asc())
             .fetch();
     }
-
-    @Override
-    public List<MyEmoji> findByUserIdAndCommentIdIn(long userId, List<Long> commentIds) {
-
-        return queryFactory
-            .select(new QMyEmoji(
-                commentEmoji.emoji.id,
-                user.id)
-            )
-            .from(commentEmoji)
-            .leftJoin(commentEmoji.user, user)
-            .where(commentEmoji.comment.id.in(commentIds)
-                .and(commentEmoji.user.id.eq(userId))
-                .or(user.id.isNull()))
-            .groupBy(commentEmoji.comment.id)
-            .orderBy(commentEmoji.comment.id.desc())
-            .fetch();
-    }
 }

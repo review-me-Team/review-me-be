@@ -13,12 +13,6 @@ public interface CommentEmojiRepository extends JpaRepository<CommentEmoji, Long
 
     Optional<CommentEmoji> findByUserIdAndCommentId(long userId, long commentId);
 
-    @Query(value = "SELECT commentEmoji " +
-        "FROM CommentEmoji commentEmoji " +
-        "WHERE commentEmoji.user.id = :userId " +
-        "AND commentEmoji.user.id IN :commentIds")
-    List<CommentEmoji> findByCommentIdAndUserIdIn(@Param("commentIds") List<Long> commentIds, @Param("userId")long userId);
-
     @Modifying
     @Query(value = "DELETE FROM comment_emoji WHERE comment_id = :commentId", nativeQuery = true)
     void deleteAllByCommentId(@Param("commentId") long commentId);
