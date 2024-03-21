@@ -104,21 +104,19 @@ public class FeedbackService {
         resumeService.findById(resumeId);
 
         // 피드백 목록 조회
-        Page<FeedbackInfo> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
+        Page<FeedbackResponse> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
             resumeId, user.getId(), resumePage, pageable);
-        List<FeedbackInfo> feedbacks = feedbackPage.getContent();
 
-        // id 목록 추출
-        List<Long> feedbackIds = extractFeedbackIds(feedbacks);
+        List<FeedbackResponse> feedbacks = feedbackPage.getContent();
 
-        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
-            feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackIds));
-
-        List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbacks,
-            emojiCounts);
+        feedbacks.forEach(feedback -> {
+            List<EmojiCount> emojiCounts = feedbackRepository.findFeedbackEmojiCountByFeedbackId(
+                feedback.getId());
+            feedback.setEmojis(emojiCounts);
+        });
 
         return FeedbackPageResponse.builder()
-            .feedbacks(feedbacksResponse)
+            .feedbacks(feedbacks)
             .pageNumber(feedbackPage.getNumber())
             .lastPage(feedbackPage.getTotalPages() - 1)
             .pageSize(feedbackPage.getSize())
@@ -274,25 +272,25 @@ public class FeedbackService {
             .collect(Collectors.toList());
     }
 
-    private List<FeedbackResponse> collectToFeedbacksResponse(
-        List<FeedbackInfo> feedbacks,
-        List<List<EmojiCount>> emojiCounts) {
-
-        List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
-
-        for (int feedbackIdx = 0; feedbackIdx < feedbacks.size(); feedbackIdx++) {
-
-            FeedbackInfo feedback = feedbacks.get(feedbackIdx);
-            List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
-
-            FeedbackResponse feedbackResponse = FeedbackResponse.fromFeedbackOfResume(feedback,
-                emojis);
-
-            feedbacksResponse.add(feedbackResponse);
-        }
-
-        return feedbacksResponse;
-    }
+//    private List<FeedbackResponse> collectToFeedbacksResponse(
+//        List<FeedbackInfo> feedbacks,
+//        List<List<EmojiCount>> emojiCounts) {
+//
+//        List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
+//
+//        for (int feedbackIdx = 0; feedbackIdx < feedbacks.size(); feedbackIdx++) {
+//
+//            FeedbackInfo feedback = feedbacks.get(feedbackIdx);
+//            List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
+//
+//            FeedbackResponse feedbackResponse = FeedbackResponse.fromFeedbackOfResume(feedback,
+//                emojis);
+//
+//            feedbacksResponse.add(feedbackResponse);
+//        }
+//
+//        return feedbacksResponse;
+//    }
 
     private List<Long> extractFeedbackCommentIds(List<FeedbackCommentInfo> feedbackComments) {
 
@@ -324,7 +322,8 @@ public class FeedbackService {
     /**
      * 대댓글 조회 시 id 오름차순으로 재정렬
      */
-    private List<FeedbackCommentInfo> sortFeedbackCommentsByIdAsc(List<FeedbackCommentInfo> feedbackCommentInfos) {
+    private List<FeedbackCommentInfo> sortFeedbackCommentsByIdAsc(
+        List<FeedbackCommentInfo> feedbackCommentInfos) {
 
         return feedbackCommentInfos.stream()
             .sorted(Comparator.comparingLong(FeedbackCommentInfo::getId))
