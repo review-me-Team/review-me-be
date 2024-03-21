@@ -265,12 +265,6 @@ public class FeedbackService {
     /***************
      * 아래는 피드백 목록 조회 시 사용되는 메서드입니다.
      ***************/
-    private List<Long> extractFeedbackIds(List<FeedbackInfo> feedbacks) {
-
-        return feedbacks.stream()
-            .map(FeedbackInfo::getId)
-            .collect(Collectors.toList());
-    }
 
     private List<Long> extractFeedbackCommentIds(List<FeedbackCommentInfo> feedbackComments) {
 
