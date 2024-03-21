@@ -3,10 +3,8 @@ package reviewme.be.feedback.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import reviewme.be.feedback.dto.FeedbackInfo;
 import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
@@ -50,24 +48,6 @@ public class FeedbackResponse {
 
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
-
-//    public static FeedbackResponse fromFeedbackOfResume(FeedbackInfo feedback,
-//        List<EmojiCount> emojis) {
-//
-//        return FeedbackResponse.builder()
-//            .id(feedback.getId())
-//            .content(feedback.getContent())
-//            .commenterId(feedback.getCommenterId())
-//            .commenterName(feedback.getCommenterName())
-//            .commenterProfileUrl(feedback.getCommenterProfileUrl())
-//            .labelContent(feedback.getLabelContent())
-//            .createdAt(feedback.getCreatedAt())
-//            .countOfReplies(feedback.getCountOfReplies())
-//            .checked(feedback.isChecked())
-//            .emojis(emojis)
-//            .myEmojiId(feedback.getMyEmojiId())
-//            .build();
-//    }
 
     @QueryProjection
     public FeedbackResponse(Long id, String content, long commenterId, String commenterName,

@@ -1,12 +1,10 @@
 package reviewme.be.feedback.repository;
 
-import static com.querydsl.core.types.ExpressionUtils.count;
 import static reviewme.be.feedback.entity.QFeedback.feedback;
 import static reviewme.be.feedback.entity.QFeedbackEmoji.feedbackEmoji;
 import static reviewme.be.util.entity.QLabel.label;
 
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -15,14 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import reviewme.be.feedback.dto.FeedbackCommentInfo;
-import reviewme.be.feedback.dto.FeedbackInfo;
-import reviewme.be.feedback.dto.QFeedbackCommentInfo;
-import reviewme.be.feedback.dto.QFeedbackInfo;
+import reviewme.be.feedback.dto.response.FeedbackCommentResponse;
 import reviewme.be.feedback.dto.response.FeedbackResponse;
+import reviewme.be.feedback.dto.response.QFeedbackCommentResponse;
 import reviewme.be.feedback.dto.response.QFeedbackResponse;
 import reviewme.be.feedback.entity.Feedback;
-import reviewme.be.util.dto.EmojiCount;
 
 @RequiredArgsConstructor
 public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
@@ -73,27 +68,11 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
     }
 
     @Override
-    public List<EmojiCount> findFeedbackEmojiCountByFeedbackId(long feedbackId) {
-
-        return queryFactory
-            .select(Projections.constructor(EmojiCount.class,
-                feedbackEmoji.emoji.id,
-                count(feedbackEmoji.emoji.id)))
-            .from(feedbackEmoji)
-            .innerJoin(feedbackEmoji.emoji)
-            .innerJoin(feedbackEmoji.user)
-            .where(feedbackEmoji.feedback.id.eq(feedbackId))
-            .groupBy(feedbackEmoji.emoji.id)
-            .orderBy(feedbackEmoji.emoji.id.asc())
-            .fetch();
-    }
-
-    @Override
-    public Page<FeedbackCommentInfo> findFeedbackCommentsByParentId(long feedbackId, long userId,
+    public Page<FeedbackCommentResponse> findFeedbackCommentsByParentId(long feedbackId, long userId,
         Pageable pageable) {
 
-        QueryResults<FeedbackCommentInfo> results = queryFactory
-            .select(new QFeedbackCommentInfo(
+        QueryResults<FeedbackCommentResponse> results = queryFactory
+            .select(new QFeedbackCommentResponse(
                 feedback.id,
                 feedback.parentFeedback.id,
                 feedback.content,
@@ -118,7 +97,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetchResults();
 
-        List<FeedbackCommentInfo> content = results.getResults();
+        List<FeedbackCommentResponse> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
