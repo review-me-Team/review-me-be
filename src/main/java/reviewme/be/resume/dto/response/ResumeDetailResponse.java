@@ -25,6 +25,9 @@ public class ResumeDetailResponse {
     @Schema(description = "이력서 작성자 프로필 사진", example = "https://avatars.githubusercontent.com/u/96980857?v=4")
     private String writerProfileUrl;
 
+    @Schema(description = "공개 범위", example = "전체 공개")
+    private String scope;
+
     @Schema(description = "직군", example = "Frontend")
     private String occupation;
 
@@ -39,6 +42,7 @@ public class ResumeDetailResponse {
                 .writerId(resume.getWriter().getId())
                 .writerName(resume.getWriter().getName())
                 .writerProfileUrl(resume.getWriter().getProfileUrl())
+                .scope(resume.getScope().getScope())
                 .occupation(resume.getOccupation().getOccupation())
                 .year(resume.getYear())
                 .build();
