@@ -272,26 +272,6 @@ public class FeedbackService {
             .collect(Collectors.toList());
     }
 
-//    private List<FeedbackResponse> collectToFeedbacksResponse(
-//        List<FeedbackInfo> feedbacks,
-//        List<List<EmojiCount>> emojiCounts) {
-//
-//        List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
-//
-//        for (int feedbackIdx = 0; feedbackIdx < feedbacks.size(); feedbackIdx++) {
-//
-//            FeedbackInfo feedback = feedbacks.get(feedbackIdx);
-//            List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
-//
-//            FeedbackResponse feedbackResponse = FeedbackResponse.fromFeedbackOfResume(feedback,
-//                emojis);
-//
-//            feedbacksResponse.add(feedbackResponse);
-//        }
-//
-//        return feedbacksResponse;
-//    }
-
     private List<Long> extractFeedbackCommentIds(List<FeedbackCommentInfo> feedbackComments) {
 
         return feedbackComments.stream()
