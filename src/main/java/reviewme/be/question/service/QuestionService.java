@@ -3,6 +3,7 @@ package reviewme.be.question.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -208,18 +209,15 @@ public class QuestionService {
         Question question = findByIdAndResumeId(questionId, resumeId);
 
         // 기존 이모지 삭제
-        questionEmojiRepository.findByQuestionIdAndUserId(questionId, user.getId())
-            .ifPresent(
-                questionEmojiRepository::delete
-            );
+        Optional<QuestionEmoji> questionEmoji = questionEmojiRepository.findByQuestionIdAndUserId(
+            questionId, user.getId());
 
-        Integer emojiId = request.getId();
+        Emoji emoji = emojisVO.findEmojiById(request.getId());
 
-        if (emojiId == null) {
+        if (questionEmoji.isPresent()) {
+            questionEmoji.get().updateEmoji(emojisVO.findEmojiById(request.getId()));
             return;
         }
-
-        Emoji emoji = emojisVO.findEmojiById(emojiId);
 
         questionEmojiRepository.save(
             new QuestionEmoji(user, question, emoji)

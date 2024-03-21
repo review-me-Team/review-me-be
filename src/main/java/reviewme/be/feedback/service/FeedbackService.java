@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -215,18 +216,15 @@ public class FeedbackService {
         Feedback feedback = findByIdAndResumeId(feedbackId, resumeId);
 
         // 기존 이모지 삭제
-        feedbackEmojiRepository.findByFeedbackIdAndUserId(feedbackId, user.getId())
-            .ifPresent(
-                feedbackEmojiRepository::delete
-            );
+        Optional<FeedbackEmoji> feedbackEmoji = feedbackEmojiRepository.findByFeedbackIdAndUserId(
+            feedbackId, user.getId());
 
-        Integer emojiId = request.getId();
+        Emoji emoji = emojisVO.findEmojiById(request.getId());
 
-        if (emojiId == null) {
+        if (feedbackEmoji.isPresent()) {
+            feedbackEmoji.get().updateEmoji(emojisVO.findEmojiById(request.getId()));
             return;
         }
-
-        Emoji emoji = emojisVO.findEmojiById(emojiId);
 
         feedbackEmojiRepository.save(
             new FeedbackEmoji(user, feedback, emoji)

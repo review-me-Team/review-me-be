@@ -41,7 +41,11 @@ public class EmojisVO {
         return emojis.containsKey(emojiId);
     }
 
-    public Emoji findEmojiById(int emojiId) {
+    public Emoji findEmojiById(Integer emojiId) {
+
+        if (emojiId == null) {
+            return null;
+        }
 
         if (!validateEmojiById(emojiId)) {
             throw new NonExistEmojiException("존재하지 않는 emojiId입니다.");

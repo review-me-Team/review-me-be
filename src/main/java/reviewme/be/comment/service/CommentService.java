@@ -1,6 +1,7 @@
 package reviewme.be.comment.service;
 
 import java.time.ZoneId;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -117,16 +118,15 @@ public class CommentService {
         Comment comment = findByIdAndResumeId(commentId, resumeId);
 
         // 기존 이모지 삭제
-        commentEmojiRepository.findByUserIdAndCommentId(user.getId(), commentId)
-            .ifPresent(
-                commentEmojiRepository::delete
-            );
+        Optional<CommentEmoji> commentEmoji = commentEmojiRepository.findByUserIdAndCommentId(
+            user.getId(), commentId);
 
-        Integer emojiId = request.getId();
+        Emoji emoji = emojisVO.findEmojiById(request.getId());
 
-        if (emojiId == null) return;
-
-        Emoji emoji = emojisVO.findEmojiById(emojiId);
+        if (commentEmoji.isPresent()) {
+            commentEmoji.get().updateEmoji(emojisVO.findEmojiById(request.getId()));
+            return;
+        }
 
         commentEmojiRepository.save(
             CommentEmoji.ofCreated(user, comment, emoji)
