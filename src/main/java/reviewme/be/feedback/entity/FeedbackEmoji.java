@@ -37,6 +37,11 @@ public class FeedbackEmoji {
         this.emoji = emoji;
     }
 
+    public void updateEmoji(Emoji emoji) {
+
+        this.emoji = emoji;
+    }
+
     public static List<FeedbackEmoji> createDefaultFeedbackEmojis(Feedback feedback,
         List<Emoji> emojis) {
 

@@ -39,6 +39,11 @@ public class CommentEmoji {
             .build();
     }
 
+    public void updateEmoji(Emoji emoji) {
+
+        this.emoji = emoji;
+    }
+
     public static List<CommentEmoji> createDefaultCommentEmojis(Comment comment,
         List<Emoji> emojis) {
 
@@ -48,10 +53,5 @@ public class CommentEmoji {
                 .emoji(emoji)
                 .build())
             .collect(Collectors.toList());
-    }
-
-    public void updateEmoji(Emoji emoji) {
-
-        this.emoji = emoji;
     }
 }

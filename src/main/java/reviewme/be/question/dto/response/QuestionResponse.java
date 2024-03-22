@@ -2,18 +2,17 @@ package reviewme.be.question.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Getter;
-import reviewme.be.question.dto.QuestionInfo;
-import reviewme.be.question.entity.Question;
+import lombok.Setter;
 import reviewme.be.util.dto.EmojiCount;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
+@Setter
 @Schema(description = "예상 질문 응답")
 public class QuestionResponse {
 
@@ -55,40 +54,21 @@ public class QuestionResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static QuestionResponse fromQuestionOfOwnResume(QuestionInfo question,
-        List<EmojiCount> emojis) {
+    @QueryProjection
+    public QuestionResponse(Long id, String content, long commenterId, String commenterName,
+        String commenterProfileUrl, String labelContent, LocalDateTime createdAt, long countOfReplies,
+        Boolean checked, Boolean bookmarked, Integer myEmojiId) {
 
-        return QuestionResponse.builder()
-            .id(question.getId())
-            .content(question.getContent())
-            .commenterId(question.getCommenterId())
-            .commenterName(question.getCommenterName())
-            .commenterProfileUrl(question.getCommenterProfileUrl())
-            .labelContent(question.getLabelContent())
-            .createdAt(question.getCreatedAt())
-            .countOfReplies(question.getCountOfReplies())
-            .checked(question.isChecked())
-            .bookmarked(question.isBookmarked())
-            .emojis(emojis)
-            .myEmojiId(question.getMyEmojiId())
-            .build();
-    }
-
-    public static QuestionResponse fromQuestionOfOtherResume(QuestionInfo question,
-        List<EmojiCount> emojis) {
-
-        return QuestionResponse.builder()
-            .id(question.getId())
-            .content(question.getContent())
-            .commenterId(question.getCommenterId())
-            .commenterName(question.getCommenterName())
-            .commenterProfileUrl(question.getCommenterProfileUrl())
-            .labelContent(question.getLabelContent())
-            .createdAt(question.getCreatedAt())
-            .countOfReplies(question.getCountOfReplies())
-            .checked(question.isChecked())
-            .emojis(emojis)
-            .myEmojiId(question.getMyEmojiId())
-            .build();
+        this.id = id;
+        this.content = content;
+        this.commenterId = commenterId;
+        this.commenterName = commenterName;
+        this.commenterProfileUrl = commenterProfileUrl;
+        this.labelContent = labelContent;
+        this.createdAt = createdAt;
+        this.countOfReplies = countOfReplies;
+        this.checked = checked;
+        this.bookmarked = bookmarked;
+        this.myEmojiId = myEmojiId;
     }
 }

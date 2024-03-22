@@ -1,17 +1,15 @@
 package reviewme.be.feedback.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reviewme.be.feedback.dto.FeedbackCommentInfo;
-import reviewme.be.feedback.dto.FeedbackInfo;
 import reviewme.be.feedback.dto.request.CreateFeedbackCommentRequest;
 import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
@@ -58,15 +56,12 @@ public class FeedbackService {
             label = utilService.findFeedbackLabelById(request.getLabelId());
         }
 
-        Feedback savedFeedback = feedbackRepository.save(Feedback.createdFeedback(
+        feedbackRepository.save(Feedback.createdFeedback(
             commenter,
             resume,
             label,
             request.getContent(),
             request.getResumePage()));
-
-        // Default Feedback Emojis 생성
-        saveDefaultEmojis(savedFeedback);
     }
 
     @Transactional
@@ -83,16 +78,13 @@ public class FeedbackService {
             throw new NonExistFeedbackException("해당 피드백에는 대댓글을 추가할 수 없습니다.");
         }
 
-        Feedback savedFeedback = feedbackRepository.save(Feedback.createFeedbackComment(
+        feedbackRepository.save(Feedback.createFeedbackComment(
             commenter,
             resume,
             parentFeedback,
             request.getContent()));
 
         parentFeedback.plusChildCnt();
-
-        // Default Feedback Emojis 생성
-        saveDefaultEmojis(savedFeedback);
     }
 
     @Transactional(readOnly = true)
@@ -103,21 +95,19 @@ public class FeedbackService {
         resumeService.findById(resumeId);
 
         // 피드백 목록 조회
-        Page<FeedbackInfo> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
+        Page<FeedbackResponse> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
             resumeId, user.getId(), resumePage, pageable);
-        List<FeedbackInfo> feedbacks = feedbackPage.getContent();
 
-        // id 목록 추출
-        List<Long> feedbackIds = extractFeedbackIds(feedbacks);
+        List<FeedbackResponse> feedbacks = feedbackPage.getContent();
 
-        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
-            feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackIds));
-
-        List<FeedbackResponse> feedbacksResponse = collectToFeedbacksResponse(feedbacks,
-            emojiCounts);
+        feedbacks.forEach(feedback -> {
+            List<EmojiCount> emojiCounts = feedbackEmojiRepository.findFeedbackEmojiCountByFeedbackId(
+                feedback.getId());
+            feedback.setEmojis(emojiCounts);
+        });
 
         return FeedbackPageResponse.builder()
-            .feedbacks(feedbacksResponse)
+            .feedbacks(feedbacks)
             .pageNumber(feedbackPage.getNumber())
             .lastPage(feedbackPage.getTotalPages() - 1)
             .pageSize(feedbackPage.getSize())
@@ -134,22 +124,21 @@ public class FeedbackService {
         findParentFeedbackById(parentFeedbackId);
 
         // 피드백 대댓글 목록 조회 후 id 오름차순으로 재정렬
-        Page<FeedbackCommentInfo> feedbackCommentPage = feedbackRepository.findFeedbackCommentsByParentId(
+        Page<FeedbackCommentResponse> feedbackCommentPage = feedbackRepository.findFeedbackCommentsByParentId(
             parentFeedbackId, user.getId(), pageable);
-        List<FeedbackCommentInfo> feedbackComments = feedbackCommentPage.getContent();
+
+        List<FeedbackCommentResponse> feedbackComments = feedbackCommentPage.getContent();
+
+        feedbackComments.forEach(feedbackComment -> {
+            List<EmojiCount> emojiCounts = feedbackEmojiRepository.findFeedbackEmojiCountByFeedbackId(
+                feedbackComment.getId());
+            feedbackComment.setEmojis(emojiCounts);
+        });
+
         feedbackComments = sortFeedbackCommentsByIdAsc(feedbackComments);
 
-        // id 목록 추출
-        List<Long> feedbackCommentIds = extractFeedbackCommentIds(feedbackComments);
-
-        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
-            feedbackEmojiRepository.findEmojiCountByFeedbackIds(feedbackCommentIds));
-
-        List<FeedbackCommentResponse> feedbackCommentsResponse = collectToFeedbackCommentsResponse(
-            feedbackComments, emojiCounts);
-
         return FeedbackCommentPageResponse.builder()
-            .feedbackComments(feedbackCommentsResponse)
+            .feedbackComments(feedbackComments)
             .pageNumber(feedbackCommentPage.getNumber())
             .lastPage(feedbackCommentPage.getTotalPages() - 1)
             .pageSize(feedbackCommentPage.getSize())
@@ -215,18 +204,15 @@ public class FeedbackService {
         Feedback feedback = findByIdAndResumeId(feedbackId, resumeId);
 
         // 기존 이모지 삭제
-        feedbackEmojiRepository.findByFeedbackIdAndUserId(feedbackId, user.getId())
-            .ifPresent(
-                feedbackEmojiRepository::delete
-            );
+        Optional<FeedbackEmoji> feedbackEmoji = feedbackEmojiRepository.findByFeedbackIdAndUserId(
+            feedbackId, user.getId());
 
-        Integer emojiId = request.getId();
+        Emoji emoji = emojisVO.findEmojiById(request.getId());
 
-        if (emojiId == null) {
+        if (feedbackEmoji.isPresent()) {
+            feedbackEmoji.get().updateEmoji(emojisVO.findEmojiById(request.getId()));
             return;
         }
-
-        Emoji emoji = emojisVO.findEmojiById(emojiId);
 
         feedbackEmojiRepository.save(
             new FeedbackEmoji(user, feedback, emoji)
@@ -258,78 +244,14 @@ public class FeedbackService {
             .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
     }
 
-    private void saveDefaultEmojis(Feedback savedFeedback) {
-        feedbackEmojiRepository.saveAll(
-            FeedbackEmoji.createDefaultFeedbackEmojis(
-                savedFeedback,
-                emojisVO.getEmojis())
-        );
-    }
-
-    /***************
-     * 아래는 피드백 목록 조회 시 사용되는 메서드입니다.
-     ***************/
-    private List<Long> extractFeedbackIds(List<FeedbackInfo> feedbacks) {
-
-        return feedbacks.stream()
-            .map(FeedbackInfo::getId)
-            .collect(Collectors.toList());
-    }
-
-    private List<FeedbackResponse> collectToFeedbacksResponse(
-        List<FeedbackInfo> feedbacks,
-        List<List<EmojiCount>> emojiCounts) {
-
-        List<FeedbackResponse> feedbacksResponse = new ArrayList<>();
-
-        for (int feedbackIdx = 0; feedbackIdx < feedbacks.size(); feedbackIdx++) {
-
-            FeedbackInfo feedback = feedbacks.get(feedbackIdx);
-            List<EmojiCount> emojis = emojiCounts.get(feedbackIdx);
-
-            FeedbackResponse feedbackResponse = FeedbackResponse.fromFeedbackOfResume(feedback,
-                emojis);
-
-            feedbacksResponse.add(feedbackResponse);
-        }
-
-        return feedbacksResponse;
-    }
-
-    private List<Long> extractFeedbackCommentIds(List<FeedbackCommentInfo> feedbackComments) {
-
-        return feedbackComments.stream()
-            .map(FeedbackCommentInfo::getId)
-            .collect(Collectors.toList());
-    }
-
-    private List<FeedbackCommentResponse> collectToFeedbackCommentsResponse(
-        List<FeedbackCommentInfo> feedbackComments,
-        List<List<EmojiCount>> emojiCounts) {
-
-        List<FeedbackCommentResponse> feedbackCommentsResponse = new ArrayList<>();
-
-        for (int feedbackCommentIdx = 0; feedbackCommentIdx < feedbackComments.size();
-            feedbackCommentIdx++) {
-
-            FeedbackCommentInfo feedbackComment = feedbackComments.get(feedbackCommentIdx);
-            List<EmojiCount> emojis = emojiCounts.get(feedbackCommentIdx);
-
-            feedbackCommentsResponse.add(
-                FeedbackCommentResponse.fromFeedbackComment(feedbackComment, emojis)
-            );
-        }
-
-        return feedbackCommentsResponse;
-    }
-
     /**
      * 대댓글 조회 시 id 오름차순으로 재정렬
      */
-    private List<FeedbackCommentInfo> sortFeedbackCommentsByIdAsc(List<FeedbackCommentInfo> feedbackCommentInfos) {
+    private List<FeedbackCommentResponse> sortFeedbackCommentsByIdAsc(
+        List<FeedbackCommentResponse> feedbackComments) {
 
-        return feedbackCommentInfos.stream()
-            .sorted(Comparator.comparingLong(FeedbackCommentInfo::getId))
+        return feedbackComments.stream()
+            .sorted(Comparator.comparingLong(FeedbackCommentResponse::getId))
             .collect(Collectors.toList());
     }
 }

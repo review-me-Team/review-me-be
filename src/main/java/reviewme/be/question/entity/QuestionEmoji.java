@@ -37,6 +37,11 @@ public class QuestionEmoji {
         this.emoji = emoji;
     }
 
+    public void updateEmoji(Emoji emoji) {
+
+        this.emoji = emoji;
+    }
+
     public static List<QuestionEmoji> createDefaultQuestionEmojis(Question question,
         List<Emoji> emojis) {
 

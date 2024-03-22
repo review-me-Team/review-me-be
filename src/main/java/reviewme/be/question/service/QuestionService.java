@@ -1,16 +1,14 @@
 package reviewme.be.question.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reviewme.be.question.dto.QuestionCommentInfo;
-import reviewme.be.question.dto.QuestionInfo;
 import reviewme.be.question.dto.request.*;
 import reviewme.be.question.dto.response.QuestionCommentPageResponse;
 import reviewme.be.question.dto.response.QuestionCommentResponse;
@@ -27,9 +25,6 @@ import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Emoji;
-import reviewme.be.util.entity.Label;
-import reviewme.be.util.repository.LabelRepository;
-import reviewme.be.util.service.UtilService;
 
 import java.util.List;
 import reviewme.be.util.vo.EmojisVO;
@@ -41,7 +36,6 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final QuestionEmojiRepository questionEmojiRepository;
     private final ResumeService resumeService;
-    private final UtilService utilService;
     private final EmojisVO emojisVO;
 
     @Transactional
@@ -50,11 +44,10 @@ public class QuestionService {
         // 이력서 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
 
-        Question savedQuestion = questionRepository.save(
-            Question.createQuestion(commenter, resume, request.getLabelContent(), request.getContent(),
+        questionRepository.save(
+            Question.createQuestion(commenter, resume, request.getLabelContent(),
+                request.getContent(),
                 request.getResumePage()));
-
-        saveDefaultEmojis(savedQuestion);
     }
 
     @Transactional
@@ -69,15 +62,13 @@ public class QuestionService {
             throw new NotParentQuestionException("해당 예상 질문에는 대댓글을 추가할 수 없습니다.");
         }
 
-        Question savedQuestion = questionRepository.save(Question.createQuestionComment(
+        questionRepository.save(Question.createQuestionComment(
             commenter,
             resume,
             parentQuestion,
             request.getContent()));
 
         parentQuestion.plusChildCnt();
-
-        saveDefaultEmojis(savedQuestion);
     }
 
     @Transactional(readOnly = true)
@@ -89,20 +80,25 @@ public class QuestionService {
         Resume resume = resumeService.findById(resumeId);
         boolean isWriter = resume.isWriter(user);
 
-        // 예상 질문 목록 조회 후 id 목록 추출
-        Page<QuestionInfo> questionPage = questionRepository.findQuestionsByResumeIdAndResumePage(
+        // 예상 질문 목록 조회
+        Page<QuestionResponse> questionPage = questionRepository.findQuestionsByResumeIdAndResumePage(
             resumeId, user.getId(), resumePage, pageable);
-        List<QuestionInfo> questions = questionPage.getContent();
-        List<Long> questionIds = extractQuestionIds(questions);
 
-        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
-            questionEmojiRepository.findEmojiCountByQuestionIds(questionIds));
+        List<QuestionResponse> questions = questionPage.getContent();
 
-        List<QuestionResponse> questionsResponse = collectToQuestionsResponse(questionIds,
-            questions, emojiCounts, isWriter);
+        // 예상 질문에 대한 이모지 목록 조회
+        questions.forEach(question -> {
+            List<EmojiCount> emojiCounts = questionEmojiRepository.findQuestionEmojiCountByQuestionId(
+                question.getId());
+            question.setEmojis(emojiCounts);
+
+            if (!isWriter) {
+                question.setBookmarked(null);
+            }
+        });
 
         return QuestionPageResponse.builder()
-            .questions(questionsResponse)
+            .questions(questions)
             .pageNumber(questionPage.getNumber())
             .lastPage(questionPage.getTotalPages() - 1)
             .pageSize(questionPage.getSize())
@@ -119,21 +115,21 @@ public class QuestionService {
         findParentQuestionById(parentQuestionId);
 
         // 예상 질문에 달린 대댓글 목록 조회
-        Page<QuestionCommentInfo> questionCommentPage = questionRepository.findQuestionCommentsByQuestionId(
+        Page<QuestionCommentResponse> questionCommentPage = questionRepository.findQuestionCommentsByQuestionId(
             parentQuestionId, user.getId(), pageable);
-        List<QuestionCommentInfo> questionComments = questionCommentPage.getContent();
+
+        List<QuestionCommentResponse> questionComments = questionCommentPage.getContent();
+
+        questionComments.forEach(questionComment -> {
+            List<EmojiCount> emojiCounts = questionEmojiRepository.findQuestionEmojiCountByQuestionId(
+                questionComment.getId());
+            questionComment.setEmojis(emojiCounts);
+        });
+
         questionComments = sortQuestionCommentsByIdAsc(questionComments);
 
-        List<Long> questionCommentIds = extractQuestionCommentIds(questionComments);
-
-        List<List<EmojiCount>> emojiCounts = utilService.collectEmojiCounts(
-            questionEmojiRepository.findEmojiCountByQuestionIds(questionCommentIds));
-
-        List<QuestionCommentResponse> questionCommentsResponse = collectToQuestionCommentsResponse(
-            questionCommentIds, questionComments, emojiCounts);
-
         return QuestionCommentPageResponse.builder()
-            .questionComments(questionCommentsResponse)
+            .questionComments(questionComments)
             .pageNumber(questionCommentPage.getNumber())
             .lastPage(questionCommentPage.getTotalPages() - 1)
             .pageSize(questionCommentPage.getSize())
@@ -208,18 +204,15 @@ public class QuestionService {
         Question question = findByIdAndResumeId(questionId, resumeId);
 
         // 기존 이모지 삭제
-        questionEmojiRepository.findByQuestionIdAndUserId(questionId, user.getId())
-            .ifPresent(
-                questionEmojiRepository::delete
-            );
+        Optional<QuestionEmoji> questionEmoji = questionEmojiRepository.findByQuestionIdAndUserId(
+            questionId, user.getId());
 
-        Integer emojiId = request.getId();
+        Emoji emoji = emojisVO.findEmojiById(request.getId());
 
-        if (emojiId == null) {
+        if (questionEmoji.isPresent()) {
+            questionEmoji.get().updateEmoji(emojisVO.findEmojiById(request.getId()));
             return;
         }
-
-        Emoji emoji = emojisVO.findEmojiById(emojiId);
 
         questionEmojiRepository.save(
             new QuestionEmoji(user, question, emoji)
@@ -252,81 +245,14 @@ public class QuestionService {
             .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 예상 질문입니다."));
     }
 
-    private void saveDefaultEmojis(Question savedQuestion) {
-
-        questionEmojiRepository.saveAll(
-            QuestionEmoji.createDefaultQuestionEmojis(
-                savedQuestion,
-                emojisVO.getEmojis())
-        );
-    }
-
-    /***************
-     * 아래는 예상 질문(또는 대댓글) 목록 조회 시 사용되는 메서드입니다.
-     ***************/
-    private List<Long> extractQuestionIds(List<QuestionInfo> questions) {
-
-        return questions.stream()
-            .map(QuestionInfo::getId)
-            .collect(Collectors.toList());
-    }
-
-    private List<QuestionResponse> collectToQuestionsResponse(List<Long> questionIds,
-        List<QuestionInfo> questions,
-        List<List<EmojiCount>> emojiCounts, boolean isWriter) {
-
-        List<QuestionResponse> questionsResponse = new ArrayList<>();
-
-        for (int questionIdx = 0; questionIdx < questionIds.size(); questionIdx++) {
-
-            QuestionInfo question = questions.get(questionIdx);
-            List<EmojiCount> emojiCount = emojiCounts.get(questionIdx);
-
-            QuestionResponse questionResponse = isWriter
-                ? QuestionResponse.fromQuestionOfOwnResume(question, emojiCount)
-                : QuestionResponse.fromQuestionOfOtherResume(question, emojiCount);
-
-            questionsResponse.add(questionResponse);
-        }
-
-        return questionsResponse;
-    }
-
-    private List<Long> extractQuestionCommentIds(List<QuestionCommentInfo> questionComments) {
-
-        return questionComments.stream()
-            .map(QuestionCommentInfo::getId)
-            .collect(Collectors.toList());
-    }
-
-    private List<QuestionCommentResponse> collectToQuestionCommentsResponse(
-        List<Long> questionCommentIds,
-        List<QuestionCommentInfo> questionComments,
-        List<List<EmojiCount>> emojiCounts) {
-
-        List<QuestionCommentResponse> questionCommentResponses = new ArrayList<>();
-
-        for (int questionCommentIdx = 0; questionCommentIdx < questionCommentIds.size();
-            questionCommentIdx++) {
-
-            QuestionCommentInfo questionComment = questionComments.get(questionCommentIdx);
-            List<EmojiCount> emojiCount = emojiCounts.get(questionCommentIdx);
-
-            questionCommentResponses.add(
-                QuestionCommentResponse.fromQuestionComment(questionComment, emojiCount)
-            );
-        }
-
-        return questionCommentResponses;
-    }
-
     /**
      * 대댓글 조회 시 id 오름차순으로 재정렬
      */
-    private List<QuestionCommentInfo> sortQuestionCommentsByIdAsc(List<QuestionCommentInfo> questionCommentInfos) {
+    private List<QuestionCommentResponse> sortQuestionCommentsByIdAsc(
+        List<QuestionCommentResponse> questionComments) {
 
-        return questionCommentInfos.stream()
-            .sorted(Comparator.comparingLong(QuestionCommentInfo::getId))
+        return questionComments.stream()
+            .sorted(Comparator.comparingLong(QuestionCommentResponse::getId))
             .collect(Collectors.toList());
     }
 }

@@ -6,6 +6,7 @@ import static reviewme.be.feedback.entity.QFeedbackEmoji.feedbackEmoji;
 import static reviewme.be.user.entity.QUser.user;
 import static reviewme.be.util.entity.QEmoji.emoji;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +19,18 @@ public class FeedbackEmojiRepositoryImpl implements FeedbackEmojiRepositoryCusto
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<EmojiCount> findEmojiCountByFeedbackIds(List<Long> feedbackIds) {
+    public List<EmojiCount> findFeedbackEmojiCountByFeedbackId(long feedbackId) {
 
         return queryFactory
-            .select(new QEmojiCount(
-                emoji.id,
-                count(user.id)
-            ))
+            .select(Projections.constructor(EmojiCount.class,
+                feedbackEmoji.emoji.id,
+                count(feedbackEmoji.emoji.id)))
             .from(feedbackEmoji)
-            .rightJoin(feedbackEmoji.emoji, emoji)
-            .leftJoin(feedbackEmoji.user, user)
-            .innerJoin(feedbackEmoji.feedback, feedback)
-            .where(feedbackEmoji.feedback.id.in(feedbackIds))
-            .groupBy(emoji.id, feedback.id)
-            .orderBy(feedback.id.desc(), emoji.id.asc())
+            .innerJoin(feedbackEmoji.emoji)
+            .innerJoin(feedbackEmoji.user)
+            .where(feedbackEmoji.feedback.id.eq(feedbackId))
+            .groupBy(feedbackEmoji.emoji.id)
+            .orderBy(feedbackEmoji.emoji.id.asc())
             .fetch();
     }
 }

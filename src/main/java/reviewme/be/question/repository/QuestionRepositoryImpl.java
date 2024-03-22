@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import reviewme.be.question.dto.QQuestionCommentInfo;
-import reviewme.be.question.dto.QQuestionInfo;
-import reviewme.be.question.dto.QuestionCommentInfo;
-import reviewme.be.question.dto.QuestionInfo;
+import reviewme.be.question.dto.response.QQuestionCommentResponse;
+import reviewme.be.question.dto.response.QQuestionResponse;
+import reviewme.be.question.dto.response.QuestionCommentResponse;
+import reviewme.be.question.dto.response.QuestionResponse;
 import reviewme.be.question.entity.Question;
 
 @RequiredArgsConstructor
@@ -24,18 +24,18 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<QuestionInfo> findQuestionsByResumeIdAndResumePage(long resumeId, long userId,
+    public Page<QuestionResponse> findQuestionsByResumeIdAndResumePage(long resumeId, long userId,
         int resumePage,
         Pageable pageable) {
 
-        QueryResults<QuestionInfo> results = queryFactory
-            .select(new QQuestionInfo(
+        QueryResults<QuestionResponse> results = queryFactory
+            .select(new QQuestionResponse(
                 question.id,
                 question.content,
-                question.labelContent,
                 question.commenter.id,
                 question.commenter.name,
                 question.commenter.profileUrl,
+                question.labelContent,
                 question.createdAt,
                 question.childCnt,
                 question.checked,
@@ -59,18 +59,18 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetchResults();
 
-        List<QuestionInfo> content = results.getResults();
+        List<QuestionResponse> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
     }
 
     @Override
-    public Page<QuestionCommentInfo> findQuestionCommentsByQuestionId(long questionId,
+    public Page<QuestionCommentResponse> findQuestionCommentsByQuestionId(long questionId,
         long userId, Pageable pageable) {
 
-        QueryResults<QuestionCommentInfo> results = queryFactory
-            .select(new QQuestionCommentInfo(
+        QueryResults<QuestionCommentResponse> results = queryFactory
+            .select(new QQuestionCommentResponse(
                 question.id,
                 question.parentQuestion.id,
                 question.content,
@@ -95,7 +95,7 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetchResults();
 
-        List<QuestionCommentInfo> content = results.getResults();
+        List<QuestionCommentResponse> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);

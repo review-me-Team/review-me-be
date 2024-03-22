@@ -30,8 +30,8 @@ public class ResumeExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Not Found",
-                        404,
+                        "Forbidden",
+                        403,
                         ex.getMessage()));
     }
 
