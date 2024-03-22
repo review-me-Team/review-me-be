@@ -1,9 +1,10 @@
 package reviewme.be.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import reviewme.be.comment.dto.CommentInfo;
 import reviewme.be.util.dto.EmojiCount;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
+@Setter
 @Schema(description = "댓글 정보 응답")
 public class CommentResponse {
 
@@ -40,17 +41,16 @@ public class CommentResponse {
     @Schema(description = "내가 선택한 이모지", example = "1")
     private Integer myEmojiId;
 
-    public static CommentResponse fromComment(CommentInfo comment, List<EmojiCount> emojis) {
+    @QueryProjection
+    public CommentResponse(Long id, String content, Long commenterId, String commenterName,
+        String commenterProfileUrl, LocalDateTime createdAt, Integer myEmojiId) {
 
-        return CommentResponse.builder()
-            .id(comment.getId())
-            .content(comment.getContent())
-            .commenterId(comment.getCommenterId())
-            .commenterName(comment.getCommenterName())
-            .commenterProfileUrl(comment.getCommenterProfileUrl())
-            .createdAt(comment.getCreatedAt())
-            .emojis(emojis)
-            .myEmojiId(comment.getMyEmojiId())
-            .build();
+        this.id = id;
+        this.content = content;
+        this.commenterId = commenterId;
+        this.commenterName = commenterName;
+        this.commenterProfileUrl = commenterProfileUrl;
+        this.createdAt = createdAt;
+        this.myEmojiId = myEmojiId;
     }
 }

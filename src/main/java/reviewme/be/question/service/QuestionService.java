@@ -25,7 +25,6 @@ import reviewme.be.resume.service.ResumeService;
 import reviewme.be.user.entity.User;
 import reviewme.be.util.dto.EmojiCount;
 import reviewme.be.util.entity.Emoji;
-import reviewme.be.util.service.UtilService;
 
 import java.util.List;
 import reviewme.be.util.vo.EmojisVO;
@@ -37,7 +36,6 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final QuestionEmojiRepository questionEmojiRepository;
     private final ResumeService resumeService;
-    private final UtilService utilService;
     private final EmojisVO emojisVO;
 
     @Transactional
@@ -46,12 +44,10 @@ public class QuestionService {
         // 이력서 존재 여부 확인
         Resume resume = resumeService.findById(resumeId);
 
-        Question savedQuestion = questionRepository.save(
+        questionRepository.save(
             Question.createQuestion(commenter, resume, request.getLabelContent(),
                 request.getContent(),
                 request.getResumePage()));
-
-        saveDefaultEmojis(savedQuestion);
     }
 
     @Transactional
@@ -66,15 +62,13 @@ public class QuestionService {
             throw new NotParentQuestionException("해당 예상 질문에는 대댓글을 추가할 수 없습니다.");
         }
 
-        Question savedQuestion = questionRepository.save(Question.createQuestionComment(
+        questionRepository.save(Question.createQuestionComment(
             commenter,
             resume,
             parentQuestion,
             request.getContent()));
 
         parentQuestion.plusChildCnt();
-
-        saveDefaultEmojis(savedQuestion);
     }
 
     @Transactional(readOnly = true)
@@ -249,15 +243,6 @@ public class QuestionService {
 
         return questionRepository.findParentQuestionByIdAndResumeId(questionId, resumeId)
             .orElseThrow(() -> new NonExistQuestionException("존재하지 않는 예상 질문입니다."));
-    }
-
-    private void saveDefaultEmojis(Question savedQuestion) {
-
-        questionEmojiRepository.saveAll(
-            QuestionEmoji.createDefaultQuestionEmojis(
-                savedQuestion,
-                emojisVO.getEmojis())
-        );
     }
 
     /**

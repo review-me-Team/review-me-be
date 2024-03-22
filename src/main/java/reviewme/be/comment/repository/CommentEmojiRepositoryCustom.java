@@ -5,5 +5,5 @@ import reviewme.be.util.dto.EmojiCount;
 
 public interface CommentEmojiRepositoryCustom {
 
-    List<EmojiCount> findEmojiCountByCommentIds(List<Long> commentIds);
+    List<EmojiCount> findCommentEmojiCountByCommentId(long commentId);
 }

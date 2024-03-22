@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import reviewme.be.comment.dto.CommentInfo;
-import reviewme.be.comment.dto.QCommentInfo;
 
 import java.util.List;
+import reviewme.be.comment.dto.response.CommentResponse;
+import reviewme.be.comment.dto.response.QCommentResponse;
 
 import static reviewme.be.comment.entity.QComment.comment;
 import static reviewme.be.comment.entity.QCommentEmoji.commentEmoji;
@@ -21,10 +21,10 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<CommentInfo> findCommentsByResumeId(long resumeId, long userId, Pageable pageable) {
+    public Page<CommentResponse> findCommentsByResumeId(long resumeId, long userId, Pageable pageable) {
 
-        QueryResults<CommentInfo> results = queryFactory
-            .select(new QCommentInfo(
+        QueryResults<CommentResponse> results = queryFactory
+            .select(new QCommentResponse(
                 comment.id,
                 comment.content,
                 comment.commenter.id,
@@ -48,7 +48,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetchResults();
 
-        List<CommentInfo> content = results.getResults();
+        List<CommentResponse> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
