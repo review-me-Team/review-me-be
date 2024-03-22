@@ -248,9 +248,9 @@ public class FeedbackService {
      * 대댓글 조회 시 id 오름차순으로 재정렬
      */
     private List<FeedbackCommentResponse> sortFeedbackCommentsByIdAsc(
-        List<FeedbackCommentResponse> feedbackCommentInfos) {
+        List<FeedbackCommentResponse> feedbackComments) {
 
-        return feedbackCommentInfos.stream()
+        return feedbackComments.stream()
             .sorted(Comparator.comparingLong(FeedbackCommentResponse::getId))
             .collect(Collectors.toList());
     }
