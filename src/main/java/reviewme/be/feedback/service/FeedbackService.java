@@ -1,7 +1,6 @@
 package reviewme.be.feedback.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -57,15 +56,12 @@ public class FeedbackService {
             label = utilService.findFeedbackLabelById(request.getLabelId());
         }
 
-        Feedback savedFeedback = feedbackRepository.save(Feedback.createdFeedback(
+        feedbackRepository.save(Feedback.createdFeedback(
             commenter,
             resume,
             label,
             request.getContent(),
             request.getResumePage()));
-
-        // Default Feedback Emojis 생성
-        saveDefaultEmojis(savedFeedback);
     }
 
     @Transactional
@@ -82,16 +78,13 @@ public class FeedbackService {
             throw new NonExistFeedbackException("해당 피드백에는 대댓글을 추가할 수 없습니다.");
         }
 
-        Feedback savedFeedback = feedbackRepository.save(Feedback.createFeedbackComment(
+        feedbackRepository.save(Feedback.createFeedbackComment(
             commenter,
             resume,
             parentFeedback,
             request.getContent()));
 
         parentFeedback.plusChildCnt();
-
-        // Default Feedback Emojis 생성
-        saveDefaultEmojis(savedFeedback);
     }
 
     @Transactional(readOnly = true)
@@ -249,14 +242,6 @@ public class FeedbackService {
 
         return feedbackRepository.findParentFeedbackByIdAndResumeId(feedbackId, resumeId)
             .orElseThrow(() -> new NonExistFeedbackException("존재하지 않는 피드백입니다."));
-    }
-
-    private void saveDefaultEmojis(Feedback savedFeedback) {
-        feedbackEmojiRepository.saveAll(
-            FeedbackEmoji.createDefaultFeedbackEmojis(
-                savedFeedback,
-                emojisVO.getEmojis())
-        );
     }
 
     /**
