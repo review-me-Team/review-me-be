@@ -196,13 +196,13 @@ public class UserController {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null) {
-            throw new NoRefreshTokenException("로그인이 필요합니다.");
+            throw new NoRefreshTokenException("cookie에 refresh token이 없습니다.");
         }
 
         return Arrays.stream(cookies)
             .filter(cookie -> cookie.getName().equals("refreshToken"))
             .findFirst()
-            .orElseThrow(() -> new NoRefreshTokenException("로그인이 필요합니다."))
+            .orElseThrow(() -> new NoRefreshTokenException("cookie에 refresh token이 없습니다."))
             .getValue();
     }
 }

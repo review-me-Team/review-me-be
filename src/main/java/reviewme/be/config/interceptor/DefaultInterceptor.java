@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import reviewme.be.user.dto.response.UserProfileResponse;
 import reviewme.be.user.entity.User;
-import reviewme.be.user.exception.ExpiredTokenException;
-import reviewme.be.user.exception.ManipulatedTokenException;
+import reviewme.be.user.exception.InvalidJWTException;
 import reviewme.be.user.exception.NoValidBearerFormatException;
 import reviewme.be.user.service.JWTService;
 import reviewme.be.user.service.UserService;
@@ -32,8 +31,6 @@ public class DefaultInterceptor implements HandlerInterceptor {
             throw new NotLoggedInUserException("Authorization header가 존재하지 않습니다.");
         }
 
-        log.info("Authorization header: {}", header);
-
         if (request.getHeader("Authorization").split(" ").length != 2) {
             throw new NoValidBearerFormatException("Bearer 토큰이 존재하지 않습니다.");
         }
@@ -41,11 +38,11 @@ public class DefaultInterceptor implements HandlerInterceptor {
         String jwt = request.getHeader("Authorization").split(" ")[1];
 
         if (jwtService.validateJwtIsManipulated(jwt)) {
-            throw new ManipulatedTokenException("조작된 토큰입니다.");
+            throw new InvalidJWTException("조작된 토큰입니다.");
         }
 
         if (jwtService.validateJwtIsExpired(jwt)) {
-            throw new ExpiredTokenException("유효 기간이 만료된 토큰입니다.");
+            throw new InvalidJWTException("유효 기간이 만료된 토큰입니다.");
         }
 
         UserProfileResponse loggedInUser = jwtService.extractUserFromJwt(jwt, UserProfileResponse.class);
