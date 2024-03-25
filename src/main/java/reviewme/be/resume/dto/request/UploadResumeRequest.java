@@ -1,6 +1,7 @@
 package reviewme.be.resume.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.Max;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
 public class UploadResumeRequest {
 
     @Schema(description = "이력서 제목", example = "네이버 신입 개발자 준비")
+    @Max(value = 30, message = "이력서 제목은 최대 30자까지 입력 가능합니다.")
     @NotBlank(message = "이력서 제목은 필수 입력 값입니다.")
     private String title;
 
