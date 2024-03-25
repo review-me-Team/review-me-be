@@ -16,8 +16,8 @@ public class UserExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "invalid authorization code",
+                        1001,
                         ex.getMessage()));
     }
 
@@ -49,8 +49,8 @@ public class UserExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "refresh token is not in cookie",
+                        1002,
                         ex.getMessage()));
     }
 
@@ -65,25 +65,14 @@ public class UserExceptionHandler {
                         ex.getMessage()));
     }
 
-    @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<CustomErrorResponse> invalidToken(InvalidTokenException ex) {
+    @ExceptionHandler(InvalidJWTException.class)
+    public ResponseEntity<CustomErrorResponse> invalidJWT(InvalidJWTException ex) {
 
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
-                        ex.getMessage()));
-    }
-
-    @ExceptionHandler(ManipulatedTokenException.class)
-    public ResponseEntity<CustomErrorResponse> manipulatedToken(ManipulatedTokenException ex) {
-
-        return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "invalid jwt",
+                        1004,
                         ex.getMessage()));
     }
 
@@ -93,20 +82,9 @@ public class UserExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
+                        "invalid refresh token",
+                        1003,
                         "유효하지 않은 refresh token입니다. 다시 로그인해주세요."));
-    }
-
-    @ExceptionHandler(ExpiredTokenException.class)
-    public ResponseEntity<CustomErrorResponse> expiredTokenException(ExpiredTokenException ex) {
-
-        return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Unauthorized",
-                        401,
-                        ex.getMessage()));
     }
 
     @ExceptionHandler(NoAuthorizationException.class)

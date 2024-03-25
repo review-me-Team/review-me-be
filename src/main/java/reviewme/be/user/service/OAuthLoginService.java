@@ -62,7 +62,7 @@ public class OAuthLoginService {
         String accessToken = response.getBody().getAccessToken();
 
         if (accessToken == null) {
-            throw new InvalidCodeException("[ERROR] 유효하지 않은 코드입니다.");
+            throw new InvalidCodeException("유효하지 않은 authorization code입니다.");
         }
 
         return response.getBody();
