@@ -82,7 +82,8 @@ public class UserController {
 
         UserRefreshedToken userRefreshedToken = oauthLoginService.getUserRefreshedToken(
             refreshToken);
-        String jwt = createJwtByGitHubToken(userRefreshedToken.getAccessToken(), userRefreshedToken.getExpiresIn());
+        String jwt = createJwtByGitHubToken(userRefreshedToken.getAccessToken(),
+            userRefreshedToken.getExpiresIn());
 
         setRefreshToken(response, userRefreshedToken.getRefreshToken());
 
@@ -97,6 +98,27 @@ public class UserController {
                     .build()
             ));
     }
+
+    @Operation(summary = "로그아웃", description = "사용자가 로그아웃 합니다.")
+    @PostMapping("/logout")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "로그 아웃 성공"),
+        @ApiResponse(responseCode = "400", description = "로그 아웃 실패")
+    })
+    public ResponseEntity<CustomResponse<Void>> logout(
+        HttpServletResponse response) {
+
+        expireCookie(response);
+
+        return ResponseEntity
+            .ok()
+            .body(new CustomResponse<>(
+                "success",
+                200,
+                "로그 아웃에 성공했습니다."
+            ));
+    }
+
 
     @Operation(summary = "사용자 검색 목록 조회", description = "검색한 이름으로 시작하는 사용자 목록을 조회합니다.")
     @GetMapping("/user")
@@ -113,7 +135,8 @@ public class UserController {
             throw new NoSearchConditionException("검색할 이름을 입력해주세요.");
         }
 
-        Page<UserResponse> searchedUsers = userService.getUsersByStartName(user.getId(), start, pageable);
+        Page<UserResponse> searchedUsers = userService.getUsersByStartName(user.getId(), start,
+            pageable);
 
         return ResponseEntity
             .ok()
@@ -149,6 +172,19 @@ public class UserController {
             .secure(true)
             .path("/")
             .maxAge(60 * 60 * 24 * 14)
+            .sameSite("None")
+            .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    private void expireCookie(HttpServletResponse response) {
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .maxAge(0)  // 쿠키 만료
             .sameSite("None")
             .build();
 
