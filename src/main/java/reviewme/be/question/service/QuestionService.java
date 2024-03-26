@@ -76,8 +76,9 @@ public class QuestionService {
         User user,
         Pageable pageable) {
 
-        // 이력서 존재 여부 확인
+        // 이력서 존재 여부 확인 및 접근 권한 확인
         Resume resume = resumeService.findById(resumeId);
+        resumeService.validateAccessRights(resume, user);
         boolean isWriter = resume.isWriter(user);
 
         // 예상 질문 목록 조회
@@ -110,8 +111,9 @@ public class QuestionService {
         User user,
         Pageable pageable) {
 
-        // 이력서, 부모 예상 질문 존재 여부 확인
-        resumeService.findById(resumeId);
+        // 이력서, 부모 예상 질문 존재 여부 확인 및 접근 권한 검증
+        Resume resume = resumeService.findById(resumeId);
+        resumeService.validateAccessRights(resume, user);
         findParentQuestionById(parentQuestionId);
 
         // 예상 질문에 달린 대댓글 목록 조회

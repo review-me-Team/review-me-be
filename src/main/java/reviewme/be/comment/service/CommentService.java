@@ -48,7 +48,9 @@ public class CommentService {
     @Transactional
     public CommentPageResponse getComments(long resumeId, Pageable pageable, User user) {
 
-        resumeService.findById(resumeId);
+        Resume resume = resumeService.findById(resumeId);
+
+        resumeService.validateAccessRights(resume, user);
 
         // 댓글 목록 조회와 내가 선택한 이모지 조회
         Page<CommentResponse> commentPage = commentRepository.findCommentsByResumeId(resumeId,

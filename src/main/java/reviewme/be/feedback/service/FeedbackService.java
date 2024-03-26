@@ -92,7 +92,8 @@ public class FeedbackService {
         User user,
         Pageable pageable) {
 
-        resumeService.findById(resumeId);
+        Resume resume = resumeService.findById(resumeId);
+        resumeService.validateAccessRights(resume, user);
 
         // 피드백 목록 조회
         Page<FeedbackResponse> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
@@ -119,8 +120,10 @@ public class FeedbackService {
         User user,
         Pageable pageable) {
 
-        // 이력서, 부모 피드백 존재 여부 확인
-        resumeService.findById(resumeId);
+        // 이력서, 부모 피드백 존재 여부 확인 및 접근 권한 검증
+        Resume resume = resumeService.findById(resumeId);
+        resumeService.validateAccessRights(resume, user);
+
         findParentFeedbackById(parentFeedbackId);
 
         // 피드백 대댓글 목록 조회 후 id 오름차순으로 재정렬
@@ -148,8 +151,9 @@ public class FeedbackService {
     @Transactional
     public void deleteFeedback(long resumeId, long feedbackId, User user) {
 
-        // 이력서 존재 여부 확인
-        resumeService.findById(resumeId);
+        // 이력서 존재 여부 확인 및 접근 권한 검증
+        Resume resume = resumeService.findById(resumeId);
+        resumeService.validateAccessRights(resume, user);
 
         // 피드백 존재 여부 확인 및 유저 검증
         Feedback feedback = findById(feedbackId);
