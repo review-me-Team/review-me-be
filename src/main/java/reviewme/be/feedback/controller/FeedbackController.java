@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.feedback.dto.FeedbacksFilter;
 import reviewme.be.feedback.dto.request.*;
 import reviewme.be.feedback.dto.response.*;
 import reviewme.be.custom.CustomResponse;
@@ -78,11 +79,11 @@ public class FeedbackController {
     })
     public ResponseEntity<CustomResponse<FeedbackPageResponse>> showFeedbacks(
         @PathVariable long resumeId,
-        @RequestParam int resumePage,
+        @ModelAttribute FeedbacksFilter feedbacksFilter,
         @RequestAttribute("user") User user,
         @PageableDefault(size = 20) Pageable pageable) {
 
-        FeedbackPageResponse feedbacks = feedbackService.getFeedbacks(resumeId, resumePage, user,
+        FeedbackPageResponse feedbacks = feedbackService.getFeedbacks(resumeId, feedbacksFilter, user,
             pageable);
 
         return ResponseEntity
