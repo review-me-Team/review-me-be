@@ -8,20 +8,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reviewme.be.question.dto.QuestionsFilter;
 import reviewme.be.question.dto.request.*;
 import reviewme.be.question.dto.response.QuestionCommentPageResponse;
 import reviewme.be.question.dto.response.QuestionPageResponse;
 import reviewme.be.custom.CustomResponse;
 import reviewme.be.question.service.QuestionService;
 import reviewme.be.user.entity.User;
-import reviewme.be.util.dto.response.LabelPageResponse;
-import reviewme.be.util.dto.response.LabelResponse;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "question", description = "예상 질문(question) API")
 @RequestMapping("/resume/{resumeId}/question")
@@ -85,11 +80,11 @@ public class QuestionController {
     })
     public ResponseEntity<CustomResponse<QuestionPageResponse>> showQuestions(
         @PathVariable long resumeId,
-        @RequestParam int resumePage,
+        @ModelAttribute QuestionsFilter questionsFilter,
         @RequestAttribute("user") User user,
         @PageableDefault(size = 20) Pageable pageable) {
 
-        QuestionPageResponse questions = questionService.getQuestions(resumeId, resumePage, user,
+        QuestionPageResponse questions = questionService.getQuestions(resumeId, questionsFilter, user,
             pageable);
 
         return ResponseEntity

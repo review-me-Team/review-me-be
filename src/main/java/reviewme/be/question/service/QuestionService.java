@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.question.dto.QuestionsFilter;
 import reviewme.be.question.dto.request.*;
 import reviewme.be.question.dto.response.QuestionCommentPageResponse;
 import reviewme.be.question.dto.response.QuestionCommentResponse;
@@ -72,7 +73,7 @@ public class QuestionService {
     }
 
     @Transactional(readOnly = true)
-    public QuestionPageResponse getQuestions(long resumeId, int resumePage,
+    public QuestionPageResponse getQuestions(long resumeId, QuestionsFilter questionsFilter,
         User user,
         Pageable pageable) {
 
@@ -83,7 +84,7 @@ public class QuestionService {
 
         // 예상 질문 목록 조회
         Page<QuestionResponse> questionPage = questionRepository.findQuestionsByResumeIdAndResumePage(
-            resumeId, user.getId(), resumePage, pageable);
+            resumeId, user.getId(), questionsFilter, pageable);
 
         List<QuestionResponse> questions = questionPage.getContent();
 

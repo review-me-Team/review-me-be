@@ -5,6 +5,7 @@ import static reviewme.be.feedback.entity.QFeedbackEmoji.feedbackEmoji;
 import static reviewme.be.util.entity.QLabel.label;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import reviewme.be.feedback.dto.FeedbacksFilter;
 import reviewme.be.feedback.dto.response.FeedbackCommentResponse;
 import reviewme.be.feedback.dto.response.FeedbackResponse;
 import reviewme.be.feedback.dto.response.QFeedbackCommentResponse;
@@ -26,7 +28,7 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
 
     @Override
     public Page<FeedbackResponse> findFeedbacksByResumeIdAndResumePage(long resumeId, long userId,
-        int resumePage,
+        FeedbacksFilter filter,
         Pageable pageable) {
 
         QueryResults<FeedbackResponse> results = queryFactory
@@ -51,8 +53,9 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
             .innerJoin(feedback.commenter)
             .leftJoin(feedback.label, label)
             .where(feedback.resume.id.eq(resumeId)
-                .and(feedback.resumePage.eq(resumePage))
+                .and(feedback.resumePage.eq(filter.getResumePage()))
                 .and(feedback.parentFeedback.isNull())
+                .and(checked(filter.getChecked()))
                 .and(feedback.deletedAt.isNull()
                     .or(feedback.deletedAt.isNotNull().and(feedback.childCnt.gt(0))))
             )
@@ -117,5 +120,10 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
                 )
                 .fetchOne()
         );
+    }
+
+    private BooleanExpression checked(Boolean checked) {
+
+        return checked != null ? feedback.checked.eq(checked) : null;
     }
 }

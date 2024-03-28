@@ -4,6 +4,7 @@ import static reviewme.be.question.entity.QQuestion.question;
 import static reviewme.be.question.entity.QQuestionEmoji.questionEmoji;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import reviewme.be.question.dto.QuestionsFilter;
 import reviewme.be.question.dto.response.QQuestionCommentResponse;
 import reviewme.be.question.dto.response.QQuestionResponse;
 import reviewme.be.question.dto.response.QuestionCommentResponse;
@@ -25,7 +27,7 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
 
     @Override
     public Page<QuestionResponse> findQuestionsByResumeIdAndResumePage(long resumeId, long userId,
-        int resumePage,
+        QuestionsFilter filter,
         Pageable pageable) {
 
         QueryResults<QuestionResponse> results = queryFactory
@@ -50,7 +52,9 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
             .from(question)
             .innerJoin(question.commenter)
             .where(question.resume.id.eq(resumeId)
-                .and(question.resumePage.eq(resumePage))
+                .and(question.resumePage.eq(filter.getResumePage()))
+                .and(checked(filter.getChecked()))
+                .and(bookmarked(filter.getBookmarked()))
                 .and(question.deletedAt.isNull()
                     .or(question.deletedAt.isNotNull().and(question.childCnt.gt(0))))
             )
@@ -113,5 +117,15 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
                     .or(question.deletedAt.isNotNull().and(question.childCnt.gt(0))))
             )
             .fetchOne());
+    }
+
+    private BooleanExpression checked(Boolean checked) {
+
+        return checked != null ? question.checked.eq(checked) : null;
+    }
+
+    private BooleanExpression bookmarked(Boolean bookmarked) {
+
+        return bookmarked != null ? question.bookmarked.eq(bookmarked) : null;
     }
 }

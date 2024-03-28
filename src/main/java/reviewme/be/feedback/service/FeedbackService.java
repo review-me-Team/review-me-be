@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reviewme.be.feedback.dto.FeedbacksFilter;
 import reviewme.be.feedback.dto.request.CreateFeedbackCommentRequest;
 import reviewme.be.feedback.dto.request.CreateFeedbackRequest;
 import reviewme.be.feedback.dto.request.UpdateFeedbackCheckRequest;
@@ -88,7 +89,7 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public FeedbackPageResponse getFeedbacks(long resumeId, int resumePage,
+    public FeedbackPageResponse getFeedbacks(long resumeId, FeedbacksFilter filter,
         User user,
         Pageable pageable) {
 
@@ -97,7 +98,7 @@ public class FeedbackService {
 
         // 피드백 목록 조회
         Page<FeedbackResponse> feedbackPage = feedbackRepository.findFeedbacksByResumeIdAndResumePage(
-            resumeId, user.getId(), resumePage, pageable);
+            resumeId, user.getId(), filter, pageable);
 
         List<FeedbackResponse> feedbacks = feedbackPage.getContent();
 
