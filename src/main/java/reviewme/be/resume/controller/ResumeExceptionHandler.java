@@ -17,32 +17,32 @@ public class ResumeExceptionHandler {
     public ResponseEntity<CustomErrorResponse> badFileExtension(BadFileExtensionException ex) {
 
         return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Bad Request",
-                        400,
-                        ex.getMessage()));
+            .badRequest()
+            .body(new CustomErrorResponse(
+                "Bad Request",
+                400,
+                ex.getMessage()));
     }
 
     @ExceptionHandler(NonExistResumeException.class)
     public ResponseEntity<CustomErrorResponse> nonExistResume(NonExistResumeException ex) {
 
         return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Forbidden",
-                        403,
-                        ex.getMessage()));
+            .status(HttpStatus.NOT_FOUND)
+            .body(new CustomErrorResponse(
+                "Not Found",
+                404,
+                ex.getMessage()));
     }
 
     @ExceptionHandler(NotYourResumeException.class)
     public ResponseEntity<CustomErrorResponse> notYourResume(NotYourResumeException ex) {
 
         return ResponseEntity
-                .badRequest()
-                .body(new CustomErrorResponse(
-                        "Forbidden",
-                        403,
-                        ex.getMessage()));
+            .status(HttpStatus.FORBIDDEN)
+            .body(new CustomErrorResponse(
+                "Forbidden",
+                403,
+                ex.getMessage()));
     }
 }
